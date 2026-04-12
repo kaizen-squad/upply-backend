@@ -42,21 +42,21 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
 
     public function client(): static
     {
-        return $this->state(fn (array $attributes) =>[
+        return $this->state(fn(array $attributes) => [
             'role' => UserRole::CLIENT,
         ]);
     }
 
     public function prestataire(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'role' => UserRole::PRESTATAIRE,
         ]);
     }
