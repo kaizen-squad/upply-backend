@@ -11,15 +11,15 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/refresh', [AuthenticationController::class, 'refreshToken']);
 
-Route::post('/register', [AuthenticationController::class, 'register'] );
+Route::post('/register', [AuthenticationController::class, 'register']);
 
 Route::post('/login', [AuthenticationController::class, 'login']);
 
-Route::get('/health', function(Request $request){
+Route::get('/health', function (Request $request) {
     return [
-        "app_name"=> config('app.name'),
-        "version" => '1.0',
-        "health" => 'OK',
+        'app_name' => config('app.name'),
+        'version' => '1.0',
+        'health' => 'OK',
     ];
 });
 
