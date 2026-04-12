@@ -13,7 +13,11 @@ return [
     |
     */
 
+<<<<<<< HEAD
     'default' => env('QUEUE_CONNECTION', 'redis'),
+=======
+    'default' => env('QUEUE_CONNECTION', 'database'),
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 
     /*
     |--------------------------------------------------------------------------
