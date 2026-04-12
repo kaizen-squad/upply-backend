@@ -1388,7 +1388,6 @@
             "time": "2026-03-23T14:35:33+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "laravel/sanctum",
             "version": "v4.3.1",
             "source": {
@@ -1452,8 +1451,11 @@
             "time": "2026-02-07T17:19:31+00:00"
         },
         {
+<<<<<<< HEAD
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+>>>>>>> 5e55ab6 (chore(architecture): Opened the api configuration for laravel)
             "name": "laravel/serializable-closure",
             "version": "v2.0.11",
             "source": {
