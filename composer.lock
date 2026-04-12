@@ -4,25 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
     "content-hash": "2295ba8a172679acacecfce701373bfb",
-=======
-    "content-hash": "c57754c93ae34ac3b9b716a0fd2f2149",
->>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
-<<<<<<< HEAD
-=======
-    "content-hash": "2295ba8a172679acacecfce701373bfb",
->>>>>>> 5e55ab6 (chore(architecture): Opened the api configuration for laravel)
-=======
->>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
-=======
-    "content-hash": "2295ba8a172679acacecfce701373bfb",
->>>>>>> 032e77c (chore(architecture): Opened the api configuration for laravel)
     "packages": [
         {
             "name": "brick/math",
@@ -1406,10 +1388,6 @@
             "time": "2026-03-23T14:35:33+00:00"
         },
         {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 5e55ab6 (chore(architecture): Opened the api configuration for laravel)
             "name": "laravel/sanctum",
             "version": "v4.3.1",
             "source": {

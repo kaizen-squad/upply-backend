@@ -7,27 +7,16 @@
         "laravel",
         "framework"
     ],
-<<<<<<< HEAD
     "keywords": [
         "laravel",
         "framework"
     ],
-=======
-    "keywords": ["laravel", "framework"],
->>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
     "license": "MIT",
     "require": {
         "php": "^8.3",
         "fedapay/fedapay-php": "^0.4.8",
         "laravel/framework": "^13.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
         "laravel/sanctum": "^4.0",
-=======
->>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
-=======
-        "laravel/sanctum": "^4.0",
->>>>>>> 5e55ab6 (chore(architecture): Opened the api configuration for laravel)
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
