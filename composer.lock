@@ -7,6 +7,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
     "content-hash": "2295ba8a172679acacecfce701373bfb",
@@ -19,6 +20,9 @@
 >>>>>>> 5e55ab6 (chore(architecture): Opened the api configuration for laravel)
 =======
 >>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
+=======
+    "content-hash": "2295ba8a172679acacecfce701373bfb",
+>>>>>>> 032e77c (chore(architecture): Opened the api configuration for laravel)
     "packages": [
         {
             "name": "brick/math",
