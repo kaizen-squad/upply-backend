@@ -2,13 +2,29 @@
 
 ## Overview
 
+<<<<<<< HEAD
  This REST API is built with Laravel 13. It exposes secure and well-designed endpoints for a small freelance platform.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+This API REST is built in Laravel 12. It expose secured and well thought out endpoint for a minor freelance system.
+
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+>>>>>>> a6f0dbb (feat(architecture): Set up the backend code base structure)
 ## INTEGRATION STEPS
 
     - Clone the project:
 
+<<<<<<< HEAD
         git clone git@github.com:kaizen-squad/upply-backend.git
+=======
+        git clone git@github.com:e-mandy/multicase-auth.git
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 
 
     - Install dependencies:
@@ -26,6 +42,7 @@
     - Generate the application key:
 
         php artisan key:generate
+<<<<<<< HEAD
 
 ## DOCKER USAGE
 
@@ -38,3 +55,5 @@ To run the application using Docker, use the following command:
 >     sudo rm -f storage/logs/laravel.log bootstrap/cache/*.php
 >     php artisan optimize:clear
 
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)

@@ -1,6 +1,7 @@
 <?php
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Application;
@@ -15,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -22,6 +25,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+<<<<<<< HEAD
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
@@ -40,6 +44,9 @@ return Application::configure(basePath: dirname(__DIR__))
 >>>>>>> 64bc454 (chore(architecture): Opened the api configuration for laravel)
 =======
 >>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
+=======
+        commands: __DIR__.'/../routes/console.php',
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -48,8 +55,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
 <<<<<<< HEAD
+<<<<<<< HEAD
     })
     ->create();
+=======
+    })->create();
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 =======
     })->create();
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)

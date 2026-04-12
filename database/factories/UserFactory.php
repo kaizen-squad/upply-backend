@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+<<<<<<< HEAD
 use App\Enums\UserRole;
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -26,13 +29,19 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+<<<<<<< HEAD
             'id' => fake()->uuid(),
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+<<<<<<< HEAD
             'phone' => fake()->phoneNumber(),
             'rating_avg' => fake()->randomFloat(2, 1, 5),
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
             'remember_token' => Str::random(10),
         ];
     }
@@ -46,6 +55,7 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+<<<<<<< HEAD
 
     public function client(): static
     {
@@ -60,4 +70,6 @@ class UserFactory extends Factory
             'role' => UserRole::PRESTATAIRE,
         ]);
     }
+=======
+>>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 }
