@@ -1,10 +1,6 @@
 
 services:
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3e1eb8b (feat- Basis backend dockerization)
   # Php setup
 
   php:
@@ -13,11 +9,6 @@ services:
       dockerfile: Dockerfile
 
     environment:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
       SERVER_NAME: "http://:8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
@@ -30,33 +21,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: ${REDIS_PORT}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-=======
-      SERVER_NAME: ":80"
-=======
-      SERVER_NAME: ":8000"
->>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
-      APP_KEY: ${APP_KEY}
-      APP_ENV: ${APP_ENV}
-<<<<<<< HEAD
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
->>>>>>> 3e1eb8b (feat- Basis backend dockerization)
-=======
-      DB_CONNECTION: pgsql
-      DB_HOST: database
-      DB_PORT: 5432
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      REDIS_HOST: redis
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
->>>>>>> fdddfe8 (fix- Dockerfile key generation)
+      
     volumes: 
       - .:/app
     ports:
       - 8000:8000
-<<<<<<< HEAD
-<<<<<<< HEAD
     depends_on:
       database:
         condition: service_healthy
@@ -70,26 +39,6 @@ services:
       retries: 5
       start_period: 30s
 
-=======
->>>>>>> 4225864 (feat- Database service & Redis service setup)
-=======
-      - 443:443
-=======
->>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
-    depends_on:
-      database:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
->>>>>>> 3e1eb8b (feat- Basis backend dockerization)
   # Postgres database setup
   database:
     image: postgres:17-alpine
@@ -101,10 +50,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -112,11 +58,6 @@ services:
       retries: 5
       start_period: 30s
 
-<<<<<<< HEAD
-=======
->>>>>>> 4225864 (feat- Database service & Redis service setup)
-=======
->>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -124,9 +65,6 @@ services:
 
   redis:
     image: redis:7-alpine
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     command: redis-server --appendonly yes
     ports:
       - 6379:6379
@@ -136,28 +74,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-<<<<<<< HEAD
-  
-
-=======
-    command: redis-server --appendonly yes requirepass "${REDIS_PASSWORD}"
-    ports:
-      - 6379:6379
-
->>>>>>> 4225864 (feat- Database service & Redis service setup)
-=======
-    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
-=======
-    command: redis-server --appendonly yes
->>>>>>> fdddfe8 (fix- Dockerfile key generation)
-    ports:
-      - 6379:6379
-
-=======
->>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
-  
-
->>>>>>> 3e1eb8b (feat- Basis backend dockerization)
+ 
 volumes:
   postgres_data: ~
