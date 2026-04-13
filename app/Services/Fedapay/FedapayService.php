@@ -5,15 +5,24 @@ namespace App\Services\Fedapay;
 use FedaPay\FedaPay;
 use FedaPay\Payout as FedapayPayout;
 use FedaPay\Transaction as FedaPayTransaction;
+use Illuminate\Support\Facades\Log;
 use Exception;
+use InvalidArgumentException;
 
 class FedapayService
 {
     public function __construct()
     {
+        $secretKey = config('fedapay.secret_key');
+        $environment = config('fedapay.environment');
+
+        if (empty($secretKey) || empty($environment)) {
+            throw new InvalidArgumentException('Configuration FedaPay incomplète. Vérifiez votre .env');
+        }
+
         // Set up FedaPay SDKs for authentication
-        FedaPay::setApiKey(config('fedapay.secret_key'));
-        FedaPay::setEnvironment(config('fedapay.environment'));
+        FedaPay::setApiKey($secretKey);
+        FedaPay::setEnvironment($environment);
     }
 
     // Function to verify the transaction (collection)
@@ -38,9 +47,10 @@ class FedapayService
                 'data' => $transaction
             ];
         } catch (Exception $e) {
+            Log::error('FedaPay verifyCollect exception: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Une erreur est survenue lors de la vérification de la transaction.',
             ];
         }
     }
@@ -65,9 +75,10 @@ class FedapayService
                 'message' => 'Payout creation failure',
             ];
         } catch (Exception $e) {
+            Log::error('FedaPay payout exception: ' . $e->getMessage(), ['data' => $data]);
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Une erreur est survenue lors de la création du paiement.',
             ];
         }
     }
