@@ -119,7 +119,7 @@ class TransactionService
                 }
 
                 // Change status to releasing inside DB transaction
-                $transaction->update(['status' => 'releasing']);
+                $transaction->update(['status' => 'released']);
 
                 return [
                     'amount' => $transaction->amount,
