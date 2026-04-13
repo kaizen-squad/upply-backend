@@ -7,6 +7,7 @@ use App\Models\TransactionLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class TransactionService
@@ -92,9 +93,9 @@ class TransactionService
 
     // Function to release escrow funds to the user's number
     public function release($transactionId)
-    {
+    {   
         try {
-            return DB::transaction(function () use ($transactionId) {
+            $txDetails = DB::transaction(function () use ($transactionId) {
                 // Find and lock the transaction with lockForUpdate() to prevent race conditions
                 $transaction = Transaction::where('transaction_id', $transactionId)
                     ->lockForUpdate()
@@ -102,60 +103,79 @@ class TransactionService
 
                 // Check if the transaction exists
                 if (!$transaction) {
-                    return ['success' => false, 'message' => 'Transaction not found'];
+                    return ['error' => 'Transaction not found'];
                 }
 
                 // Check if the transaction is actually locked in escrow
                 if ($transaction->status !== 'escrow_lock') {
-                    return ['success' => false, 'message' => 'Transaction is not active in escrow'];
+                    return ['error' => 'Transaction is not active in escrow'];
                 }
 
-                // Retrieve vendor (prestataire) information
-                // Use find() with the primary ID, or where('user_id', ...)->first() depending on your schema
+                // Retrieve prestataire information
                 $prestataireInfo = User::find($transaction->prestataire_id);
 
                 if (!$prestataireInfo) {
-                    return ['success' => false, 'message' => 'Prestataire details not found'];
+                    return ['error' => 'Prestataire details not found'];
                 }
 
-                // Payout configuration (The amount comes from the database record, not from client-side modifiable variables)
-                $data = [
-                    'amount' => (int) $transaction->amount,
-                    'currency' => ['iso' => $transaction->currency ?? 'XOF'],
-                    'description' => 'Payout for transaction: ' . $transaction->description,
-                    'customer' => [
-                        'firstname' => $prestataireInfo->firstname,
-                        'lastname' => $prestataireInfo->lastname,
-                        'email' => $prestataireInfo->email,
-                        'phone_number' => [
-                            'number' => $prestataireInfo->phone ?? '',
-                            'country' => $prestataireInfo->country ?? 'BJ'  // FedaPay country code
-                        ]
-                    ]
+                // Change status to releasing inside DB transaction
+                $transaction->update(['status' => 'releasing']);
+
+                return [
+                    'amount' => $transaction->amount,
+                    'currency' => $transaction->currency ?? 'XOF',
+                    'description' => $transaction->description,
+                    'prestataire' => $prestataireInfo
                 ];
-
-                // Trigger the payout now
-                $payout = $this->fedapayService->payout($data);
-
-                // Check if the payout was successfully prepared
-                if ($payout['success'] === true && isset($payout['data'])) {
-                    try {
-                        // Actually send the funds using the FedaPay\Payout object
-                        $payout['data']->sendNow();
-
-                        // Update the transaction status to released
-                        $transaction->update(['status' => 'released']);
-
-                        return ['success' => true, 'message' => 'Payout successfully processed'];
-                    } catch (Exception $e) {
-                        return ['success' => false, 'error' => 'Payout execution failed: ' . $e->getMessage()];
-                    }
-                }
-
-                return ['success' => false, 'error' => 'Payout creation request failed on Fedapay'];
             });
+
+            if (isset($txDetails['error'])) {
+                return ['success' => false, 'message' => $txDetails['error']];
+            }
+
+            // Payout configuration (outside DB transaction)
+            $data = [
+                'amount' => (int) $txDetails['amount'],
+                'currency' => ['iso' => $txDetails['currency']],
+                'description' => 'Payout for transaction: ' . $txDetails['description'],
+                'customer' => [
+                    'firstname' => $txDetails['prestataire']->firstname,
+                    'lastname' => $txDetails['prestataire']->lastname,
+                    'email' => $txDetails['prestataire']->email,
+                    'phone_number' => [
+                        'number' => $txDetails['prestataire']->phone ?? '',
+                        'country' => $txDetails['prestataire']->country ?? 'BJ'  // FedaPay country code
+                    ]
+                ]
+            ];
+
+            // Trigger the payout now
+            $payout = $this->fedapayService->payout($data);
+
+            // Check if the payout was successfully prepared
+            if ($payout['success'] === true && isset($payout['data'])) {
+                try {
+                    // Actually send the funds using the FedaPay\Payout object
+                    $payout['data']->sendNow();
+
+                    // Update the transaction status to released
+                    Transaction::where('transaction_id', $transactionId)->update(['status' => 'released']);
+
+                    return ['success' => true, 'message' => 'Payout successfully processed'];
+                } catch (Exception $e) {
+                    Log::error('Payout execution failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
+                    Transaction::where('transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
+                    return ['success' => false, 'error' => 'Une erreur est survenue lors de la finalisation du transfert.'];
+                }
+            }
+
+            Transaction::where('transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
+            return ['success' => false, 'error' => 'La demande de création du paiement a échouée sur FedaPay.'];
+
         } catch (Exception $e) {
-            return ['success' => false, 'error' => 'Release method failed: ' . $e->getMessage()];
+            Log::error('Release method failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
+            Transaction::where('transaction_id', $transactionId)->where('status', 'releasing')->update(['status' => 'escrow_lock']);
+            return ['success' => false, 'error' => 'Une erreur d\'exécution interne est survenue.'];
         }
     }
 }
