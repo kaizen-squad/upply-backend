@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('currency', 3)->default('XOF');
             $table->string('description')->nullable();
             $table->enum('payment_method', ['mobile_money', 'card', 'virement'])->nullable()->default('mobile_money');
-            $table->enum('status', ['escrow_lock', 'canceled', 'failed', 'approved', 'released']);
+            $table->enum('status', ['escrow_lock', 'failed', 'approved', 'released']);
             $table->timestamps();
         });
     }
