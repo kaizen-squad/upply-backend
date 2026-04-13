@@ -75,7 +75,12 @@ class FedapayService
                 'message' => 'Payout creation failure',
             ];
         } catch (Exception $e) {
-            Log::error('FedaPay payout exception: ' . $e->getMessage(), ['data' => $data]);
+            // Nettoyage des données PII pour les logs
+            $safeData = [
+                'amount' => $data['amount'] ?? null,
+                'currency' => $data['currency'] ?? null,
+            ];
+            Log::error('FedaPay payout exception: ' . $e->getMessage(), ['safe_data' => $safeData]);
             return [
                 'success' => false,
                 'error' => 'Une erreur est survenue lors de la création du paiement.',
