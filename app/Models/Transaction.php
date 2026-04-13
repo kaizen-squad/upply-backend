@@ -22,6 +22,10 @@ class Transaction extends Model
         'status'
     ];
 
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id');
