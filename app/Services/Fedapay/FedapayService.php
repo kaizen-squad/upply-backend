@@ -52,7 +52,7 @@ use FedaPay\Transaction as FedaPayTransaction ;
                         'success' => true,
                         'message' => 'Payout create',
                         'data' => $createPayout
-                    ]);
+                    ], 200);
                 }
             }catch(\Exception $e){
                 return response()->json([
