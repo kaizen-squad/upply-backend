@@ -48,7 +48,7 @@ class TransactionService
                             'prestataire_id' => $prestataireId,
                             'amount' => $txData->amount ?? 0,
                             'currency' => 'XOF',
-                            'mode_payment' => $txData->mode ?? 'unknown',
+                            'payment_method' => $txData->mode ?? 'unknown',
                             'description' => $txData->description ?? null,
                             'status' => 'canceled'
                         ]
@@ -77,7 +77,7 @@ class TransactionService
                     'prestataire_id' => $prestataireId,
                     'amount' => $txData->amount,
                     'currency' => 'XOF',
-                    'mode_payment' => $txData->mode ?? 'unknown',
+                    'payment_method' => $txData->mode ?? 'unknown',
                     'description' => $txData->description ?? null,
                     'status' => 'escrow_lock'
                 ]
