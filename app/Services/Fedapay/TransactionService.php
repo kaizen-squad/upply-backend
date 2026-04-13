@@ -44,7 +44,7 @@ class TransactionService
                     Transaction::updateOrCreate(
                         ['transaction_id' => $txData->id ?? $transactionId],
                         [
-                            'user_id' => $clientId,
+                            'client_id' => $clientId,
                             'prestataire_id' => $prestataireId,
                             'amount' => $txData->amount ?? 0,
                             'currency' => 'XOF',
@@ -73,7 +73,7 @@ class TransactionService
             Transaction::updateOrCreate(
                 ['transaction_id' => $txData->id ?? $transactionId],
                 [
-                    'user_id' => $clientId,
+                    'client_id' => $clientId,
                     'prestataire_id' => $prestataireId,
                     'amount' => $txData->amount,
                     'currency' => 'XOF',
