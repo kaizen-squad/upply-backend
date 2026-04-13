@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
 class TransactionLog extends Model
 {
@@ -12,15 +12,25 @@ class TransactionLog extends Model
 
     protected $fillable = [
         'transaction_id',
-        'user_id',
+        'client_id',
+        'prestataire_id',
         'description',
         'status',
         'metadata'
     ];
 
-    public function transactions():BelongsTo{
-        return $this->belongsTo(Transaction::class);
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class, 'transaction_id', 'transaction_id');
     }
 
-    
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'client_id');
+    }
+
+    public function prestataire(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'prestataire_id');
+    }
 }
