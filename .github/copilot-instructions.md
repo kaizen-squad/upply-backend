@@ -44,7 +44,7 @@ app/
 | Frontend | Next.js 14 + Tailwind CSS |
 | Backend | Laravel 12 + PHP 8.2 |
 | Base de données | PostgreSQL |
-| Authentification | Laravel Sanctum — Access Token + Refresh Token HttpOnly |
+| Authentification | Laravel Sanctum (gestion des tokens) + Refresh Token implémenté en interne — Sanctum ne fournit pas de refresh token nativement. Le refresh token est un second token Sanctum longue durée, stocké en cookie HttpOnly, géré manuellement via le Trait HasAuthToken. |
 | Paiement | FedaPay (sandbox) |
 | Conteneurisation | Docker + Docker Compose |
 | Queue driver | Redis |
@@ -72,7 +72,7 @@ app/
 `id` (UUID) · `transaction_id` (FK) · `from_status` · `to_status` · `triggered_by` (FK users) · `note` (nullable) · `created_at`
 
 ### reviews
-`id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` tinyint(1-5) · `comment` (nullable) · `created_at`
+`id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` smallint avec contrainte CHECK (rating >= 1 AND rating <= 5) · `comment` (nullable) · `created_at`
 
 ---
 
