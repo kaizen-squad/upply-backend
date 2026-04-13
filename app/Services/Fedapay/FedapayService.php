@@ -1,64 +1,74 @@
 <?php
-    namespace App\Services\FedapayServices;
 
+namespace App\Services\Fedapay;
+
+use FedaPay\FedaPay;
 use FedaPay\Payout as FedapayPayout;
-use FedaPay\Transaction as FedaPayTransaction ;
+use FedaPay\Transaction as FedaPayTransaction;
+use Exception;
 
-    class FedapayService{
+class FedapayService
+{
+    public function __construct()
+    {
+        // Set up FedaPay SDKs for authentication
+        FedaPay::setApiKey(config('fedapay.secret_key'));
+        FedaPay::setEnvironment(config('fedapay.environment'));
+    }
 
-        //Fonction pour la verification de la transaction (collecte) vu que la collecte est fait au niveau du front
-        public function verifyCollect($transactionId){
-            //Configuration des SDKs de Fedapay pour l'authentification
-            \FedaPay\FedaPay::setApiKey(config('fedapay.secret_key'));
-            \FedaPay\FedaPay::setEnvironment(config('fedapay.environment'));
+    // Function to verify the transaction (collection)
+    public function verifyCollect($transactionId)
+    {
+        try {
+            // Verify the status of the transaction in question
+            $transaction = FedaPayTransaction::retrieve($transactionId);
 
-            try{
-                //Verifier le statut de la transaction dont il est question
-                $transaction = FedaPayTransaction::retrieve($transactionId);
-
-                //Verification de la status de la transaction
-                if($transaction->status !== 'approved'){
-                    //Si la transaction a echoué envoyer une erreur avec les données de la transaction
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Transaction denied',
-                        'data' => $transaction
-                    ], 403);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Transaction successfully',
+            // Check transaction status
+            if ($transaction->status !== 'approved') {
+                return [
+                    'success' => false,
+                    'message' => 'Transaction denied',
                     'data' => $transaction
-                ], 200);
-
-            }catch(\Exception $e){
-                return response()->json([
-                    'success' => false,
-                    'error' => $e->getMessage(),
-                ], 500);
+                ];
             }
-        }
 
-
-        //Fonction pour la gestion du payout fedapay
-        public function payout($data){
-            try{
-                //Creation du depot
-                $createPayout = FedapayPayout::create($data);
-
-                if($createPayout){
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Payout create',
-                        'data' => $createPayout
-                    ], 200);
-                }
-            }catch(\Exception $e){
-                return response()->json([
-                    'success' => false,
-                    'error' => $e->getMessage(),
-                ], 500);
-            }
+            return [
+                'success' => true,
+                'message' => 'Transaction successfully',
+                'data' => $transaction
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
         }
     }
+
+    // Function to handle FedaPay payout
+    public function payout($data)
+    {
+        try {
+            // Create payout
+            $createPayout = FedapayPayout::create($data);
+
+            if ($createPayout) {
+                return [
+                    'success' => true,
+                    'message' => 'Payout created',
+                    'data' => $createPayout
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => 'Payout creation failure',
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+}
