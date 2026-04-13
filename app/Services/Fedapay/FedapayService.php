@@ -41,11 +41,19 @@ use FedaPay\Transaction as FedaPayTransaction ;
         }
 
 
-        //Fonction pour la gestion du payout (versement de l'argent vers le compte de la personne du)
-        public function payout($transactionId, $data){
+        //Fonction pour la gestion du payout fedapay
+        public function payout($data){
             try{
+                //Creation du depot
                 $createPayout = FedapayPayout::create($data);
-                
+
+                if($createPayout){
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Payout create',
+                        'data' => $createPayout
+                    ]);
+                }
             }catch(\Exception $e){
                 return response()->json([
                     'success' => false,
