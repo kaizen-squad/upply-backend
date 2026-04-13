@@ -42,7 +42,7 @@ app/
 | Couche | Technologie |
 |---|---|
 | Frontend | Next.js 14 + Tailwind CSS |
-| Backend | Laravel 12 + PHP 8.2 |
+| Backend | Laravel 12 ou plus + PHP 8.2 ou plus |
 | Base de données | PostgreSQL |
 | Authentification | Laravel Sanctum (gestion des tokens) + Refresh Token implémenté en interne — Sanctum ne fournit pas de refresh token nativement. Le refresh token est un second token Sanctum longue durée, stocké en cookie HttpOnly, géré manuellement via le Trait HasAuthToken. |
 | Paiement | FedaPay (sandbox) |
