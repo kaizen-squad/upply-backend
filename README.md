@@ -4,6 +4,7 @@
 
 This API REST is built in Laravel 12. It expose secured and well thought out endpoint for a minor freelance system.
 
+
 ## INTEGRATION STEPS
 
     - Clone the project:
