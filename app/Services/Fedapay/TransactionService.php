@@ -38,7 +38,7 @@ class TransactionService
                         'prestataire_id' => $prestataireId,
                         'description' => $txData->description ?? 'Failed transaction',
                         'status' => $txData->status ?? 'failed',
-                        'metadata' => json_encode($txData->custom_metadata ?? [])
+                        'metadata' => $txData->custom_metadata
                     ]);
 
                     Transaction::updateOrCreate(
@@ -66,7 +66,7 @@ class TransactionService
                 'prestataire_id' => $prestataireId,
                 'description' => $txData->description ?? 'Success transaction',
                 'status' => $txData->status ?? 'approved',
-                'metadata' => json_encode($txData->custom_metadata ?? [])
+                'metadata' => $txData->custom_metadata
             ]);
 
             // Save the transaction (Escrow)
@@ -93,7 +93,7 @@ class TransactionService
 
     // Function to release escrow funds to the user's number
     public function release($transactionId)
-    {   
+    {
         try {
             $txDetails = DB::transaction(function () use ($transactionId) {
                 // Find and lock the transaction with lockForUpdate() to prevent race conditions
@@ -174,7 +174,7 @@ class TransactionService
 
         } catch (Exception $e) {
             Log::error('Release method failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
-            Transaction::where('transaction_id', $transactionId)->where('status', 'releasing')->update(['status' => 'escrow_lock']);
+            Transaction::where('transaction_id', $transactionId)->where('status', 'released')->update(['status' => 'escrow_lock']);
             return ['success' => false, 'error' => 'Une erreur d\'exécution interne est survenue.'];
         }
     }
