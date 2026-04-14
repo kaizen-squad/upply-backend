@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             $table->uuid("id")->primary();
             $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
 =======
             $table->uuid()->primary();
+=======
+            $table->uuid("id")->primary();
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
             
 >>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
@@ -26,10 +30,14 @@ return new class extends Migration
             $table->integer("budget")->index();
             $table->date("deadline");
 <<<<<<< HEAD
+<<<<<<< HEAD
             $table->enum("status", ["OUVERTE", "EN_COURS", "LIVREE", "VALIDEE"])->index();
 =======
             $table->enum("status", ["opened", "on_going", "delivered", "validated"])->index();
 >>>>>>> 1d59015 (feat(migrations): Added index for optimized query)
+=======
+            $table->enum("status", ["OUVERTE", "EN_COURS", "LIVREE", "VALIDEE"])->index();
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             $table->timestamps();
             
             $table->softDeletes();

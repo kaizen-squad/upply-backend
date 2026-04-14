@@ -3,9 +3,13 @@
 namespace Database\Factories;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 use App\Enums\UserRole;
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+use App\Enums\UserRole;
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -30,18 +34,27 @@ class UserFactory extends Factory
     {
         return [
 <<<<<<< HEAD
+<<<<<<< HEAD
             'id' => fake()->uuid(),
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+            'id' => fake()->uuid(),
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
 <<<<<<< HEAD
+<<<<<<< HEAD
             'phone' => fake()->phoneNumber(),
             'rating_avg' => fake()->randomFloat(2, 1, 5),
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+            'phone' => fake()->phoneNumber(),
+            'rating_avg' => fake()->randomFloat(2, 1, 5),
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             'remember_token' => Str::random(10),
         ];
     }
@@ -56,6 +69,9 @@ class UserFactory extends Factory
         ]);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 
     public function client(): static
     {
@@ -70,6 +86,9 @@ class UserFactory extends Factory
             'role' => UserRole::PRESTATAIRE,
         ]);
     }
+<<<<<<< HEAD
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 }
