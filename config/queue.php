@@ -17,6 +17,7 @@ return [
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
     'default' => env('QUEUE_CONNECTION', 'redis'),
@@ -32,6 +33,9 @@ return [
 =======
     'default' => env('QUEUE_CONNECTION', 'redis'),
 >>>>>>> 0a96e76 (fix(architecture): Integrated the domain-based structure)
+=======
+    'default' => env('QUEUE_CONNECTION', 'redis'),
+>>>>>>> 863066b (fix(architecture): Integrated the domain-based structure)
 
     /*
     |--------------------------------------------------------------------------
