@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
+            $table->uuid("id")->primary();
             $table->foreignUuid("reviewer_id")->constrained("users")->cascadeOnDelete();
             $table->foreignUuid("reviewee_id")->constrained("users");
 
