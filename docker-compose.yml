@@ -1,6 +1,27 @@
 
 services:
 
+  # Php setup
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      SERVER_NAME: ":80"
+      APP_KEY: ${APP_KEY}
+      APP_ENV: ${APP_ENV}
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
+    volumes: 
+      - .:/app
+    ports:
+      - 8000:8000
+      - 443:443
+    depends_on:
+      - database
+      - redis
+
   # Postgres database setup
   database:
     image: postgres:17-alpine
@@ -19,9 +40,11 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes requirepass "${REDIS_PASSWORD}"
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
     ports:
       - 6379:6379
+
+  
 
 volumes:
   postgres_data: ~
