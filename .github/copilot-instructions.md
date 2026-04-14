@@ -77,6 +77,7 @@ app/
 <<<<<<< HEAD
 Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`) à définir sur `Task` (`public function contract(): HasOneThrough`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
 =======
+<<<<<<< HEAD
 `id` (UUID) · `application_id` (FK, unique) · timestamps
 
 Décision retenue pour cette architecture : la table `contracts` matérialise la retenue d'une `application` et formalise le lien contractuel. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
@@ -87,6 +88,10 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 =======
 Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`) à définir sur `Task` (`public function contract(): HasOneThrough`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
 >>>>>>> 722f152 (docs: expliciter hasOneThrough et DB::transaction pour contracts)
+=======
+Une table `contracts` peut être introduite en optimisation pour matérialiser la retenue d'une `application` et formaliser le lien contractuel. Dans ce cas, le contrat est lié à `applications` et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`).
+>>>>>>> 1dc7611 (docs: documenter la décision d'architecture contracts)
+>>>>>>> a498129 (docs: documenter la décision d'architecture contracts)
 
 ### deliverables
 
