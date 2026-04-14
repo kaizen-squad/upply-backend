@@ -30,7 +30,7 @@ return new class extends Migration
 =======
             $table->id();
             $table->foreignUuid("reviewer_id")->constrained("users")->cascadeOnDelete();
-            $table->morphs("reviewee");
+            $table->foreignUuid("reviewee_id")->constrained("users");
 
             $table->smallInteger("rating")->min();
             $table->text("comment")->nullable();
