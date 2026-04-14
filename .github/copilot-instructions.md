@@ -94,7 +94,7 @@ EN_COURS → LIVREE (prestataire soumet un livrable)
 LIVREE → VALIDEE (client valide le livrable)
 ```
 
-Dans cette architecture, la transition `OUVERTE → EN_COURS` et la création du contrat doivent être traitées dans une même transaction atomique (tout ou rien), sans créer de nouvel état métier.
+Dans cette architecture, la transition `OUVERTE → EN_COURS` et la création du contrat doivent s'effectuer au sein d'une même transaction atomique (tout ou rien), sans introduction d'un nouvel état métier.
 
 Toute autre transition est invalide. Signale comme erreur bloquante toute implémentation qui permet une transition non listée ci-dessus.
 
