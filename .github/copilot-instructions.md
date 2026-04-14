@@ -110,6 +110,7 @@ LIVREE → VALIDEE (client valide le livrable)
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 =======
 Si l'architecture `contracts` est activée, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
@@ -117,6 +118,9 @@ Si l'architecture `contracts` est activée, la création du contrat est concomit
 =======
 Dans cette architecture, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
 >>>>>>> dac7574 (docs: lever les ambiguïtés sur la décision contracts)
+=======
+Dans cette architecture, la transition `OUVERTE → EN_COURS` et la création du contrat doivent s'effectuer au sein d'une même transaction atomique (tout ou rien), sans introduction d'un nouvel état métier.
+>>>>>>> afc7ecd (docs: reformuler la règle d'atomicité de création de contrat)
 
 Toute autre transition est invalide. Signale comme erreur bloquante toute implémentation qui permet une transition non listée ci-dessus.
 
