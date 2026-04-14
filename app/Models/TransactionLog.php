@@ -20,12 +20,12 @@ class TransactionLog extends Model
     ];
 
     protected $casts = [
-        'metadata' => 'array ',
+        'metadata' => 'json',
     ];
 
     public function transaction(): BelongsTo
     {
-        return $this->belongsTo(Transaction::class, 'transaction_id', 'transaction_id');
+        return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
     }
 
     public function client(): BelongsTo

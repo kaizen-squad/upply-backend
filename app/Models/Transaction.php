@@ -12,14 +12,15 @@ class Transaction extends Model
     use HasUuids;
 
     protected $fillable = [
-        'transaction_id',
+        'task_id',
+        'fedapay_transaction_id',
         'client_id',
         'prestataire_id',
         'amount',
         'currency',
         'description',
         'payment_method',
-        'status'
+        'status',
     ];
 
     protected $casts = [
@@ -38,6 +39,6 @@ class Transaction extends Model
 
     public function transactionLogs(): HasMany
     {
-        return $this->hasMany(TransactionLog::class, 'transaction_id', 'transaction_id');
+        return $this->hasMany(TransactionLog::class, 'transaction_id', 'id');
     }
 }

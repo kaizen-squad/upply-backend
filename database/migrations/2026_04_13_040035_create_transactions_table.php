@@ -12,14 +12,15 @@ return new class extends Migration {
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('transaction_id')->unique()->nullable();  // ID coming from FedaPay
-            $table->foreignUuid('client_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('prestataire_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('task_id')->constrained('tasks')->onDelete('cascade');
+            $table->string('fedapay_transaction_id')->unique()->nullable();
+            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('prestataire_id')->constrained('users')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->string('currency', 3)->default('XOF');
             $table->string('description')->nullable();
             $table->enum('payment_method', ['mobile_money', 'card', 'virement'])->nullable()->default('mobile_money');
-            $table->enum('status', ['escrow_lock', 'failed', 'approved', 'released']);
+            $table->enum('status', ['escrow_lock', 'released', 'failed', 'releasing']);
             $table->timestamps();
         });
     }
