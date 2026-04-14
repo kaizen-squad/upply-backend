@@ -26,10 +26,15 @@ return new class extends Migration
             $table->string("file_path")->nullable();
             $table->timestamp("submitted_at")->useCurrent();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             $table->softDeletes();
 =======
 >>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
+=======
+
+            $table->softDeletes();
+>>>>>>> 1d59015 (feat(migrations): Added index for optimized query)
         });
     }
 

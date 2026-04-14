@@ -19,12 +19,18 @@ return new class extends Migration
             $table->text("description");
             $table->integer("budget")->index();
             $table->date("deadline");
+<<<<<<< HEAD
             $table->enum("status", ["OUVERTE", "EN_COURS", "LIVREE", "VALIDEE"])->index();
             $table->timestamps();
 <<<<<<< HEAD
             
 =======
 >>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
+=======
+            $table->enum("status", ["opened", "on_going", "delivered", "validated"])->index();
+            $table->timestamps();
+            
+>>>>>>> 1d59015 (feat(migrations): Added index for optimized query)
             $table->softDeletes();
         });
     }
