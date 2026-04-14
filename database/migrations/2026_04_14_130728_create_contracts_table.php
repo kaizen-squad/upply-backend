@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             $table->uuid("id")->primary();
             $table->foreignUuid("application_id")->unique()->constrained()->cascadeOnDelete();
 =======
             $table->uuid();
+=======
+            $table->uuid()->primary();
+>>>>>>> fa47f73 (fix(reviews): Added the primary constrained on the uuid)
             $table->foreignId("application_id")->constrained()->cascadeOnDelete();
 >>>>>>> 9733822 (feat(contracts): Added contracts migration for application table)
 
