@@ -19,8 +19,13 @@ return new class extends Migration
             $table->text("description");
             $table->integer("budget")->index();
             $table->date("deadline");
+<<<<<<< HEAD
             $table->enum("status", ["OUVERTE", "EN_COURS", "LIVREE", "VALIDEE"])->index();
+=======
+            $table->enum("status", ["opened", "on_going", "delivered", "validated"])->index();
+>>>>>>> 1d59015 (feat(migrations): Added index for optimized query)
             $table->timestamps();
+            
             $table->softDeletes();
         });
     }
