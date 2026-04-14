@@ -13,8 +13,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reviews', function (Blueprint $table) {
-<<<<<<< HEAD
-<<<<<<< HEAD
             $table->uuid("id")->primary();
             $table->foreignUuid("reviewer_id")->constrained("users")->cascadeOnDelete();
             $table->foreignUuid("reviewee_id")->constrained("users");
@@ -28,18 +26,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->softDeletes();
-=======
-            $table->id();
-=======
-            $table->uuid("id")->primary();
->>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
-            $table->foreignUuid("reviewer_id")->constrained("users")->cascadeOnDelete();
-            $table->foreignUuid("reviewee_id")->constrained("users");
-
-            $table->smallInteger("rating");
-            $table->text("comment")->nullable();
-            $table->timestamps();
->>>>>>> 1d519cf (feat(reviews): Set up the reviews migration)
         });
 
         DB::statement("ALTER TABLE reviews ADD CONSTRAINT rating_range CHECK(rating >= 1 AND rating <= 5)");
