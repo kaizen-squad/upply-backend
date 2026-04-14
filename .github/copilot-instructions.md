@@ -66,9 +66,9 @@ app/
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `message` · `status` enum(`EN_ATTENTE`, `ACCEPTEE`, `REJETEE`) · timestamps
 
 ### contracts (décision d'architecture)
-`id` (UUID) · `application_id` (FK, unique recommandé) · timestamps
+`id` (UUID) · `application_id` (FK, unique) · timestamps
 
-Une table `contracts` peut être introduite en optimisation pour matérialiser la retenue d'une `application` et formaliser le lien contractuel. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`).
+Décision retenue pour cette architecture : la table `contracts` matérialise la retenue d'une `application` et formalise le lien contractuel. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
 
 ### deliverables
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `content` text · `file_path` (nullable) · `submitted_at`
@@ -94,7 +94,7 @@ EN_COURS → LIVREE (prestataire soumet un livrable)
 LIVREE → VALIDEE (client valide le livrable)
 ```
 
-Si l'architecture `contracts` est activée, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
+Dans cette architecture, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
 
 Toute autre transition est invalide. Signale comme erreur bloquante toute implémentation qui permet une transition non listée ci-dessus.
 
