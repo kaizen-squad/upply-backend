@@ -1,3 +1,6 @@
+>[!IMPORTANT]
+>Toutes les revues de code, explications et commentaires générés doivent être rédigés exclusivement en français, quel que soit le langage utilisé dans le code source.
+
 # Upply — Copilot Instructions (Backend)
 
 ## Conventions obligatoires
