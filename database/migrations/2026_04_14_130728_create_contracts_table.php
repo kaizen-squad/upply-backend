@@ -17,6 +17,7 @@ return new class extends Migration
 <<<<<<< HEAD
             $table->uuid("id")->primary();
             $table->foreignUuid("application_id")->unique()->constrained()->cascadeOnDelete();
+<<<<<<< HEAD
 =======
             $table->uuid();
 =======
@@ -31,6 +32,8 @@ return new class extends Migration
 >>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             $table->foreignUuid("application_id")->constrained()->cascadeOnDelete();
 >>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
+=======
+>>>>>>> 531abd8 (fix(reviews): Added unique constraint to application_id column)
 
             $table->timestamps();
         });
