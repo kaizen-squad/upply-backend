@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignId("application_id")->constrained()->cascadeOnDelete();
+            $table->foreignUuid("application_id")->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });

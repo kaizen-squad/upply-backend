@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('deliverables', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignId("prestataire_id")->constrained("users");
-            $table->foreignId("task_id")->constrained()->cascadeOnDelete();
+            $table->foreignUuid("prestataire_id")->constrained("users");
+            $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
 
             $table->text("content");
             $table->string("file_path")->nullable();
