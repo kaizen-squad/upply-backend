@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('deliverables', function (Blueprint $table) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             $table->uuid("id")->primary();
             $table->foreignUuid("prestataire_id")->constrained("users");
             $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
