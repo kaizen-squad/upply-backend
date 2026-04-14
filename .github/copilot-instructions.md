@@ -78,6 +78,7 @@ app/
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> f8e09d0 (docs: documenter la décision d'architecture contracts)
 =======
@@ -162,6 +163,11 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 =======
 Une table `contracts` peut être introduite en optimisation pour matérialiser la retenue d'une `application` et formaliser le lien contractuel. Dans ce cas, le contrat est lié à `applications` et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`).
 >>>>>>> 1dc7611 (docs: documenter la décision d'architecture contracts)
+=======
+`id` (UUID) · `application_id` (FK, unique recommandé) · timestamps
+
+Une table `contracts` peut être introduite en optimisation pour matérialiser la retenue d'une `application` et formaliser le lien contractuel. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`).
+>>>>>>> 1605468 (docs: préciser le schéma contracts et son impact sur la machine d'états)
 
 ### deliverables
 
@@ -274,6 +280,7 @@ LIVREE → VALIDEE (client valide le livrable)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 9bd7881 (docs: lever les ambiguïtés sur la décision contracts)
 =======
@@ -296,6 +303,8 @@ LIVREE → VALIDEE (client valide le livrable)
 >>>>>>> 339d3fb (docs: expliciter l'unicité métier des contrats)
 =======
 >>>>>>> 3793991 (docs: expliciter hasOneThrough et DB::transaction pour contracts)
+=======
+>>>>>>> b9d4d0a (docs: préciser le schéma contracts et son impact sur la machine d'états)
 Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 =======
 Si l'architecture `contracts` est activée, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
@@ -349,6 +358,9 @@ Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la tr
 =======
 Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 >>>>>>> 252c584 (docs: expliciter hasOneThrough et DB::transaction pour contracts)
+=======
+Si l'architecture `contracts` est activée, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
+>>>>>>> 1605468 (docs: préciser le schéma contracts et son impact sur la machine d'états)
 
 Toute autre transition est invalide. Signale comme erreur bloquante toute implémentation qui permet une transition non listée ci-dessus.
 
