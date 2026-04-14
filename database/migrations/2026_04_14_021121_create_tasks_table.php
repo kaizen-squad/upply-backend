@@ -12,9 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
+<<<<<<< HEAD
 
             $table->uuid("id")->primary();
             $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
+=======
+            $table->uuid()->primary();
+            $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
+            
+>>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
             $table->string("title");
             $table->text("description");
             $table->integer("budget")->index();
