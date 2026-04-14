@@ -69,10 +69,16 @@ app/
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `message` · `status` enum(`EN_ATTENTE`, `ACCEPTEE`, `REJETEE`) · timestamps
 
 ### contracts (décision d'architecture)
+<<<<<<< HEAD
 
 `id` (UUID) · `application_id` (FK, unique) · timestamps
 
 Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`) à définir sur `Task` (`public function contract(): HasOneThrough`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
+=======
+`id` (UUID) · `application_id` (FK, unique) · timestamps
+
+Décision retenue pour cette architecture : la table `contracts` matérialise la retenue d'une `application` et formalise le lien contractuel. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
+>>>>>>> dac7574 (docs: lever les ambiguïtés sur la décision contracts)
 
 ### deliverables
 
@@ -103,10 +109,14 @@ LIVREE → VALIDEE (client valide le livrable)
 ```
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 =======
 Si l'architecture `contracts` est activée, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
 >>>>>>> 44dc7ba (docs: préciser le schéma contracts et son impact sur la machine d'états)
+=======
+Dans cette architecture, la création du contrat est concomitante à la transition `OUVERTE → EN_COURS` et ne crée pas de nouvel état métier.
+>>>>>>> dac7574 (docs: lever les ambiguïtés sur la décision contracts)
 
 Toute autre transition est invalide. Signale comme erreur bloquante toute implémentation qui permet une transition non listée ci-dessus.
 
