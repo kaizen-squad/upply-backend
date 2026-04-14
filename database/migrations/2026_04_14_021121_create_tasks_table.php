@@ -44,7 +44,7 @@ return new class extends Migration
             $table->softDeletes();
 =======
             $table->uuid()->primary();
-            $table->foreignId("client_id")->constrained("users")->cascadeOnDelete();
+            $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
             
             $table->string("title");
             $table->text("description");

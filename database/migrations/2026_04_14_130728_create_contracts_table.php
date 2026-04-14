@@ -20,9 +20,13 @@ return new class extends Migration
             $table->uuid();
 =======
             $table->uuid()->primary();
+<<<<<<< HEAD
 >>>>>>> fa47f73 (fix(reviews): Added the primary constrained on the uuid)
             $table->foreignId("application_id")->constrained()->cascadeOnDelete();
 >>>>>>> 9733822 (feat(contracts): Added contracts migration for application table)
+=======
+            $table->foreignUuid("application_id")->constrained()->cascadeOnDelete();
+>>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
 
             $table->timestamps();
         });
