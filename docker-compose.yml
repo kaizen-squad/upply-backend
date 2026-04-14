@@ -1,0 +1,27 @@
+
+services:
+
+  # Postgres database setup
+  database:
+    image: postgres:17-alpine
+    ports: 
+      - 5432:5432
+    
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis setup
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes requirepass "${REDIS_PASSWORD}"
+    ports:
+      - 6379:6379
+
+volumes:
+  postgres_data: ~
