@@ -12,11 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('personal_access_tokens', function (Blueprint $table) {
-<<<<<<< HEAD
             $table->uuid();
-=======
-            $table->id();
->>>>>>> 5e55ab6 (chore(architecture): Opened the api configuration for laravel)
             $table->morphs('tokenable');
             $table->text('name');
             $table->string('token', 64)->unique();

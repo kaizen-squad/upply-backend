@@ -4,9 +4,13 @@ namespace Database\Factories;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 use App\Enums\UserRole;
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+use App\Enums\UserRole;
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 =======
 use App\Enums\UserRole;
 >>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
@@ -35,9 +39,13 @@ class UserFactory extends Factory
         return [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             'id' => fake()->uuid(),
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+            'id' => fake()->uuid(),
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 =======
             'id' => fake()->uuid(),
 >>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
@@ -47,10 +55,15 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             'phone' => fake()->phoneNumber(),
             'rating_avg' => fake()->randomFloat(2, 1, 5),
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+            'phone' => fake()->phoneNumber(),
+            'rating_avg' => fake()->randomFloat(2, 1, 5),
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 =======
             'phone' => fake()->phoneNumber(),
             'rating_avg' => fake()->randomFloat(2, 1, 5),
@@ -70,6 +83,9 @@ class UserFactory extends Factory
     }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 =======
 >>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 
@@ -87,8 +103,11 @@ class UserFactory extends Factory
         ]);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 =======
 >>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
 }

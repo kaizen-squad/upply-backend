@@ -15,6 +15,7 @@ return new class extends Migration
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             $table->uuid("id")->primary();
             $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
@@ -44,13 +45,16 @@ return new class extends Migration
             $table->softDeletes();
 =======
             $table->uuid()->primary();
+=======
+            $table->uuid("id")->primary();
+>>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
             $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
             
             $table->string("title");
             $table->text("description");
             $table->integer("budget")->index();
             $table->date("deadline");
-            $table->enum("status", ["opened", "on_going", "delivered", "validated"])->index();
+            $table->enum("status", ["OUVERTE", "EN_COURS", "LIVREE", "VALIDEE"])->index();
             $table->timestamps();
 <<<<<<< HEAD
 <<<<<<< HEAD
