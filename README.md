@@ -3,6 +3,7 @@
 ## Overview
 
 <<<<<<< HEAD
+<<<<<<< HEAD
  This REST API is built with Laravel 13. It exposes secure and well-designed endpoints for a small freelance platform.
 
 <<<<<<< HEAD
@@ -13,6 +14,9 @@
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 =======
 This API REST is built in Laravel 12. It expose secured and well thought out endpoint for a minor freelance system.
+=======
+This API REST is built in Laravel 13. It expose secured and well thought out endpoint for a minor freelance system.
+>>>>>>> cc87a82 (docs- Docker User)
 
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 >>>>>>> a6f0dbb (feat(architecture): Set up the backend code base structure)
@@ -43,6 +47,9 @@ This API REST is built in Laravel 12. It expose secured and well thought out end
 
         php artisan key:generate
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cc87a82 (docs- Docker User)
 
 ## DOCKER USAGE
 
@@ -55,5 +62,8 @@ To run the application using Docker, use the following command:
 >     sudo rm -f storage/logs/laravel.log bootstrap/cache/*.php
 >     php artisan optimize:clear
 
+<<<<<<< HEAD
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+>>>>>>> cc87a82 (docs- Docker User)
