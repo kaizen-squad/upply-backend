@@ -1,11 +1,16 @@
 <?php
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 namespace App\DTOs\Auth;
 
 use Illuminate\Validation\Validator;
 =======
 use App\DTOs\Auth;
+=======
+namespace App\DTOs\Auth;
+
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 use Illuminate\Http\Request;
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
 

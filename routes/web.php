@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return response()->json([
         'app_name' => config('app.name'),
         'version' => '1.0',
@@ -12,4 +13,11 @@ Route::get('/', function () {
 =======
     return view('welcome');
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+    return response()->json([
+        "APP NAME" => env("APP_NAME"),
+        "VERSION" => "1.0",
+        "HEALTH" => "OK"
+    ]);
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 });

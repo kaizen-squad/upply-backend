@@ -2,6 +2,9 @@
 services:
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
   # Php setup
 
   php:
@@ -10,6 +13,7 @@ services:
       dockerfile: Dockerfile
 
     environment:
+<<<<<<< HEAD
       SERVER_NAME: "http://:8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
@@ -22,10 +26,17 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: ${REDIS_PORT}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+=======
+      SERVER_NAME: ":80"
+      APP_KEY: ${APP_KEY}
+      APP_ENV: ${APP_ENV}
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
     volumes: 
       - .:/app
     ports:
       - 8000:8000
+<<<<<<< HEAD
     depends_on:
       database:
         condition: service_healthy
@@ -41,6 +52,13 @@ services:
 
 =======
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
+=======
+      - 443:443
+    depends_on:
+      - database
+      - redis
+
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
   # Postgres database setup
   database:
     image: postgres:17-alpine
@@ -70,6 +88,7 @@ services:
   redis:
     image: redis:7-alpine
 <<<<<<< HEAD
+<<<<<<< HEAD
     command: redis-server --appendonly yes
     ports:
       - 6379:6379
@@ -88,5 +107,13 @@ services:
       - 6379:6379
 
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
+=======
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    ports:
+      - 6379:6379
+
+  
+
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 volumes:
   postgres_data: ~

@@ -1,16 +1,22 @@
 <?php
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 namespace App\Services\AuthService;
 
 =======
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
+=======
+namespace App\Services\AuthService;
+
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 use App\DTOs\Auth\LoginDTO;
 use App\Models\Prestataire;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+<<<<<<< HEAD
 <<<<<<< HEAD
 use App\DTOs\Auth\RegisterPrestataireDTO;
 
@@ -19,6 +25,9 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
         public static function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
 =======
 use RegisterPrestataireDTO;
+=======
+use App\DTOs\Auth\RegisterPrestataireDTO;
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 
     class Authentication{
 

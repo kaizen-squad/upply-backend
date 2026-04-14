@@ -1,7 +1,11 @@
 FROM dunglas/frankenphp:1-php8.4-alpine
 # Installation des dépendances système et extensions PHP
+<<<<<<< HEAD
 RUN apk add --no-cache postgresql-client redis curl && \
     install-php-extensions \
+=======
+RUN install-php-extensions \
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
     pdo_pgsql \
     redis \
     bcmath \
@@ -24,7 +28,11 @@ RUN chmod +x Docker/entrypoint.sh
 
 ENTRYPOINT [ "/bin/sh", "/app/Docker/entrypoint.sh" ]
 
+<<<<<<< HEAD
 ENV PORT=8000
+=======
+ENV PORT=8000 HOST=0.0.0.0
+>>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 
 # Création de l'utilisateur unit
 RUN addgroup -g 1000 unit && adduser -u 1000 -D -S -G unit unit
