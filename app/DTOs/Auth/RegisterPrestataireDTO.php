@@ -1,6 +1,7 @@
 <?php
 
-use App\DTOs\Auth;
+namespace App\DTOs\Auth;
+
 use Illuminate\Http\Request;
 
     readonly class RegisterPrestataireDTO{

@@ -1,12 +1,14 @@
 <?php
 
+namespace App\Services\AuthService;
+
 use App\DTOs\Auth\LoginDTO;
 use App\Models\Prestataire;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use RegisterPrestataireDTO;
+use App\DTOs\Auth\RegisterPrestataireDTO;
 
     class Authentication{
 
