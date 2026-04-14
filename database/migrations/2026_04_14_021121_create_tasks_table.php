@@ -48,13 +48,17 @@ return new class extends Migration
             
             $table->string("title");
             $table->text("description");
-            $table->integer("budget");
+            $table->integer("budget")->index();
             $table->date("deadline");
-            $table->enum("status", ["opened", "on_going", "delivered", "validated"]);
+            $table->enum("status", ["opened", "on_going", "delivered", "validated"])->index();
             $table->timestamps();
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 896991d (feat(tasks): Set up the task migration)
 =======
+=======
+            
+>>>>>>> 1d59015 (feat(migrations): Added index for optimized query)
             $table->softDeletes();
 >>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
         });
