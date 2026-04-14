@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('deliverables', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->foreignId("prestataire_id")->constrained("users");
             $table->foreignId("task_id")->constrained()->cascadeOnDelete();
-            $table->foreignId("prestataire_id")->constrained("users")->cascadeOnDelete();
-            
-            $table->text("message");
-            $table->enum("status", ["pending", "accepted", "rejected"]);
-            $table->timestamps();
-            $table->softDeletes();
+
+            $table->text("content");
+            $table->string("file_path")->nullable();
+            $table->timestamp("submitted_at")->useCurrent();
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('deliverables');
     }
 };
