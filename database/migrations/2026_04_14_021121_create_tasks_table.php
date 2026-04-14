@@ -52,7 +52,11 @@ return new class extends Migration
             $table->date("deadline");
             $table->enum("status", ["opened", "on_going", "delivered", "validated"]);
             $table->timestamps();
+<<<<<<< HEAD
 >>>>>>> 896991d (feat(tasks): Set up the task migration)
+=======
+            $table->softDeletes();
+>>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
         });
     }
 
