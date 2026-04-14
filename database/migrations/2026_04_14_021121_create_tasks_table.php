@@ -17,10 +17,11 @@ return new class extends Migration
             
             $table->string("title");
             $table->text("description");
-            $table->integer("budget");
+            $table->integer("budget")->index();
             $table->date("deadline");
-            $table->enum("status", ["opened", "on_going", "delivered", "validated"]);
+            $table->enum("status", ["opened", "on_going", "delivered", "validated"])->index();
             $table->timestamps();
+            
             $table->softDeletes();
         });
     }
