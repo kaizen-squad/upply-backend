@@ -65,6 +65,11 @@ app/
 ### applications
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `message` · `status` enum(`EN_ATTENTE`, `ACCEPTEE`, `REJETEE`) · timestamps
 
+### contracts (décision d'architecture)
+`id` (UUID) · `application_id` (FK, unique) · timestamps
+
+Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`) à définir sur `Task` (`public function contract(): HasOneThrough`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
+
 ### deliverables
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `content` text · `file_path` (nullable) · `submitted_at`
 
@@ -88,6 +93,8 @@ OUVERTE → EN_COURS (client sélectionne + paiement confirmé en escrow)
 EN_COURS → LIVREE (prestataire soumet un livrable)
 LIVREE → VALIDEE (client valide le livrable)
 ```
+
+Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 
 Toute autre transition est invalide. Signale comme erreur bloquante toute implémentation qui permet une transition non listée ci-dessus.
 
