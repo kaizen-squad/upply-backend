@@ -15,10 +15,12 @@ return new class extends Migration
             $table->uuid()->primary();
             $table->foreignId("task_id")->constrained()->cascadeOnDelete();
             $table->foreignId("prestataire_id")->constrained("users")->cascadeOnDelete();
-            
+
             $table->text("message");
             $table->enum("status", ["pending", "accepted", "rejected"]);
             $table->timestamps();
+
+            $table->index(["task_id", "status"]);
             $table->softDeletes();
         });
     }

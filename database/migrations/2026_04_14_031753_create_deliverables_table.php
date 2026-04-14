@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text("content");
             $table->string("file_path")->nullable();
             $table->timestamp("submitted_at")->useCurrent();
+
+            $table->softDeletes();
         });
     }
 
