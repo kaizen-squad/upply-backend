@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             $table->uuid("id")->primary();
             $table->foreignUuid("client_id")->constrained("users")->cascadeOnDelete();
@@ -41,6 +42,17 @@ return new class extends Migration
             $table->timestamps();
             
             $table->softDeletes();
+=======
+            $table->uuid()->primary();
+            $table->foreignId("client_id")->constrained("users")->cascadeOnDelete();
+            
+            $table->string("title");
+            $table->text("description");
+            $table->integer("budget");
+            $table->date("deadline");
+            $table->enum("status", ["opened", "on_going", "delivered", "validated"]);
+            $table->timestamps();
+>>>>>>> 896991d (feat(tasks): Set up the task migration)
         });
     }
 
