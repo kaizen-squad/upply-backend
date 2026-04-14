@@ -65,6 +65,9 @@ app/
 ### applications
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `message` · `status` enum(`EN_ATTENTE`, `ACCEPTEE`, `REJETEE`) · timestamps
 
+### contracts (décision d'architecture)
+Une table `contracts` peut être introduite en optimisation pour matérialiser la retenue d'une `application` et formaliser le lien contractuel. Dans ce cas, le contrat est lié à `applications` et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`).
+
 ### deliverables
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `content` text · `file_path` (nullable) · `submitted_at`
 
