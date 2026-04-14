@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('applications', function (Blueprint $table) {
-<<<<<<< HEAD
             $table->uuid("id")->primary();
             $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
             $table->foreignUuid("prestataire_id")->constrained("users")->cascadeOnDelete();
@@ -23,15 +22,7 @@ return new class extends Migration
 
             $table->index(["task_id", "status"]);
             $table->softDeletes();
-=======
-            $table->uuid()->primary();
-            $table->foreignId("task_id")->constrained()->cascadeOnDelete();
-            $table->foreignId("prestataire_id")->constrained("users")->cascadeOnDelete();
-            
-            $table->text("message");
-            $table->enum("status", ["pending", "accepted", "rejected"]);
-            $table->timestamps();
->>>>>>> e02fe49 (feat(applications): Set up the application migration)
+            $table->softDeletes();
         });
     }
 
