@@ -20,6 +20,8 @@ return new class extends Migration
             $table->smallInteger("rating")->min();
             $table->text("comment")->nullable();
             $table->timestamps();
+
+            $table->softDeletes();
         });
 
         DB::statement("ALTER TABLE reviews ADD CONSTRAINT rating_range CHECK(rating >= 1 AND rating <= 5)");
