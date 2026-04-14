@@ -8,7 +8,7 @@ This API REST is built in Laravel 12. It expose secured and well thought out end
 
     - Clone the project:
 
-        git clone git@github.com:e-mandy/multicase-auth.git
+        git clone git@github.com:kaizen-squad/upply-backend.git
 
 
     - Install dependencies:
