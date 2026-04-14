@@ -18,9 +18,14 @@ return new class extends Migration
             $table->foreignUuid("prestataire_id")->constrained("users")->cascadeOnDelete();
 =======
             $table->uuid()->primary();
+<<<<<<< HEAD
             $table->foreignId("task_id")->constrained()->cascadeOnDelete();
             $table->foreignId("prestataire_id")->constrained("users")->cascadeOnDelete();
 >>>>>>> 1d59015 (feat(migrations): Added index for optimized query)
+=======
+            $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
+            $table->foreignUuid("prestataire_id")->constrained("users")->cascadeOnDelete();
+>>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
 
             $table->text("message");
             $table->enum("status", ["EN_ATTENTE", "ACCEPTEE", "REJETEE"]);

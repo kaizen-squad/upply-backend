@@ -29,7 +29,7 @@ return new class extends Migration
             $table->softDeletes();
 =======
             $table->id();
-            $table->foreignId("reviewer_id")->constrained("users")->cascadeOnDelete();
+            $table->foreignUuid("reviewer_id")->constrained("users")->cascadeOnDelete();
             $table->morphs("reviewee");
 
             $table->smallInteger("rating")->min();

@@ -18,9 +18,14 @@ return new class extends Migration
             $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
 =======
             $table->uuid()->primary();
+<<<<<<< HEAD
             $table->foreignId("prestataire_id")->constrained("users");
             $table->foreignId("task_id")->constrained()->cascadeOnDelete();
 >>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
+=======
+            $table->foreignUuid("prestataire_id")->constrained("users");
+            $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
+>>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
 
             $table->text("content");
             $table->string("file_path")->nullable();
