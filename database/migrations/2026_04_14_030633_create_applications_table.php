@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignId("task_id")->constrained()->cascadeOnDelete();
-            $table->foreignId("prestataire_id")->constrained("users")->cascadeOnDelete();
+            $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
+            $table->foreignUuid("prestataire_id")->constrained("users")->cascadeOnDelete();
 
             $table->text("message");
             $table->enum("status", ["pending", "accepted", "rejected"]);
