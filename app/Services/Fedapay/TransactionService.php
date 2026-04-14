@@ -118,10 +118,24 @@ class TransactionService
                     return ['error' => 'Prestataire details not found'];
                 }
 
+                if (empty($prestataireInfo->phone)) {
+                    return ['error' => 'Le numéro de téléphone du prestataire est manquant.'];
+                }
+
                 // Change status to releasing inside DB transaction
-                $transaction->update(['status' => 'released']);
+                $transaction->update(['status' => 'releasing']);
+
+                TransactionLog::create([
+                    'transaction_id' => $transactionId,
+                    'client_id' => $transaction->client_id,
+                    'prestataire_id' => $transaction->prestataire_id,
+                    'description' => 'Initiating payout process',
+                    'status' => 'releasing',
+                    'metadata' => null
+                ]);
 
                 return [
+                    'client_id' => $transaction->client_id,
                     'amount' => $transaction->amount,
                     'currency' => $transaction->currency ?? 'XOF',
                     'description' => $transaction->description,
@@ -143,7 +157,7 @@ class TransactionService
                     'lastname' => $txDetails['prestataire']->lastname,
                     'email' => $txDetails['prestataire']->email,
                     'phone_number' => [
-                        'number' => $txDetails['prestataire']->phone ?? '',
+                        'number' => $txDetails['prestataire']->phone,
                         'country' => $txDetails['prestataire']->country ?? 'BJ'  // FedaPay country code
                     ]
                 ]
@@ -161,20 +175,68 @@ class TransactionService
                     // Update the transaction status to released
                     Transaction::where('transaction_id', $transactionId)->update(['status' => 'released']);
 
+                    TransactionLog::create([
+                        'transaction_id' => $transactionId,
+                        'client_id' => $txDetails['client_id'],
+                        'prestataire_id' => $txDetails['prestataire']->id,
+                        'description' => 'Payout successfully processed',
+                        'status' => 'released',
+                        'metadata' => null
+                    ]);
+
                     return ['success' => true, 'message' => 'Payout successfully processed'];
                 } catch (Exception $e) {
                     Log::error('Payout execution failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
                     Transaction::where('transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
+                    
+                    TransactionLog::create([
+                        'transaction_id' => $transactionId,
+                        'client_id' => $txDetails['client_id'],
+                        'prestataire_id' => $txDetails['prestataire']->id,
+                        'description' => 'Payout execution failed',
+                        'status' => 'escrow_lock',
+                        'metadata' => null
+                    ]);
+                    
                     return ['success' => false, 'error' => 'Une erreur est survenue lors de la finalisation du transfert.'];
                 }
             }
 
             Transaction::where('transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
+            
+            TransactionLog::create([
+                'transaction_id' => $transactionId,
+                'client_id' => $txDetails['client_id'],
+                'prestataire_id' => $txDetails['prestataire']->id,
+                'description' => 'Payout preparation failed on FedaPay',
+                'status' => 'escrow_lock',
+                'metadata' => null
+            ]);
+            
             return ['success' => false, 'error' => 'La demande de création du paiement a échouée sur FedaPay.'];
 
         } catch (Exception $e) {
             Log::error('Release method failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
-            Transaction::where('transaction_id', $transactionId)->where('status', 'released')->update(['status' => 'escrow_lock']);
+            
+            $updated = Transaction::where('transaction_id', $transactionId)
+                ->where('status', 'releasing')
+                ->update(['status' => 'escrow_lock']);
+                
+            if ($updated) {
+                // Log the rollback
+                $failedTx = Transaction::where('transaction_id', $transactionId)->first();
+                if ($failedTx) {
+                    TransactionLog::create([
+                        'transaction_id' => $transactionId,
+                        'client_id' => $failedTx->client_id,
+                        'prestataire_id' => $failedTx->prestataire_id,
+                        'description' => 'Release reverted due to internal error',
+                        'status' => 'escrow_lock',
+                        'metadata' => null
+                    ]);
+                }
+            }
+            
             return ['success' => false, 'error' => 'Une erreur d\'exécution interne est survenue.'];
         }
     }
