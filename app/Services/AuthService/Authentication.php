@@ -1,18 +1,29 @@
 <?php
 
+<<<<<<< HEAD
 namespace App\Services\AuthService;
 
+=======
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
 use App\DTOs\Auth\LoginDTO;
 use App\Models\Prestataire;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+<<<<<<< HEAD
 use App\DTOs\Auth\RegisterPrestataireDTO;
 
     class Authentication{
 
         public static function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
+=======
+use RegisterPrestataireDTO;
+
+    class Authentication{
+
+        public function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
 
             $user = User::create([
                 "email" => $DTO->email,
@@ -30,18 +41,27 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
                 "bio" => $DTO->bio,
                 "daily_rate" => $DTO->daily_rate,
                 "skills" => $DTO->skills,
+<<<<<<< HEAD
                 "user_id" => $user->id
+=======
+                "user_id" => $user
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
             ]);
 
             return response()->json([
                 "success" => true,
+<<<<<<< HEAD
                 "message" => "Prestataire créé avec succès",
+=======
+                "message" => "Prestataire créer avec succès",
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
                 "data" => $prestataire,
                 "code" => 201
             ], 201);
 
         }
 
+<<<<<<< HEAD
         // public function LoginUser(LoginDTO $DTO, Request $request):JsonResponse {
 
         //     $user = User::where("email",$DTO->email);
@@ -68,6 +88,34 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
 
 
         // }
+=======
+        public function LoginUser(LoginDTO $DTO, Request $request):JsonResponse {
+
+            $user = User::where("email",$DTO->email);
+
+            if(!$user){
+                return response()->json([
+                    "success" => false,
+                    "message" => "Identenfiants Incorrects",
+                    "code" => 401
+                ],401);
+            }
+
+            if( ! Hash::check($DTO->password, $user->password)){
+                return response()->json([
+                    "success" => false,
+                    "message" => "Identenfiants Incorrects",
+                    "code" => 401
+                ],401);
+            }else{
+
+                // $ResfreshToken = $user->createToken($request->device)
+            
+            };
+
+
+        }
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
 
     }
 

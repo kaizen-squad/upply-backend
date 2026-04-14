@@ -1,6 +1,7 @@
 
 services:
 
+<<<<<<< HEAD
   # Php setup
 
   php:
@@ -38,6 +39,8 @@ services:
       retries: 5
       start_period: 30s
 
+=======
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
   # Postgres database setup
   database:
     image: postgres:17-alpine
@@ -49,6 +52,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
+<<<<<<< HEAD
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -56,6 +60,8 @@ services:
       retries: 5
       start_period: 30s
 
+=======
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -63,6 +69,7 @@ services:
 
   redis:
     image: redis:7-alpine
+<<<<<<< HEAD
     command: redis-server --appendonly yes
     ports:
       - 6379:6379
@@ -75,5 +82,11 @@ services:
 
   
 
+=======
+    command: redis-server --appendonly yes requirepass "${REDIS_PASSWORD}"
+    ports:
+      - 6379:6379
+
+>>>>>>> 4225864 (feat- Database service & Redis service setup)
 volumes:
   postgres_data: ~
