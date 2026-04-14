@@ -19,8 +19,11 @@ return new class extends Migration
             $table->text("message");
             $table->enum("status", ["EN_ATTENTE", "ACCEPTEE", "REJETEE"]);
             $table->timestamps();
+<<<<<<< HEAD
 
             $table->index(["task_id", "status"]);
+=======
+>>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
             $table->softDeletes();
         });
     }

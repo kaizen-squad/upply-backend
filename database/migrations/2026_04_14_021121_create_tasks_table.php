@@ -21,7 +21,10 @@ return new class extends Migration
             $table->date("deadline");
             $table->enum("status", ["OUVERTE", "EN_COURS", "LIVREE", "VALIDEE"])->index();
             $table->timestamps();
+<<<<<<< HEAD
             
+=======
+>>>>>>> db64f77 (feat(deliverables): Set up the deliverables migration)
             $table->softDeletes();
         });
     }
