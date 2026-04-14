@@ -20,7 +20,7 @@ class TransactionLog extends Model
     ];
 
     protected $casts = [
-        'metadata' => 'array',
+        'metadata' => 'array ',
     ];
 
     public function transaction(): BelongsTo
