@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('applications', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->uuid("id")->primary();
             $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
             $table->foreignUuid("prestataire_id")->constrained("users")->cascadeOnDelete();
 
             $table->text("message");
-            $table->enum("status", ["pending", "accepted", "rejected"]);
+            $table->enum("status", ["EN_ATTENTE", "ACCEPTEE", "REJETEE"]);
             $table->timestamps();
 
             $table->index(["task_id", "status"]);
