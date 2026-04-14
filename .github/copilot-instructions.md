@@ -1,5 +1,5 @@
->[!IMPORTANT]
->Toutes les revues de code, explications et commentaires générés doivent être rédigés exclusivement en français, quel que soit le langage utilisé dans le code source.
+> [!IMPORTANT]
+> Toutes les revues de code, explications et commentaires générés doivent être rédigés exclusivement en français, quel que soit le langage utilisé dans le code source.
 
 # Upply — Copilot Instructions (Backend)
 
@@ -42,44 +42,52 @@ app/
 
 ## Stack technique de référence
 
-| Couche | Technologie |
-|---|---|
-| Frontend | Next.js 14 + Tailwind CSS |
-| Backend | Laravel 13 + PHP 8.3  |
-| Base de données | PostgreSQL |
+| Couche           | Technologie                                                                                                                                                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend         | Next.js 14 + Tailwind CSS                                                                                                                                                                                                                                           |
+| Backend          | Laravel 13 + PHP 8.3                                                                                                                                                                                                                                                |
+| Base de données  | PostgreSQL                                                                                                                                                                                                                                                          |
 | Authentification | Laravel Sanctum (gestion des tokens) + Refresh Token implémenté en interne — Sanctum ne fournit pas de refresh token nativement. Le refresh token est un second token Sanctum longue durée, stocké en cookie HttpOnly, géré manuellement via le Trait HasAuthToken. |
-| Paiement | FedaPay (sandbox) |
-| Conteneurisation | Docker + Docker Compose |
-| Queue driver | Redis |
+| Paiement         | FedaPay (sandbox)                                                                                                                                                                                                                                                   |
+| Conteneurisation | Docker + Docker Compose                                                                                                                                                                                                                                             |
+| Queue driver     | Redis                                                                                                                                                                                                                                                               |
 
 ---
 
 ## Modèle de données — Tables et colonnes de référence
 
 ### users
+
 `id` (UUID) · `name` · `email` (unique) · `password` (hashed) · `role` enum(`client`, `prestataire`) · `phone` (nullable) · `rating_avg` decimal(3,2) · timestamps
 
 ### tasks
+
 `id` (UUID) · `client_id` (FK) · `prestataire_id` (FK, nullable) · `title` · `description` · `budget` integer · `deadline` date · `status` enum(`OUVERTE`, `EN_COURS`, `LIVREE`, `VALIDEE`) · timestamps
 
 ### applications
+
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `message` · `status` enum(`EN_ATTENTE`, `ACCEPTEE`, `REJETEE`) · timestamps
 
 ### contracts (décision d'architecture)
+
 `id` (UUID) · `application_id` (FK, unique) · timestamps
 
 Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`) à définir sur `Task` (`public function contract(): HasOneThrough`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
 
 ### deliverables
+
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `content` text · `file_path` (nullable) · `submitted_at`
 
 ### transactions
+
 `id` (UUID) · `task_id` (FK) · `client_id` (FK) · `prestataire_id` (FK) · `fedapay_transaction_id` · `amount_gross` integer · `commission` integer · `amount_net` integer · `status` enum(`EN_SEQUESTRE`, `LIBERE`) · `liberated_at` (nullable) · timestamps
 
 ### transaction_logs
+
 `id` (UUID) · `transaction_id` (FK) · `from_status` · `to_status` · `triggered_by` (FK users) · `note` (nullable) · `created_at`
 
 ### reviews
+
 `id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` smallint avec contrainte CHECK (rating >= 1 AND rating <= 5) · `comment` (nullable) · `created_at` · `updated_at` · `deleted_at` (soft delete, conservation pour audit)
 
 ---
@@ -111,21 +119,27 @@ Le statut d'une transaction ne doit jamais changer sans vérification préalable
 ## Endpoints de référence
 
 ### Auth
+
 `POST /api/auth/register` · `POST /api/auth/login` · `POST /api/auth/refresh` (cookie) · `POST /api/auth/logout` (Bearer)
 
 ### Tâches
+
 `GET /api/tasks` · `GET /api/tasks/{id}` · `POST /api/tasks` (client) · `GET /api/tasks/mine` (client) · `DELETE /api/tasks/{id}` (client, OUVERTE uniquement)
 
 ### Candidatures
+
 `POST /api/tasks/{id}/apply` (prestataire) · `GET /api/tasks/{id}/applications` (client) · `GET /api/applications/mine` (prestataire) · `PATCH /api/applications/{id}/accept` (client) · `PATCH /api/applications/{id}/reject` (client)
 
 ### Paiement & Escrow
+
 `POST /api/tasks/{id}/payment/verify` (client) · `GET /api/tasks/{id}/transaction` (les deux)
 
 ### Livrables
+
 `POST /api/tasks/{id}/deliver` (prestataire) · `GET /api/tasks/{id}/deliverable` (client) · `POST /api/tasks/{id}/validate` (client → déclenche payout)
 
 ### Notation & Dashboard
+
 `POST /api/tasks/{id}/review` (les deux) · `GET /api/dashboard/client` · `GET /api/dashboard/prestataire`
 
 ---
