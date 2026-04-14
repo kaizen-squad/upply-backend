@@ -73,6 +73,7 @@ app/
 `id` (UUID) · `application_id` (FK, unique) · timestamps
 
 Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`) à définir sur `Task` (`public function contract(): HasOneThrough`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
+Décision retenue pour cette architecture : la table `contracts` matérialise l'acceptation d'une `application` et formalise le lien contractuel. Seule une `application` au statut `ACCEPTEE` peut créer un contrat. L'unicité de `application_id` garantit qu'une candidature ne peut générer qu'un seul contrat. Le contrat est lié à `applications`, et l'accès depuis `tasks` se fait par transitivité (`hasOneThrough` Laravel via `Application`). Le schéma minimal attendu à ce stade est volontairement limité aux colonnes ci-dessus.
 
 ### deliverables
 
@@ -102,6 +103,7 @@ EN_COURS → LIVREE (prestataire soumet un livrable)
 LIVREE → VALIDEE (client valide le livrable)
 ```
 
+Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS` et la création du contrat doivent s'effectuer au sein d'une même transaction atomique (tout ou rien), sans introduction d'un nouvel état métier.
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -115,7 +117,8 @@ Dans cette architecture, la création du contrat est concomitante à la transiti
 Dans cette architecture, la transition `OUVERTE → EN_COURS` et la création du contrat doivent être traitées dans une même transaction atomique (tout ou rien), sans créer de nouvel état métier.
 =======
 Dans cette architecture, la transition `OUVERTE → EN_COURS` et la création du contrat doivent s'effectuer au sein d'une même transaction atomique (tout ou rien), sans introduction d'un nouvel état métier.
->>>>>>> d9e55a4 (docs: reformuler la règle d'atomicité de création de contrat)
+
+> > > > > > > d9e55a4 (docs: reformuler la règle d'atomicité de création de contrat)
 
 > > > > > > > 04688f4 (docs: préciser la condition ACCEPTEE et l'atomicité de création de contrat)
 
