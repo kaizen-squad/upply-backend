@@ -101,7 +101,10 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 `id` (UUID) · `transaction_id` (FK) · `from_status` · `to_status` · `triggered_by` (FK users) · `note` (nullable) · `created_at`
 
 ### reviews
+<<<<<<< HEAD
 
+=======
+>>>>>>> 04e956f (docs(schema): aligner reviews avec soft delete pour audit)
 `id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` smallint avec contrainte CHECK (rating >= 1 AND rating <= 5) · `comment` (nullable) · `created_at` · `updated_at` · `deleted_at` (soft delete, conservation pour audit)
 
 ---
