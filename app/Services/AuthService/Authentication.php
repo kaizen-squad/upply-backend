@@ -30,7 +30,7 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
                 "bio" => $DTO->bio,
                 "daily_rate" => $DTO->daily_rate,
                 "skills" => $DTO->skills,
-                "user_id" => $user
+                "user_id" => $user->id
             ]);
 
             return response()->json([

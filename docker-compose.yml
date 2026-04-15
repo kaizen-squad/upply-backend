@@ -12,7 +12,15 @@ services:
       SERVER_NAME: ":8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
-      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes: 
       - .:/app
     ports:
@@ -39,7 +47,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    command: redis-server --appendonly yes
     ports:
       - 6379:6379
 
