@@ -33,7 +33,7 @@ class TransactionService
             if ($verification['success'] === false) {
                 if ($txData) {
                     $amountGross = (int) ($txData->amount ?? 0);
-                    $commission = (int) round($amountGross * 0.1);
+                    $commission = intdiv($amountGross * 10, 100);
                     $amountNet = $amountGross - $commission;
 
                     $transaction = Transaction::updateOrCreate(
