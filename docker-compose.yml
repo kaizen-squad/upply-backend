@@ -14,6 +14,7 @@ services:
 
     environment:
 <<<<<<< HEAD
+<<<<<<< HEAD
       SERVER_NAME: "http://:8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
@@ -28,6 +29,9 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
 =======
       SERVER_NAME: ":80"
+=======
+      SERVER_NAME: ":8000"
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
       DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
@@ -36,6 +40,7 @@ services:
       - .:/app
     ports:
       - 8000:8000
+<<<<<<< HEAD
 <<<<<<< HEAD
     depends_on:
       database:
@@ -54,6 +59,8 @@ services:
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
 =======
       - 443:443
+=======
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
     depends_on:
       - database
       - redis

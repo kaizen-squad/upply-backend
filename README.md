@@ -4,6 +4,9 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
  This REST API is built with Laravel 13. It exposes secure and well-designed endpoints for a small freelance platform.
 
 <<<<<<< HEAD

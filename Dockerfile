@@ -29,10 +29,14 @@ RUN chmod +x Docker/entrypoint.sh
 ENTRYPOINT [ "/bin/sh", "/app/Docker/entrypoint.sh" ]
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENV PORT=8000
 =======
 ENV PORT=8000 HOST=0.0.0.0
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
+=======
+ENV PORT=8000
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
 
 # Création de l'utilisateur unit
 RUN addgroup -g 1000 unit && adduser -u 1000 -D -S -G unit unit
