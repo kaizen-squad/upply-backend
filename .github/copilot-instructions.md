@@ -91,6 +91,8 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 
 `id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` smallint avec contrainte CHECK (rating >= 1 AND rating <= 5) · `comment` (nullable) · `created_at` · `updated_at` · `deleted_at` (soft delete, conservation pour audit)
 
+`id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` smallint avec contrainte CHECK (rating >= 1 AND rating <= 5) · `comment` (nullable) · `created_at` · `updated_at` · `deleted_at` (soft delete, conservation pour audit)
+
 ---
 
 ## Machines à états — Transitions valides uniquement
@@ -103,13 +105,7 @@ EN_COURS → LIVREE (prestataire soumet un livrable)
 LIVREE → VALIDEE (client valide le livrable)
 ```
 
-<<<<<<< HEAD
 Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS` et la création du contrat doivent s'effectuer au sein d'une même transaction atomique (tout ou rien), sans introduction d'un nouvel état métier.
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 
 Dans cette architecture, la mise à jour de l'application vers `ACCEPTEE`, la transition `OUVERTE → EN_COURS`, la création du contrat et la création de la transaction financière d'escrow doivent s'effectuer dans un `DB::transaction()` unique (tout ou rien). En cas d'échec, le rollback doit être complet, sans introduction d'un nouvel état métier.
 
