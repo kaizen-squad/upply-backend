@@ -80,7 +80,7 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 
 ### transactions
 
-`id` (UUID) · `task_id` (FK) · `client_id` (FK) · `prestataire_id` (FK) · `fedapay_transaction_id` · `amount_gross` integer · `commission` integer · `amount_net` integer · `status` enum(`EN_SEQUESTRE`, `LIBERE`) · `liberated_at` (nullable) · timestamps
+`id` (UUID) · `task_id` (FK) · `client_id` (FK) · `prestataire_id` (FK) · `fedapay_transaction_id` · `amount_gross` integer · `commission` integer · `amount_net` integer · `status` enum(`EN_SEQUESTRE`, `EN_LIBERATION`, `LIBERE`) · `liberated_at` (nullable) · timestamps
 
 ### transaction_logs
 
@@ -109,10 +109,12 @@ Toute autre transition est invalide. Signale comme erreur bloquante toute implé
 ### Transaction
 
 ```
-EN_SEQUESTRE → LIBERE (client valide le livrable → déclenche Job ProcessPayout)
+EN_SEQUESTRE → EN_LIBERATION (début du payout, avant confirmation finale)
+EN_LIBERATION → LIBERE (payout confirmé)
 ```
 
 Le statut d'une transaction ne doit jamais changer sans vérification préalable côté serveur des conditions requises. Signale comme erreur bloquante tout changement de statut sans validation des conditions.
+Tout statut `EN_LIBERATION` bloqué doit être traité par un job de réconciliation pour finaliser l'état (`LIBERE`) ou relancer une vérification côté fournisseur de paiement.
 
 ---
 
