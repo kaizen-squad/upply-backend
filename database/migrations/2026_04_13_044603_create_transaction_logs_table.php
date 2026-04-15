@@ -13,11 +13,10 @@ return new class extends Migration {
         Schema::create('transaction_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('transaction_id')->constrained('transactions')->onDelete('cascade');
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('prestataire_id')->constrained('users')->onDelete('cascade');
-            $table->string('description')->nullable();
-            $table->string('status')->nullable();
-            $table->json('metadata')->nullable();
+            $table->string('from_status')->nullable();
+            $table->string('to_status');
+            $table->foreignId('triggered_by')->constrained('users')->onDelete('cascade');
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

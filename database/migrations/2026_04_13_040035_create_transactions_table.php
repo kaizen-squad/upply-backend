@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->string('fedapay_transaction_id')->unique()->nullable();
             $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('prestataire_id')->constrained('users')->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
+            $table->integer('amount_gross');
+            $table->integer('commission')->default(10);
+            $table->integer('amount_net');
             $table->string('currency', 3)->default('XOF');
             $table->string('description')->nullable();
             $table->enum('payment_method', ['mobile_money', 'card', 'virement'])->nullable()->default('mobile_money');

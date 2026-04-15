@@ -2,39 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
+#[Fillable([
+    'transaction_id',
+    'from_status',
+    'to_status',
+    'triggered_by',
+    'note',
+])]
 class TransactionLog extends Model
 {
     use HasUuids;
-
-    protected $fillable = [
-        'transaction_id',
-        'client_id',
-        'prestataire_id',
-        'description',
-        'status',
-        'metadata'
-    ];
-
-    protected $casts = [
-        'metadata' => 'json',
-    ];
 
     public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
     }
 
-    public function client(): BelongsTo
+    public function triggeredBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'client_id');
-    }
-
-    public function prestataire(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'prestataire_id');
+        return $this->belongsTo(User::class, 'triggered_by');
     }
 }
