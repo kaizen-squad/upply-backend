@@ -68,30 +68,34 @@ class TransactionService
             $commission = intdiv($amountGross * 10, 100);
             $amountNet = $amountGross - $commission;
 
-            // Save the transaction (Escrow)
-            $transaction = Transaction::updateOrCreate(
-                ['fedapay_transaction_id' => $txData->id ?? $transactionId],
-                [
-                    'client_id' => $clientId,
-                    'prestataire_id' => $prestataireId,
-                    'amount_gross' => $amountGross,
-                    'commission' => $commission,
-                    'amount_net' => $amountNet,
-                    'currency' => 'XOF',
-                    'payment_method' => $txData->mode ?? 'unknown',
-                    'description' => $txData->description ?? null,
-                    'status' => 'escrow_lock'
-                ]
-            );
-
-            // Record in the log table
-            TransactionLog::create([
-                'transaction_id' => $transaction->id,
-                'from_status' => null,
-                'to_status' => 'escrow_lock',
-                'triggered_by' => $clientId,
-                'note' => $txData->description ?? 'Success transaction'
+            // Save the transaction (Escrow) — use firstOrNew to capture previous status for audit log
+            $transaction = Transaction::firstOrNew([
+                'fedapay_transaction_id' => $txData->id ?? $transactionId,
             ]);
+            $previousStatus = $transaction->exists ? $transaction->status : null;
+            $transaction->fill([
+                'client_id' => $clientId,
+                'prestataire_id' => $prestataireId,
+                'amount_gross' => $amountGross,
+                'commission' => $commission,
+                'amount_net' => $amountNet,
+                'currency' => 'XOF',
+                'payment_method' => $txData->mode ?? 'unknown',
+                'description' => $txData->description ?? null,
+                'status' => 'escrow_lock',
+            ]);
+            $transaction->save();
+
+            // Record in the log table only on creation or real status change
+            if ($previousStatus === null || $previousStatus !== 'escrow_lock') {
+                TransactionLog::create([
+                    'transaction_id' => $transaction->id,
+                    'from_status' => $previousStatus,
+                    'to_status' => 'escrow_lock',
+                    'triggered_by' => $clientId,
+                    'note' => $txData->description ?? 'Success transaction',
+                ]);
+            }
 
             DB::commit();
             return ['success' => true, 'message' => 'Transaction created successfully and locked'];
@@ -195,11 +199,19 @@ class TransactionService
                     // Actually send the funds using the FedaPay\Payout object
                     $payout['data']->sendNow();
 
-                    // Update the transaction status to released and persist the release timestamp
-                    Transaction::where('fedapay_transaction_id', $transactionId)->update([
-                        'status' => 'released',
-                        'liberated_at' => now(),
-                    ]);
+                    // Update the transaction status to released — guard on 'releasing' to prevent overwriting a newer state
+                    $affectedRows = Transaction::where('fedapay_transaction_id', $transactionId)
+                        ->where('status', 'releasing')
+                        ->update([
+                            'status' => 'released',
+                            'liberated_at' => now(),
+                        ]);
+
+                    if ($affectedRows === 0) {
+                        Log::warning('Released update skipped: transaction was not in releasing state.', [
+                            'transaction_id' => $transactionId,
+                        ]);
+                    }
 
                     TransactionLog::create([
                         'transaction_id' => $txDetails['internal_transaction_id'],
