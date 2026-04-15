@@ -43,7 +43,7 @@ class FedapayService
 
             return [
                 'success' => true,
-                'message' => 'Transaction successfully',
+                'message' => 'Transaction verified successfully',
                 'data' => $transaction
             ];
         } catch (Exception $e) {
