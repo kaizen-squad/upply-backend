@@ -4,21 +4,30 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 <<<<<<< HEAD
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 =======
+=======
+use App\Models\Client;
+use App\Models\Prestataire;
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+<<<<<<< HEAD
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+use Illuminate\Database\Eloquent\Relations\HasOne;
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -51,10 +60,21 @@ class User extends Authenticatable
         ];
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     public function transactions():HasMany{
         return $this->hasMany(Transaction::class);
     }
 =======
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
+=======
+
+    public function client() : HasOne{
+        return $this->hasOne(Client::class);
+    }
+
+    public function prestataire() : HasOne{
+        return $this->hasOne(Prestataire::class);
+    }
+>>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
 }

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This API REST is built in Laravel 13. It expose secured and well thought out endpoint for a minor freelance system.
+ This REST API is built with Laravel 13. It exposes secure and well-designed endpoints for a small freelance platform.
 
 ## INTEGRATION STEPS
 

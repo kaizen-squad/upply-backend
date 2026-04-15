@@ -23,7 +23,7 @@ RUN chmod +x Docker/entrypoint.sh
 
 ENTRYPOINT [ "/bin/sh", "/app/Docker/entrypoint.sh" ]
 
-ENV PORT=8000 HOST=0.0.0.0
+ENV PORT=8000
 
 # Création de l'utilisateur unit
 RUN addgroup -g 1000 unit && adduser -u 1000 -D -S -G unit unit
