@@ -35,39 +35,39 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
 
             return response()->json([
                 "success" => true,
-                "message" => "Prestataire créer avec succès",
+                "message" => "Prestataire créé avec succès",
                 "data" => $prestataire,
                 "code" => 201
             ], 201);
 
         }
 
-        public function LoginUser(LoginDTO $DTO, Request $request):JsonResponse {
+        // public function LoginUser(LoginDTO $DTO, Request $request):JsonResponse {
 
-            $user = User::where("email",$DTO->email);
+        //     $user = User::where("email",$DTO->email);
 
-            if(!$user){
-                return response()->json([
-                    "success" => false,
-                    "message" => "Identenfiants Incorrects",
-                    "code" => 401
-                ],401);
-            }
+        //     if(!$user){
+        //         return response()->json([
+        //             "success" => false,
+        //             "message" => "Identenfiants Incorrects",
+        //             "code" => 401
+        //         ],401);
+        //     }
 
-            if( ! Hash::check($DTO->password, $user->password)){
-                return response()->json([
-                    "success" => false,
-                    "message" => "Identenfiants Incorrects",
-                    "code" => 401
-                ],401);
-            }else{
+        //     if( ! Hash::check($DTO->password, $user->password)){
+        //         return response()->json([
+        //             "success" => false,
+        //             "message" => "Identenfiants Incorrects",
+        //             "code" => 401
+        //         ],401);
+        //     }else{
 
-                // $ResfreshToken = $user->createToken($request->device)
+        //         // $ResfreshToken = $user->createToken($request->device)
             
-            };
+        //     };
 
 
-        }
+        // }
 
     }
 

@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
 
     environment:
-      SERVER_NAME: ":80"
+      SERVER_NAME: ":8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
       DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
@@ -17,7 +17,6 @@ services:
       - .:/app
     ports:
       - 8000:8000
-      - 443:443
     depends_on:
       - database
       - redis
