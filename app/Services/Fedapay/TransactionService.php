@@ -65,7 +65,7 @@ class TransactionService
             }
 
             $amountGross = (int) $txData->amount;
-            $commission = (int) round($amountGross * 0.1);
+            $commission = intdiv($amountGross * 10, 100);
             $amountNet = $amountGross - $commission;
 
             // Save the transaction (Escrow)
@@ -97,7 +97,20 @@ class TransactionService
             return ['success' => true, 'message' => 'Transaction created successfully and locked'];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'error' => $e->getMessage()];
+
+            $errorId = bin2hex(random_bytes(8));
+            Log::error('Erreur lors du traitement de la transaction FedaPay.', [
+                'error_id' => $errorId,
+                'transaction_id' => $transactionId,
+                'prestataire_id' => $prestataireId,
+                'client_id' => $clientId,
+                'exception_message' => $e->getMessage(),
+            ]);
+            return [
+                'success' => false,
+                'error' => 'Une erreur interne est survenue lors du traitement de la transaction.',
+                'error_id' => $errorId,
+            ];
         }
     }
 
@@ -182,8 +195,11 @@ class TransactionService
                     // Actually send the funds using the FedaPay\Payout object
                     $payout['data']->sendNow();
 
-                    // Update the transaction status to released
-                    Transaction::where('fedapay_transaction_id', $transactionId)->update(['status' => 'released']);
+                    // Update the transaction status to released and persist the release timestamp
+                    Transaction::where('fedapay_transaction_id', $transactionId)->update([
+                        'status' => 'released',
+                        'liberated_at' => now(),
+                    ]);
 
                     TransactionLog::create([
                         'transaction_id' => $txDetails['internal_transaction_id'],
