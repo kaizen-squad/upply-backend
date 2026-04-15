@@ -99,7 +99,8 @@ EN_LIBERATION → LIBERE (payout confirmé)
 ```
 
 Le statut d'une transaction ne doit jamais changer sans vérification préalable côté serveur des conditions requises. Signale comme erreur bloquante tout changement de statut sans validation des conditions.
-Tout statut `EN_LIBERATION` bloqué doit être traité par un job de réconciliation pour finaliser l'état (`LIBERE`) ou relancer une vérification côté fournisseur de paiement.
+Le champ `liberated_at` doit être renseigné uniquement au passage vers `LIBERE` (jamais lors du passage en `EN_LIBERATION`).
+Tout statut `EN_LIBERATION` bloqué doit être traité par un job de réconciliation (ex: absence de confirmation/callback FedaPay après un délai serveur configuré) pour finaliser l'état (`LIBERE`) ou relancer une vérification côté fournisseur de paiement.
 
 ---
 
