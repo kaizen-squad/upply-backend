@@ -109,14 +109,14 @@ Toute autre transition est invalide. Signale comme erreur bloquante toute implé
 ### Transaction
 
 ```
-EN_SEQUESTRE → EN_LIBERATION (début du payout, avant confirmation finale)
+EN_SEQUESTRE → EN_LIBERATION (client valide le livrable, début du payout avant confirmation finale)
 EN_LIBERATION → LIBERE (payout confirmé)
 EN_LIBERATION → EN_SEQUESTRE (échec payout confirmé par réconciliation)
 ```
 
 Le statut d'une transaction ne doit jamais changer sans vérification préalable côté serveur des conditions requises. Signale comme erreur bloquante tout changement de statut sans validation des conditions.
 Le champ `liberated_at` doit être renseigné uniquement au passage vers `LIBERE` (jamais lors du passage en `EN_LIBERATION`).
-Le job `ProcessPayoutReconciliation` doit traiter tout statut `EN_LIBERATION` bloqué : vérifier les transactions restées `EN_LIBERATION` au-delà de `FEDAPAY_RECONCILIATION_TIMEOUT_MINUTES` minutes (valeur définie dans `.env`, mappée dans `config/fedapay.php`), puis soit confirmer le payout (transition vers `LIBERE`), soit marquer l'échec et revenir à `EN_SEQUESTRE`.
+Le job `ProcessPayoutReconciliation` doit traiter tout statut `EN_LIBERATION` bloqué : vérifier les transactions restées `EN_LIBERATION` au-delà de `FEDAPAY_RECONCILIATION_TIMEOUT_MINUTES` minutes (valeur définie dans `.env`, mappée dans `config/fedapay.php`), contrôler l'état réel côté FedaPay via `fedapay_transaction_id`, puis soit confirmer le payout (transition vers `LIBERE`), soit marquer l'échec et revenir à `EN_SEQUESTRE`.
 
 ---
 
@@ -154,3 +154,4 @@ Le job `ProcessPayoutReconciliation` doit traiter tout statut `EN_LIBERATION` bl
 - Tout changement de statut de transaction doit être enregistré dans `transaction_logs` avec `triggered_by` et horodatage
 - Le `amount_net` doit toujours être calculé comme `amount_gross - commission` (10 %) avant tout payout
 - Le numéro Mobile Money du prestataire (`phone`) doit être validé comme non-null avant de déclencher le Job `ProcessPayout`
+- Le job `ProcessPayoutReconciliation` doit vérifier l'état réel FedaPay via `fedapay_transaction_id` avant toute finalisation (`LIBERE`) ou rollback (`EN_SEQUESTRE`) d'une transaction bloquée en `EN_LIBERATION`
