@@ -139,6 +139,7 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 ### reviews
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -159,7 +160,15 @@ Décision retenue pour cette architecture : la table `contracts` matérialise l'
 =======
 
 >>>>>>> f8e09d0 (docs: documenter la décision d'architecture contracts)
+<<<<<<< HEAD
 >>>>>>> e886ac5 (docs: documenter la décision d'architecture contracts)
+=======
+=======
+
+=======
+>>>>>>> c4ff55a (docs(schema): aligner reviews avec soft delete pour audit)
+>>>>>>> 830d6f1 (docs(schema): aligner reviews avec soft delete pour audit)
+>>>>>>> 882b4c3 (docs(schema): aligner reviews avec soft delete pour audit)
 `id` (UUID) · `task_id` (FK) · `reviewer_id` (FK) · `reviewee_id` (FK) · `rating` smallint avec contrainte CHECK (rating >= 1 AND rating <= 5) · `comment` (nullable) · `created_at` · `updated_at` · `deleted_at` (soft delete, conservation pour audit)
 
 ---
