@@ -34,8 +34,20 @@ services:
 >>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
+<<<<<<< HEAD
       DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
+=======
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+>>>>>>> fdddfe8 (fix- Dockerfile key generation)
     volumes: 
       - .:/app
     ports:
@@ -96,6 +108,7 @@ services:
     image: redis:7-alpine
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     command: redis-server --appendonly yes
     ports:
       - 6379:6379
@@ -116,6 +129,9 @@ services:
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
 =======
     command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+=======
+    command: redis-server --appendonly yes
+>>>>>>> fdddfe8 (fix- Dockerfile key generation)
     ports:
       - 6379:6379
 

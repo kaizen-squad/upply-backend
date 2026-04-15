@@ -15,9 +15,9 @@ Route::get('/', function () {
 >>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
 =======
     return response()->json([
-        "APP NAME" => env("APP_NAME"),
-        "VERSION" => "1.0",
-        "HEALTH" => "OK"
+        'app_name' => config('app.name'),
+        'version' => '1.0',
+        'health' => 'OK',
     ]);
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 });

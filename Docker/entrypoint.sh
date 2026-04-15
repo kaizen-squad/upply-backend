@@ -45,7 +45,12 @@ php artisan install:api
 >>>>>>> ab425dd (fix- Review of pull request #33 taking in account)
 php artisan migrate
 
-php artisan key:generate
+if ! grep -Eq '^APP_KEY=.+$' .env; then
+    echo "APP_KEY absente, génération de la clé applicative"
+    php artisan key:generate
+else
+    echo "APP_KEY déjà définie, aucune régénération"
+fi
 
 php artisan cache:clear
 
@@ -57,8 +62,12 @@ php artisan route:clear
 chown -R unit:unit storage bootstrap/cache vendor
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 exec docker-php-entrypoint "$@"
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
 =======
 php artisan serve --port=$PORT --host=0.0.0.0 --env=local
 >>>>>>> ab425dd (fix- Review of pull request #33 taking in account)
+=======
+php artisan serve --port=$PORT --host=0.0.0.0 --env=$APP_ENV
+>>>>>>> fdddfe8 (fix- Dockerfile key generation)

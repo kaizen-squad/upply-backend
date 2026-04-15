@@ -21,10 +21,14 @@ use Illuminate\Http\Request;
             public string $email,
             public string $password,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fdddfe8 (fix- Dockerfile key generation)
             public ?string $job_title = null,
             public ?string $bio=null,
             public ?int $daily_rate=null,
             public ?array $skills=null,
+<<<<<<< HEAD
         ){}
 
         public static function FromRequest(Validator $validate){
@@ -43,6 +47,8 @@ use Illuminate\Http\Request;
             public ? string $bio=null,
             public ? int $daily_rate=null,
             public ? array $skills=null,
+=======
+>>>>>>> fdddfe8 (fix- Dockerfile key generation)
         ){}
 
         public static function FromRequest(Request $req){

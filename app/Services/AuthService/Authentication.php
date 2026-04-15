@@ -51,10 +51,14 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
                 "daily_rate" => $DTO->daily_rate,
                 "skills" => $DTO->skills,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "user_id" => $user->id
 =======
                 "user_id" => $user
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
+=======
+                "user_id" => $user->id
+>>>>>>> fdddfe8 (fix- Dockerfile key generation)
             ]);
 
             return response()->json([
