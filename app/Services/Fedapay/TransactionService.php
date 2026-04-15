@@ -32,56 +32,66 @@ class TransactionService
             // Check if the transaction is valid
             if ($verification['success'] === false) {
                 if ($txData) {
-                    TransactionLog::create([
-                        'transaction_id' => $txData->id ?? $transactionId,
-                        'client_id' => $clientId,
-                        'prestataire_id' => $prestataireId,
-                        'description' => $txData->description ?? 'Failed transaction',
-                        'status' => $txData->status ?? 'failed',
-                        'metadata' => $txData->custom_metadata
-                    ]);
+                    $amountGross = (int) ($txData->amount ?? 0);
+                    $commission = (int) round($amountGross * 0.1);
+                    $amountNet = $amountGross - $commission;
 
-                    Transaction::updateOrCreate(
-                        ['transaction_id' => $txData->id ?? $transactionId],
+                    $transaction = Transaction::updateOrCreate(
+                        ['fedapay_transaction_id' => $txData->id ?? $transactionId],
                         [
                             'client_id' => $clientId,
                             'prestataire_id' => $prestataireId,
-                            'amount' => $txData->amount ?? 0,
+                            'amount_gross' => $amountGross,
+                            'commission' => $commission,
+                            'amount_net' => $amountNet,
                             'currency' => 'XOF',
                             'payment_method' => $txData->mode ?? 'unknown',
                             'description' => $txData->description ?? null,
                             'status' => 'canceled'
                         ]
                     );
+
+                    TransactionLog::create([
+                        'transaction_id' => $transaction->id,
+                        'from_status' => null,
+                        'to_status' => 'canceled',
+                        'triggered_by' => $clientId,
+                        'note' => $txData->description ?? 'Failed transaction'
+                    ]);
                 }
 
                 DB::commit();
                 return ['success' => false, 'message' => 'Transaction declined or failed'];
             }
 
-            // Record in the log table
-            TransactionLog::create([
-                'transaction_id' => $txData->id ?? $transactionId,
-                'client_id' => $clientId,
-                'prestataire_id' => $prestataireId,
-                'description' => $txData->description ?? 'Success transaction',
-                'status' => $txData->status ?? 'approved',
-                'metadata' => $txData->custom_metadata
-            ]);
+            $amountGross = (int) $txData->amount;
+            $commission = (int) round($amountGross * 0.1);
+            $amountNet = $amountGross - $commission;
 
             // Save the transaction (Escrow)
-            Transaction::updateOrCreate(
-                ['transaction_id' => $txData->id ?? $transactionId],
+            $transaction = Transaction::updateOrCreate(
+                ['fedapay_transaction_id' => $txData->id ?? $transactionId],
                 [
                     'client_id' => $clientId,
                     'prestataire_id' => $prestataireId,
-                    'amount' => $txData->amount,
+                    'amount_gross' => $amountGross,
+                    'commission' => $commission,
+                    'amount_net' => $amountNet,
                     'currency' => 'XOF',
                     'payment_method' => $txData->mode ?? 'unknown',
                     'description' => $txData->description ?? null,
                     'status' => 'escrow_lock'
                 ]
             );
+
+            // Record in the log table
+            TransactionLog::create([
+                'transaction_id' => $transaction->id,
+                'from_status' => null,
+                'to_status' => 'escrow_lock',
+                'triggered_by' => $clientId,
+                'note' => $txData->description ?? 'Success transaction'
+            ]);
 
             DB::commit();
             return ['success' => true, 'message' => 'Transaction created successfully and locked'];
@@ -97,7 +107,7 @@ class TransactionService
         try {
             $txDetails = DB::transaction(function () use ($transactionId) {
                 // Find and lock the transaction with lockForUpdate() to prevent race conditions
-                $transaction = Transaction::where('transaction_id', $transactionId)
+                $transaction = Transaction::where('fedapay_transaction_id', $transactionId)
                     ->lockForUpdate()
                     ->first();
 
@@ -126,17 +136,17 @@ class TransactionService
                 $transaction->update(['status' => 'releasing']);
 
                 TransactionLog::create([
-                    'transaction_id' => $transactionId,
-                    'client_id' => $transaction->client_id,
-                    'prestataire_id' => $transaction->prestataire_id,
-                    'description' => 'Initiating payout process',
-                    'status' => 'releasing',
-                    'metadata' => null
+                    'transaction_id' => $transaction->id,
+                    'from_status' => 'escrow_lock',
+                    'to_status' => 'releasing',
+                    'triggered_by' => $transaction->client_id,
+                    'note' => 'Initiating payout process'
                 ]);
 
                 return [
+                    'internal_transaction_id' => $transaction->id,
                     'client_id' => $transaction->client_id,
-                    'amount' => $transaction->amount,
+                    'amount' => $transaction->amount_net,
                     'currency' => $transaction->currency ?? 'XOF',
                     'description' => $transaction->description,
                     'prestataire' => $prestataireInfo
@@ -173,71 +183,66 @@ class TransactionService
                     $payout['data']->sendNow();
 
                     // Update the transaction status to released
-                    Transaction::where('transaction_id', $transactionId)->update(['status' => 'released']);
+                    Transaction::where('fedapay_transaction_id', $transactionId)->update(['status' => 'released']);
 
                     TransactionLog::create([
-                        'transaction_id' => $transactionId,
-                        'client_id' => $txDetails['client_id'],
-                        'prestataire_id' => $txDetails['prestataire']->id,
-                        'description' => 'Payout successfully processed',
-                        'status' => 'released',
-                        'metadata' => null
+                        'transaction_id' => $txDetails['internal_transaction_id'],
+                        'from_status' => 'releasing',
+                        'to_status' => 'released',
+                        'triggered_by' => $txDetails['client_id'],
+                        'note' => 'Payout successfully processed'
                     ]);
 
                     return ['success' => true, 'message' => 'Payout successfully processed'];
                 } catch (Exception $e) {
                     Log::error('Payout execution failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
-                    Transaction::where('transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
-                    
+                    Transaction::where('fedapay_transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
+
                     TransactionLog::create([
-                        'transaction_id' => $transactionId,
-                        'client_id' => $txDetails['client_id'],
-                        'prestataire_id' => $txDetails['prestataire']->id,
-                        'description' => 'Payout execution failed',
-                        'status' => 'escrow_lock',
-                        'metadata' => null
+                        'transaction_id' => $txDetails['internal_transaction_id'],
+                        'from_status' => 'releasing',
+                        'to_status' => 'escrow_lock',
+                        'triggered_by' => $txDetails['client_id'],
+                        'note' => 'Payout execution failed'
                     ]);
-                    
+
                     return ['success' => false, 'error' => 'Une erreur est survenue lors de la finalisation du transfert.'];
                 }
             }
 
-            Transaction::where('transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
-            
-            TransactionLog::create([
-                'transaction_id' => $transactionId,
-                'client_id' => $txDetails['client_id'],
-                'prestataire_id' => $txDetails['prestataire']->id,
-                'description' => 'Payout preparation failed on FedaPay',
-                'status' => 'escrow_lock',
-                'metadata' => null
-            ]);
-            
-            return ['success' => false, 'error' => 'La demande de création du paiement a échouée sur FedaPay.'];
+            Transaction::where('fedapay_transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
 
+            TransactionLog::create([
+                'transaction_id' => $txDetails['internal_transaction_id'],
+                'from_status' => 'releasing',
+                'to_status' => 'escrow_lock',
+                'triggered_by' => $txDetails['client_id'],
+                'note' => 'Payout preparation failed on FedaPay'
+            ]);
+
+            return ['success' => false, 'error' => 'La demande de création du paiement a échouée sur FedaPay.'];
         } catch (Exception $e) {
             Log::error('Release method failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
-            
-            $updated = Transaction::where('transaction_id', $transactionId)
+
+            $updated = Transaction::where('fedapay_transaction_id', $transactionId)
                 ->where('status', 'releasing')
                 ->update(['status' => 'escrow_lock']);
-                
+
             if ($updated) {
                 // Log the rollback
-                $failedTx = Transaction::where('transaction_id', $transactionId)->first();
+                $failedTx = Transaction::where('fedapay_transaction_id', $transactionId)->first();
                 if ($failedTx) {
                     TransactionLog::create([
-                        'transaction_id' => $transactionId,
-                        'client_id' => $failedTx->client_id,
-                        'prestataire_id' => $failedTx->prestataire_id,
-                        'description' => 'Release reverted due to internal error',
-                        'status' => 'escrow_lock',
-                        'metadata' => null
+                        'transaction_id' => $failedTx->id,
+                        'from_status' => 'releasing',
+                        'to_status' => 'escrow_lock',
+                        'triggered_by' => $failedTx->client_id,
+                        'note' => 'Release reverted due to internal error'
                     ]);
                 }
             }
-            
-            return ['success' => false, 'error' => 'Une erreur d\'exécution interne est survenue.'];
+
+            return ['success' => false, 'error' => "Une erreur d'exécution interne est survenue."];
         }
     }
 }
