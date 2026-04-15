@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('prestataire_id')->constrained('users')->onDelete('cascade');
             $table->integer('amount_gross');
-            $table->integer('commission')->default(10);
+            $table->integer('commission');
             $table->integer('amount_net');
             $table->string('currency', 3)->default('XOF');
             $table->string('description')->nullable();
