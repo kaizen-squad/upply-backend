@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return response()->json([
-        "APP NAME" => env("APP_NAME"),
-        "VERSION" => "1.0",
-        "HEALTH" => "OK"
+        'app_name' => config('app.name'),
+        'version' => '1.0',
+        'health' => 'OK',
     ]);
 });

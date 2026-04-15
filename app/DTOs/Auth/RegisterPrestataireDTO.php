@@ -10,10 +10,10 @@ use Illuminate\Http\Request;
             public string $lastname,
             public string $email,
             public string $password,
-            public ? string $job_title = null,
-            public ? string $bio=null,
-            public ? int $daily_rate=null,
-            public ? array $skills=null,
+            public ?string $job_title = null,
+            public ?string $bio=null,
+            public ?int $daily_rate=null,
+            public ?array $skills=null,
         ){}
 
         public static function FromRequest(Request $req){
