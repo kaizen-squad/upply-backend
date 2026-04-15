@@ -69,7 +69,7 @@ app/
 `id` (UUID) · `task_id` (FK) · `prestataire_id` (FK) · `content` text · `file_path` (nullable) · `submitted_at`
 
 ### transactions
-`id` (UUID) · `task_id` (FK) · `client_id` (FK) · `prestataire_id` (FK) · `fedapay_transaction_id` · `amount_gross` integer · `commission` integer · `amount_net` integer · `status` enum(`EN_SEQUESTRE`, `EN_LIBERATION`, `LIBERE`) · `liberated_at` (nullable) · timestamps
+`id` (UUID) · `task_id` (FK) · `client_id` (FK) · `prestataire_id` (FK) · `fedapay_transaction_id` · `amount_gross` integer · `commission` integer · `amount_net` integer · `status` enum(`EN_SEQUESTRE`, `EN_LIBERATION`, `LIBERE`) · `liberated_at` (nullable tant que le statut n'est pas `LIBERE`, requis à `LIBERE`) · timestamps
 
 ### transaction_logs
 `id` (UUID) · `transaction_id` (FK) · `from_status` · `to_status` · `triggered_by` (FK users) · `note` (nullable) · `created_at`
@@ -100,7 +100,7 @@ EN_LIBERATION → LIBERE (payout confirmé)
 
 Le statut d'une transaction ne doit jamais changer sans vérification préalable côté serveur des conditions requises. Signale comme erreur bloquante tout changement de statut sans validation des conditions.
 Le champ `liberated_at` doit être renseigné uniquement au passage vers `LIBERE` (jamais lors du passage en `EN_LIBERATION`).
-Tout statut `EN_LIBERATION` bloqué doit être traité par un job de réconciliation (ex: absence de confirmation/callback FedaPay après un délai explicite défini en configuration serveur) pour finaliser l'état (`LIBERE`) ou relancer une vérification côté fournisseur de paiement.
+Tout statut `EN_LIBERATION` bloqué doit être traité par un job de réconciliation (ex: absence de confirmation/callback FedaPay après `FEDAPAY_RECONCILIATION_TIMEOUT_MINUTES`, défini dans `.env` puis mappé dans `config/fedapay.php`) pour finaliser l'état (`LIBERE`) ou relancer une vérification côté fournisseur de paiement.
 
 ---
 
