@@ -11,8 +11,6 @@ else
     echo "env file exists"
 fi
 
-php artisan install:api
-
 php artisan migrate
 
 php artisan key:generate
@@ -23,6 +21,7 @@ php artisan config:clear
 
 php artisan route:clear
 
-php artisan serve --port=$PORT --host=$HOST --env=.env
+# Ajuster les droits pour l'utilisateur unit
+chown -R unit:unit storage bootstrap/cache vendor
 
-exec docker-php-entrypoint "$@"
+php artisan serve --port=$PORT --host=0.0.0.0 --env=local
