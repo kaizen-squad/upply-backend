@@ -21,6 +21,7 @@ else
 fi
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 echo "Waiting for database ($DB_HOST:$DB_PORT)..."
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME"; do
     echo "Database is unavailable - sleeping"
@@ -40,6 +41,8 @@ exec frankenphp run --config /app/Docker/Caddyfile
 =======
 php artisan install:api
 
+=======
+>>>>>>> ab425dd (fix- Review of pull request #33 taking in account)
 php artisan migrate
 
 php artisan key:generate
@@ -50,7 +53,12 @@ php artisan config:clear
 
 php artisan route:clear
 
-php artisan serve --port=$PORT --host=$HOST --env=.env
+# Ajuster les droits pour l'utilisateur unit
+chown -R unit:unit storage bootstrap/cache vendor
 
+<<<<<<< HEAD
 exec docker-php-entrypoint "$@"
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
+=======
+php artisan serve --port=$PORT --host=0.0.0.0 --env=local
+>>>>>>> ab425dd (fix- Review of pull request #33 taking in account)
