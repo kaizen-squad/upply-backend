@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignUuid('transaction_id')->constrained('transactions')->onDelete('cascade');
             $table->string('from_status')->nullable();
             $table->string('to_status');
-            $table->foreignUuid('triggered_by')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('triggered_by')->constrained('users')->nullOnDelete();
             $table->text('note')->nullable();
             $table->timestamps();
         });
