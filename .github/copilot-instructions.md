@@ -111,11 +111,12 @@ Toute autre transition est invalide. Signale comme erreur bloquante toute implé
 ```
 EN_SEQUESTRE → EN_LIBERATION (début du payout, avant confirmation finale)
 EN_LIBERATION → LIBERE (payout confirmé)
+EN_LIBERATION → EN_SEQUESTRE (échec payout confirmé par réconciliation)
 ```
 
 Le statut d'une transaction ne doit jamais changer sans vérification préalable côté serveur des conditions requises. Signale comme erreur bloquante tout changement de statut sans validation des conditions.
 Le champ `liberated_at` doit être renseigné uniquement au passage vers `LIBERE` (jamais lors du passage en `EN_LIBERATION`).
-Tout statut `EN_LIBERATION` bloqué doit être traité par un job de réconciliation : vérifier les transactions restées `EN_LIBERATION` au-delà de `FEDAPAY_RECONCILIATION_TIMEOUT_MINUTES` minutes (valeur définie dans `.env`, mappée dans `config/fedapay.php`), puis soit confirmer le payout (transition vers `LIBERE`), soit marquer l'échec et revenir à `EN_SEQUESTRE` selon le résultat de vérification côté fournisseur de paiement.
+Le job `ProcessPayoutReconciliation` doit traiter tout statut `EN_LIBERATION` bloqué : vérifier les transactions restées `EN_LIBERATION` au-delà de `FEDAPAY_RECONCILIATION_TIMEOUT_MINUTES` minutes (valeur définie dans `.env`, mappée dans `config/fedapay.php`), puis soit confirmer le payout (transition vers `LIBERE`), soit marquer l'échec et revenir à `EN_SEQUESTRE`.
 
 ---
 
