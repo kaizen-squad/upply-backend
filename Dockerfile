@@ -1,6 +1,7 @@
 FROM dunglas/frankenphp:1-php8.4-alpine
 # Installation des dépendances système et extensions PHP
-RUN install-php-extensions \
+RUN apk add --no-cache postgresql-client redis curl && \
+    install-php-extensions \
     pdo_pgsql \
     redis \
     bcmath \

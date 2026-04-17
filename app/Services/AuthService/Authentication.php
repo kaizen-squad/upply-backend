@@ -12,7 +12,7 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
 
     class Authentication{
 
-        public function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
+        public static function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
 
             $user = User::create([
                 "email" => $DTO->email,

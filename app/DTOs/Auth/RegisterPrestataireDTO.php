@@ -2,7 +2,7 @@
 
 namespace App\DTOs\Auth;
 
-use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
 
     readonly class RegisterPrestataireDTO{
         public function __construct(
@@ -16,17 +16,17 @@ use Illuminate\Http\Request;
             public ?array $skills=null,
         ){}
 
-        public static function FromRequest(Request $req){
+        public static function FromRequest(Validator $validate){
+            $data = $validate->validated();
             return new self(
-                firstname : $req->validated('firstname'),
-                lastname : $req->validated('lastname'),
-                email : $req->validated('email'),
-                password: $req->validated('password'),
-                job_title: $req->validated('job_title'),
-                bio: $req->validated('bio'),
-                daily_rate : $req->validated('daily_rate'),
-                skills : $req->validates('skills',[])
-
+                firstname : $data['firstname'],
+                lastname : $data['lastname'],
+                email : $data['email'],
+                password: $data['password'],
+                job_title: $data['job_title'],
+                bio: $data['bio'],
+                daily_rate : $data['daily_rate'],
+                skills : $data['skills']
             );
         }
     }
