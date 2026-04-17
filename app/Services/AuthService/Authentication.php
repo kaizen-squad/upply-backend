@@ -23,6 +23,7 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
     class Authentication{
 
         public static function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
+<<<<<<< HEAD
 =======
 use RegisterPrestataireDTO;
 =======
@@ -33,6 +34,8 @@ use App\DTOs\Auth\RegisterPrestataireDTO;
 
         public function registerUser(RegisterPrestataireDTO $DTO): JsonResponse{
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
 
             $user = User::create([
                 "email" => $DTO->email,

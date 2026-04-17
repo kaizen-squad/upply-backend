@@ -6,6 +6,7 @@ fi
 
 if [ ! -f ".env" ]; then
 <<<<<<< HEAD
+<<<<<<< HEAD
     echo "Creating env file for $APP_ENV"
     cp .env.example .env
     # Écrire APP_KEY dans .env si fournie en env var
@@ -16,18 +17,30 @@ if [ ! -f ".env" ]; then
     echo "Creating env file for en $APP_ENV"
     cp .env.example .env
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
+=======
+    echo "Creating env file for $APP_ENV"
+    cp .env.example .env
+    # Écrire APP_KEY dans .env si fournie en env var
+    if [ -n "$APP_KEY" ]; then
+        sed -i "s|APP_KEY=.*|APP_KEY=$APP_KEY|" .env
+    fi
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
 else
     echo "env file exists"
 fi
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
 echo "Waiting for database ($DB_HOST:$DB_PORT)..."
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME"; do
     echo "Database is unavailable - sleeping"
     sleep 2
 done
 echo "Database is up!"
+<<<<<<< HEAD
 
 php artisan migrate --force
 php artisan cache:clear
@@ -51,16 +64,17 @@ if ! grep -Eq '^APP_KEY=.+$' .env; then
 else
     echo "APP_KEY déjà définie, aucune régénération"
 fi
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
 
+php artisan migrate --force
 php artisan cache:clear
-
 php artisan config:clear
-
 php artisan route:clear
 
-# Ajuster les droits pour l'utilisateur unit
 chown -R unit:unit storage bootstrap/cache vendor
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 exec docker-php-entrypoint "$@"
@@ -71,3 +85,7 @@ php artisan serve --port=$PORT --host=0.0.0.0 --env=local
 =======
 php artisan serve --port=$PORT --host=0.0.0.0 --env=$APP_ENV
 >>>>>>> fdddfe8 (fix- Dockerfile key generation)
+=======
+# ✅ Utiliser FrankenPHP, pas artisan serve
+exec frankenphp run --config /app/Docker/Caddyfile
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)

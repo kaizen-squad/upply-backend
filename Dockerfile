@@ -1,11 +1,16 @@
 FROM dunglas/frankenphp:1-php8.4-alpine
 # Installation des dépendances système et extensions PHP
 <<<<<<< HEAD
+<<<<<<< HEAD
 RUN apk add --no-cache postgresql-client redis curl && \
     install-php-extensions \
 =======
 RUN install-php-extensions \
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
+=======
+RUN apk add --no-cache postgresql-client redis curl && \
+    install-php-extensions \
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
     pdo_pgsql \
     redis \
     bcmath \

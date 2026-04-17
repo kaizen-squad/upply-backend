@@ -15,6 +15,9 @@ services:
     environment:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
       SERVER_NAME: "http://:8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
@@ -74,8 +77,17 @@ services:
 =======
 >>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
     depends_on:
-      - database
-      - redis
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
   # Postgres database setup
@@ -90,6 +102,9 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -97,8 +112,11 @@ services:
       retries: 5
       start_period: 30s
 
+<<<<<<< HEAD
 =======
 >>>>>>> 4225864 (feat- Database service & Redis service setup)
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -119,6 +137,7 @@ services:
       timeout: 5s
       retries: 5
 
+<<<<<<< HEAD
   
 
 =======
@@ -135,6 +154,8 @@ services:
     ports:
       - 6379:6379
 
+=======
+>>>>>>> c506592 (feat- security check & caddyfile config for dockerization)
   
 
 >>>>>>> 3e1eb8b (feat- Basis backend dockerization)
