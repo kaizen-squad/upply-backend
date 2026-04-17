@@ -138,6 +138,11 @@ class TransactionService
                     return ['error' => 'Transaction is not active in escrow'];
                 }
 
+                // Vérifier la sécurité : la transaction appartient-elle au client ?
+                if ($transaction->client_id !== Auth::id()) {
+                    return ['error' => 'Payout Unauthorized'];
+                }
+
                 // Retrieve prestataire information
                 $prestataireInfo = User::find($transaction->prestataire_id);
 
