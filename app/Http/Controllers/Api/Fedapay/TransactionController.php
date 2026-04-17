@@ -39,4 +39,8 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+
+    public function makePaout(){
+        
+    }
 }
