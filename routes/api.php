@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthenticationController;
+use App\Http\Controllers\Api\Fedapay\TransactionController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,3 +25,5 @@ Route::get('/health', function (Request $request) {
 });
 
 Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware('authentify');
+
+Route::post('/tasks/{id}/payment/verify', [TransactionController::class, 'verifyPayment'])->middleware('authentify');
