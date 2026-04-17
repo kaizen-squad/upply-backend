@@ -1,0 +1,9 @@
+.git
+.gitignore
+.env*
+vendor/
+node_modules/
+storage/logs/*
+tests/
+README.md
+.dockerignore

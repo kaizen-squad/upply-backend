@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
 
     environment:
-      SERVER_NAME: ":8000"
+      SERVER_NAME: "http://:8000"
       APP_KEY: ${APP_KEY}
       APP_ENV: ${APP_ENV}
       DB_CONNECTION: pgsql
@@ -26,8 +26,17 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - database
-      - redis
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Postgres database setup
   database:
@@ -40,6 +49,13 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -50,6 +66,12 @@ services:
     command: redis-server --appendonly yes
     ports:
       - 6379:6379
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   
 
