@@ -36,7 +36,7 @@ class TaskService{
         return new TaskResource($createdTask);
     }
 
-    public function update(User $client, Task $targetTask, TaskUpdateDTO $data): bool
+    public function update(Task $targetTask, TaskUpdateDTO $data): bool
     {
         // Check the ability of the user to update this task.
         Gate::authorize('update', $targetTask);
