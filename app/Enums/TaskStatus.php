@@ -13,7 +13,7 @@ enum TaskStatus: string
     {
         return match($this){
             self::VALIDATED => true,
-            self::OPENED, self::PENDING => false
+            self::OPENED, self::PENDING, self::DELIVERED => false
         };
     }
 }
