@@ -11,6 +11,7 @@ class Application extends Model
     protected $fillable = [
         'task_id',
         'prestataire_id',
+        'contract_id',
 
         'message',
         'status'

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid("id")->primary();
             $table->foreignUuid("task_id")->constrained()->cascadeOnDelete();
             $table->foreignUuid("prestataire_id")->constrained("users")->cascadeOnDelete();
+            $table->foreignUuid('contract_id')->nullable()->constrained()->cascadeOnDelete();
 
             $table->text("message");
             $table->enum("status", ["EN_ATTENTE", "ACCEPTEE", "REJETEE"]);
