@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TaskStatus;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,6 +24,21 @@ class TaskFactory extends Factory
             "description" => fake()->paragraph(),
             "budget" => fake()->numberBetween(10000, 100000),
             "deadline" => fake()->dateTimeBetween('now', '+3 months'),
+            "status" => TaskStatus::OPENED
         ];
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => TaskStatus::PENDING
+        ]);
+    }
+
+    public function validated(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => TaskStatus::DELIVERED
+        ]);
     }
 }
