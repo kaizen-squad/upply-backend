@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\Task;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Enums\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class TaskStoreRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class TaskStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +24,13 @@ class TaskStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "title" => ['required', 'string'],
+            "description" => ['required', 'string'],
+            "budget" => ['required', 'numeric'],
+            "deadline" => ['required', 'date_format:Y-m-d', 'after:today'],
+            "status" => ['required', new Enum(TaskStatus::class)],
+
+            "client_id" => ['required', 'exists:users,id']
         ];
     }
 }
