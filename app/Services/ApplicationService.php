@@ -55,6 +55,6 @@ class ApplicationService{
     }
 
     public function accept(Application $application){
-
+        
     }
 }
