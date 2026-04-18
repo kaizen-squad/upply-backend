@@ -33,4 +33,8 @@ class ApplicationService{
 
         return new ApplicationResource($newApplication->load('prestataire'));
     }
+
+    public function listForTask(){
+
+    }
 }
