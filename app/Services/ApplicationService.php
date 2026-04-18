@@ -8,8 +8,10 @@ use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
 use App\Http\Resources\ApplicationResource;
 use App\Models\Application;
+use App\Models\Contract;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class ApplicationService{
@@ -21,7 +23,7 @@ class ApplicationService{
         Gate::authorize('create', [Application::class, $task]);
         
         // Check if the task is opened.
-        if($task->status !== TaskStatus::OPENED) throw new DomainException("Vous ne pouvez pas souscrire à cette tâche.");
+        if($task->status !== TaskStatus::OPENED) throw new DomainException("You can not apply to this task.");
 
         $newApplication = Application::create([
             'message' => $data->message,
@@ -39,7 +41,7 @@ class ApplicationService{
 
         Gate::authorize('listForTask', [Application::class, $task]);
 
-        if($task->status !== TaskStatus::OPENED) throw new DomainException("Cette tâche n'est plus ouverte.");
+        if($task->status !== TaskStatus::OPENED) throw new DomainException("This task is not opened anymore.");
 
         $applications = Application::where('task_id', $taskId)->with('prestataire')->get();
     
@@ -55,6 +57,38 @@ class ApplicationService{
     }
 
     public function accept(Application $application){
+        return DB::transaction(function() use ($application){
+            $task = $application->task()->lockForUpdate();
+
+            Gate::authorize('accept', $task);
+
+            if($application->status !== ApplicationStatus::PENDING) throw new DomainException("This application can not be accepted.");
         
+            if($task->status !== TaskStatus::OPENED) throw new DomainException("The current task is already in pending");
+        
+            // The task move switch to pending
+            $task->update([
+                'status' => TaskStatus::PENDING
+            ]);
+
+            $newContract = Contract::create([
+                'application_id' => $application->id
+            ]);
+
+            // The application switch to accepted
+            $application->update([
+                'status' => ApplicationStatus::ACCEPTED,
+                'contract_id' => $newContract
+            ]);
+
+            // We reject all others application for the specific task.
+            $task->applications()
+                ->where('id', "!=", $application->id)
+                ->update([
+                    'status' => ApplicationStatus::REJECTED
+                ]);
+
+            
+        });
     }
 }
