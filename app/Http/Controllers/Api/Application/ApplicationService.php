@@ -2,8 +2,24 @@
 
 namespace App\Http\Controllers\Api\Application;
 
+use App\Enums\TaskStatus;
+use App\Exceptions\DomainException;
+use App\Models\Application;
+use App\Models\Task;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+
 class ApplicationService{
-    public function apply(){
+    public function apply(User $prestataire, $taskId){
+        // Check first if the task exist.
+        $task = Task::FindOrFail($taskId);
+
+        // Check if the task is opened.
+        if($task->status !== TaskStatus::OPENED) throw new DomainException("Vous ne pouvez pas souscrire à cette tâche.");
+
+        // Check if the user has the ability to perform this action.
+        Gate::authorize('create', [Application::class, $task]);
+
         
     }
 }
