@@ -51,5 +51,6 @@ class ApplicationService{
 
         $applications = Application::where('prestataire_id', $prestataire->id)->with('task:id,title,descprition');
     
+        return ApplicationResource::collection($applications);
     }
 }
