@@ -38,5 +38,13 @@ class ApplicationController extends Controller
 
     public function listMine(Request $request){
         $user = $request->user();
+
+        $response = $this->service->listMine($user);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "List of applications for a prestataire"
+        ]);
     }
 }

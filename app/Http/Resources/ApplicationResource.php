@@ -20,6 +20,7 @@ class ApplicationResource extends JsonResource
 
             'prestataire_id' => $this->prestataire_id,
             'task_id' => $this->task_id,
+            'created_at' => $this->created_at,
 
             'prestataire' => new UserResource($this->whenLoaded('prestataire')),
             'task' => $this->whenLoaded('task', fn() => [
