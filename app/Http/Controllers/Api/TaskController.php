@@ -87,4 +87,8 @@ class TaskController{
             ], 403);
         }
     }
+
+    public function delete(Task $task){
+        //
+    }
 }
