@@ -22,7 +22,7 @@ class ApiException extends Exception
         return [
             'status' => 403,
             'success' => false,
-            'message' => "You don't authorized to perform this action.",
+            'message' => "You are not authorized to perform this action.",
             'data' => null
         ];
     }
