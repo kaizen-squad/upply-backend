@@ -11,6 +11,7 @@ namespace App\Http\Requests\Task;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
 =======
@@ -58,6 +59,11 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 >>>>>>> f12918b (feat(tasks): Defined task storage DTO)
+=======
+use App\Enums\TaskStatus;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+>>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
 
 class TaskStoreRequest extends FormRequest
 {
@@ -75,6 +81,7 @@ class TaskStoreRequest extends FormRequest
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         return true;
 =======
         return false;
@@ -109,6 +116,9 @@ class TaskStoreRequest extends FormRequest
 =======
         return false;
 >>>>>>> f12918b (feat(tasks): Defined task storage DTO)
+=======
+        return true;
+>>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
     }
 
     /**
@@ -128,6 +138,7 @@ class TaskStoreRequest extends FormRequest
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
 =======
@@ -140,6 +151,8 @@ class TaskStoreRequest extends FormRequest
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
 =======
 >>>>>>> e6b67ca (chore: Ended rebase)
+=======
+>>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
             "title" => ['required', 'string'],
             "description" => ['required', 'string'],
             "budget" => ['required', 'numeric'],
@@ -153,6 +166,7 @@ class TaskStoreRequest extends FormRequest
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             //
 >>>>>>> f12918b (feat(tasks): Defined task storage DTO)
@@ -180,6 +194,8 @@ class TaskStoreRequest extends FormRequest
 =======
             //
 >>>>>>> f12918b (feat(tasks): Defined task storage DTO)
+=======
+>>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
         ];
     }
 }
