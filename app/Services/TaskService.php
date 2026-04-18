@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\Task\TaskStoreDTO;
+use App\DTOs\Task\TaskUpdateDTO;
 use App\Enums\UserRole;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
@@ -18,7 +19,6 @@ class TaskService{
     }
 
     public function create(User $client, TaskStoreDTO $newTask){
-
         // Check the ability to create a task.
         Gate::authorize('create', Task::class);
 
@@ -34,5 +34,20 @@ class TaskService{
         ]);
 
         return new TaskResource($createdTask);
+    }
+
+    public function update(User $client, Task $targetTask, TaskUpdateDTO $data): bool
+    {
+        // Check the ability of the user to update this task.
+        Gate::authorize('update', $targetTask);
+
+        $isUpdated = $targetTask->update([
+            'title' => $data->title,
+            'description' => $data->description,
+            'budget' => $data->budget,
+            'deadline' => $data->deadline,
+        ]);
+
+        return $isUpdated;
     }
 }
