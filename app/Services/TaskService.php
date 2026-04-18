@@ -28,7 +28,7 @@ class TaskService{
             'description' => $newTask->description,
             'budget' => $newTask->budget,
             'deadline' => $newTask->deadline,
-            'status' => UserRole::CLIENT,
+            'status' => UserRole::Client,
 
             'client_id' => $client->id
         ]);
@@ -53,5 +53,12 @@ class TaskService{
         ]);
 
         return $isUpdated;
+    }
+
+    public function delete(Task $task): bool
+    {
+        Gate::authorize('delete', $task);
+
+        return $task->delete();
     }
 }
