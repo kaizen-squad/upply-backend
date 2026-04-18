@@ -6,6 +6,7 @@ use App\DTOs\Application\ApplicationStoreDTO;
 use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
+use App\Http\Resources\ApplicationResource;
 use App\Models\Application;
 use App\Models\Task;
 use App\Models\User;
@@ -29,5 +30,7 @@ class ApplicationService{
             'task_id' => $taskId,
             'prestataire_id' => $prestataire->id
         ]);
+
+        return new ApplicationResource($newApplication->load('prestataire'));
     }
 }
