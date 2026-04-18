@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
@@ -30,5 +31,17 @@ class Task extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id', 'id');
+    }
+
+    public function contract(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Contract::class,
+            Application::class,
+            'task_id',
+            'application_id',
+            'id',
+            
+        );
     }
 }

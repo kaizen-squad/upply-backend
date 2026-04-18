@@ -36,4 +36,12 @@ class ApplicationPolicy
     {
         return $user->status === UserRole::PRESTATAIRE;
     }
+
+    public function accept(User $user, Task $task): bool
+    {
+        return (
+            $user->id == $task->client_id
+            && $user->role === UserRole::CLIENT
+        );
+    }
 }
