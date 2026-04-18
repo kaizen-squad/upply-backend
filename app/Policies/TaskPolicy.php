@@ -38,4 +38,13 @@ class TaskPolicy
             && $user->role == UserRole::Client
         );
     }
+
+    public function update(User $user, Task $task): bool
+    {
+        return (
+            $user->id == $task->client_id
+            && $task->status == TaskStatus::OPENED
+            && $user->role == UserRole::CLIENT
+        );
+    }
 }
