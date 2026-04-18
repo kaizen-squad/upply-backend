@@ -19,6 +19,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })
-    ->create();
+        $exceptions->render(function (Throwable $e, Request $request){
+            if($request->is('api/*')){
+                $response = ApiException::render($e);
+
+                return response()->json(
+                    collect($response),
+                    $response['status']
+                );
+            }
+        });
+    })->create();
