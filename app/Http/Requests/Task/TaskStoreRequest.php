@@ -6,6 +6,7 @@ namespace App\Http\Requests\Task;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
 use App\Enums\TaskStatus;
@@ -29,6 +30,10 @@ use App\Enums\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 >>>>>>> e6b67ca (chore: Ended rebase)
+=======
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+>>>>>>> f12918b (feat(tasks): Defined task storage DTO)
 
 class TaskStoreRequest extends FormRequest
 {
@@ -37,6 +42,7 @@ class TaskStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -57,6 +63,9 @@ class TaskStoreRequest extends FormRequest
 =======
         return true;
 >>>>>>> e6b67ca (chore: Ended rebase)
+=======
+        return false;
+>>>>>>> f12918b (feat(tasks): Defined task storage DTO)
     }
 
     /**
@@ -67,6 +76,7 @@ class TaskStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -99,6 +109,9 @@ class TaskStoreRequest extends FormRequest
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
 =======
 >>>>>>> e6b67ca (chore: Ended rebase)
+=======
+            //
+>>>>>>> f12918b (feat(tasks): Defined task storage DTO)
         ];
     }
 }
