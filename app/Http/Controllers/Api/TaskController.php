@@ -97,5 +97,10 @@ class TaskController{
                 "message" => "You don't have the right access to delete this resource."
             ], 403);
         }
+
+        return response()->json([
+            "success" => true,
+            "message" => "Task deleted successfully"
+        ], 204);
     }
 }
