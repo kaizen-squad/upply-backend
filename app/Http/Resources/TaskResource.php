@@ -24,7 +24,10 @@ class TaskResource extends JsonResource
             "created_at" => $this->created_at,
 
             "client_id" => $this->client_id,
-            "client" => new UserResource($this->whenLoaded('client'))
+            "client" => new UserResource($this->whenLoaded('client')),
+            "contract" => $this->whenLoaded('contract', fn() => [
+                "application_id" => $this->contract->application_id
+            ])
         ];
     }
 }

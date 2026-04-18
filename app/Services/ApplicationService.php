@@ -7,6 +7,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
 use App\Http\Resources\ApplicationResource;
+use App\Http\Resources\TaskResource;
 use App\Models\Application;
 use App\Models\Contract;
 use App\Models\Task;
@@ -88,7 +89,7 @@ class ApplicationService{
                     'status' => ApplicationStatus::REJECTED
                 ]);
 
-            
+            return new TaskResource($task->load('contract'));
         });
     }
 }
