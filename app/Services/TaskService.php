@@ -13,10 +13,17 @@ class TaskService{
         return TaskResource::collection($tasks);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     public function create(){
         //
     }
 =======
 >>>>>>> 12b565f (Ended the cherry pick)
+=======
+
+    public function create(){
+        
+    }
+>>>>>>> f12918b (feat(tasks): Defined task storage DTO)
 }
