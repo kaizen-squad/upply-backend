@@ -12,8 +12,11 @@ class TaskService{
 
         return TaskResource::collection($tasks);
     }
+<<<<<<< HEAD
 
     public function create(){
         //
     }
+=======
+>>>>>>> 12b565f (Ended the cherry pick)
 }
