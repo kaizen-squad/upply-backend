@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\TaskStatus;
 use App\Models\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,11 +21,12 @@ class TaskFactory extends Factory
     {
         return [
             "id" => fake()->uuid(),
+            "client_id" => User::factory(),
             "title" => fake()->jobTitle(),
             "description" => fake()->paragraph(),
             "budget" => fake()->numberBetween(10000, 100000),
             "deadline" => fake()->dateTimeBetween('now', '+3 months'),
-            "status" => TaskStatus::OPENED
+            "status" => TaskStatus::OPENED,
         ];
     }
 
