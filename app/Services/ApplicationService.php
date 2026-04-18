@@ -53,4 +53,8 @@ class ApplicationService{
     
         return ApplicationResource::collection($applications);
     }
+
+    public function accept(Application $application){
+
+    }
 }
