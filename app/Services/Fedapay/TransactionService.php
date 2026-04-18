@@ -20,8 +20,12 @@ class TransactionService
     }
 
     // Function to save a transaction in the Transaction and TransactionLog tables
-    public function handleTransaction($transactionId, $prestataireId)
+    public function handleTransaction($transactionId)
     {
+
+        //Get prestataireId with fedapayTransactionId
+        $prestataireId = Transaction::where('fedapay_transaction_id', $transactionId)->first()->prestataire_id;
+
         $verification = $this->fedapayService->verifyCollect($transactionId);
         $clientId = Auth::id();
 
