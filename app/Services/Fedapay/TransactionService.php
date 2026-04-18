@@ -38,6 +38,7 @@ class TransactionService
                     $amountGross = (int) ($txData->amount ?? 0);
                     $commission = intdiv($amountGross * 10, 100);
                     $amountNet = $amountGross - $commission;
+                    $prestataireId = $txData->custom_metadata->prestataire_id;
 
                     $transaction = Transaction::updateOrCreate(
                         ['fedapay_transaction_id' => $txData->id ?? $transactionId],
@@ -78,7 +79,7 @@ class TransactionService
             $previousStatus = $transaction->exists ? $transaction->status : null;
             $transaction->fill([
                 'client_id' => $clientId,
-                'prestataire_id' => $prestataireId,
+                'prestataire_id' => $txData->custom_metadata['prestataire_id'],
                 'amount_gross' => $amountGross,
                 'commission' => $commission,
                 'amount_net' => $amountNet,
