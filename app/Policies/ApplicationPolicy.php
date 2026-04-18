@@ -19,7 +19,7 @@ class ApplicationPolicy
     public function create(User $user, Task $task){
         return (
             $user->id !== $task->client_id
-            && $user->status === UserRole::PRESTATAIRE
+            && $user->role === UserRole::PRESTATAIRE
         );
     }
 }
