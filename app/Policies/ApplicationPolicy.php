@@ -22,4 +22,11 @@ class ApplicationPolicy
             && $user->role === UserRole::PRESTATAIRE
         );
     }
+
+    public function listForTask(User $user, Task $task){
+        return (
+            $user->status === UserRole::CLIENT
+            && $user->id == $task->client_id
+        );
+    }
 }
