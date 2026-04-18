@@ -54,6 +54,22 @@ class TaskController{
         }
     }
 
+    public function show(Task $task){
+        try{
+            $response = $this->service->show($task);
+
+            response()->json([
+                "success" => true,
+                "data" => $response,
+                "message" => "Task fetch successfully"
+            ], 200);
+        }catch(Exception $e){
+            response()->json([
+                "message" => $e->getMessage()
+            ], 403);
+        }
+    }
+
     public function update(Task $task, TaskUpdateRequest $request){
         $taskData = TaskUpdateDTO::fromRequest($request);
 
