@@ -45,4 +45,11 @@ class ApplicationService{
     
         return ApplicationResource::collection($applications);
     }
+
+    public function listMine(User $prestataire){
+        Gate::authorize('listMine', Application::class);
+
+        $applications = Application::where('prestataire_id', $prestataire->id)->with('task:id,title,descprition');
+    
+    }
 }
