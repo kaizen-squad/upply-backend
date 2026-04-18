@@ -54,4 +54,11 @@ class TaskService{
 
         return $isUpdated;
     }
+
+    public function delete(Task $task): bool
+    {
+        Gate::authorize('delete', $task);
+
+        return $task->delete();
+    }
 }
