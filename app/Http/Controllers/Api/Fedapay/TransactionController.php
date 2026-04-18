@@ -31,7 +31,7 @@ class TransactionController extends Controller
                 'message' => 'Paiement non vérifié',
                 'data' => $result['message'] ?? ($result['error'] ?? 'Unknown error')
             ], 400);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Une erreur est survenue lors de la vérification',
@@ -40,7 +40,23 @@ class TransactionController extends Controller
         }
     }
 
-    public function makePaout(){
-        
+    public function makePaout($transactionId): JsonResponse{
+        try{
+            $payout = $this->transactionService->release($transactionId);
+            if ($payout['success']) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Paiement vérifié avec succès',
+                    'data' => $payout['message']
+                ], 200);
+            }
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de la vérification',
+                'data' => $e->getMessage()
+            ], 500);
+        }
     }
 }
+
