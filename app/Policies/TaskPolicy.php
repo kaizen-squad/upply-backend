@@ -30,4 +30,12 @@ class TaskPolicy
             && $user->role == UserRole::CLIENT
         );
     }
+
+    public function delete(User $user, Task $task){
+        return (
+            $user->id == $task->client_id
+            && $task->status == TaskStatus::OPENED
+            && $user->role == UserRole::CLIENT
+        );
+    }
 }
