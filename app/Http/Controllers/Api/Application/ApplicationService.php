@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Application;
 
+use App\DTOs\Application\ApplicationStoreDTO;
+use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
 use App\Models\Application;
@@ -10,7 +12,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class ApplicationService{
-    public function apply(User $prestataire, $taskId){
+    public function apply(User $prestataire, $taskId, ApplicationStoreDTO $data){
         // Check first if the task exist.
         $task = Task::FindOrFail($taskId);
 
@@ -20,6 +22,12 @@ class ApplicationService{
         // Check if the user has the ability to perform this action.
         Gate::authorize('create', [Application::class, $task]);
 
-        
+        $newApplication = Application::create([
+            'message' => $data->message,
+            'status' => ApplicationStatus::PENDING,
+
+            'task_id' => $taskId,
+            'prestataire_id' => $prestataire->id
+        ]);
     }
 }
