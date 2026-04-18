@@ -33,4 +33,8 @@ class User extends Authenticatable
     public function transactions():HasMany{
         return $this->hasMany(Transaction::class);
     }
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'client_id', 'client_id');
+    }
 }
