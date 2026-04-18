@@ -8,7 +8,6 @@ use Carbon\Carbon;
 
 readonly class TaskStoreDTO{
     public function __construct(
-        public string $client_id,
         public string $title,
         public string $description,
         public int $budget,
@@ -21,7 +20,6 @@ readonly class TaskStoreDTO{
         $data = $request->validated();
 
         return new self(
-            client_id: $data['client_id'],
             title: $data['title'],
             description: $data['description'],
             budget: $data['budget'],

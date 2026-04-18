@@ -29,8 +29,6 @@ class TaskStoreRequest extends FormRequest
             "budget" => ['required', 'numeric'],
             "deadline" => ['required', 'date_format:Y-m-d', 'after:today'],
             "status" => ['required', new Enum(TaskStatus::class)],
-
-            "client_id" => ['required', 'exists:users,id']
         ];
     }
 }
