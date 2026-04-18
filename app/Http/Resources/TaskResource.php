@@ -24,6 +24,7 @@ class TaskResource extends JsonResource
             "status" => $this->status,
             "created_at" => $this->created_at,
 
+            "client_id" => $this->client_id,
             "client" => new UseResource($this->whenLoaded('client'))
         ];
     }
