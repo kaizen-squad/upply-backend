@@ -6,6 +6,7 @@ use App\DTOs\Application\ApplicationStoreDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Application\ApplicationListForTaskRequest;
 use App\Http\Requests\Application\ApplicationStoreRequest;
+use App\Models\Application;
 use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
@@ -45,6 +46,16 @@ class ApplicationController extends Controller
             "success" => true,
             "data" => $response,
             "message" => "List of applications for a prestataire"
+        ]);
+    }
+
+    public function accept(Application $application){
+        $response = $this->service->accept($application);
+
+        return response()->json([
+            'success' => true,
+            'data' => $response,
+            'message' => "Application accepted successfully"
         ]);
     }
 }
