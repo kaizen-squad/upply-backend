@@ -15,7 +15,8 @@ class TaskPolicy
         //
     }
 
-    public function create(User $user){
+    public function create(User $user): bool
+    {
         return $user->role == UserRole::CLIENT;
     }
 }
