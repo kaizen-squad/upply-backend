@@ -13,9 +13,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class ApplicationService{
-    public function apply(User $prestataire, $taskId, ApplicationStoreDTO $data){
+    public function apply(User $prestataire, ApplicationStoreDTO $data){
         // Check first if the task exist.
-        $task = Task::FindOrFail($taskId);
+        $task = Task::FindOrFail($data->task_id);
 
         // Check if the task is opened.
         if($task->status !== TaskStatus::OPENED) throw new DomainException("Vous ne pouvez pas souscrire à cette tâche.");
@@ -27,7 +27,7 @@ class ApplicationService{
             'message' => $data->message,
             'status' => ApplicationStatus::PENDING,
 
-            'task_id' => $taskId,
+            'task_id' => $data->task_id,
             'prestataire_id' => $prestataire->id
         ]);
 

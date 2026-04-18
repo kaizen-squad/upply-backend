@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Api\Task;
 
 use App\DTOs\Task\TaskStoreDTO;
 use App\DTOs\Task\TaskUpdateDTO;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\TaskStoreRequest;
 use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Exception;
 
-class TaskController{
+class TaskController extends Controller{
 
     public function __construct(
-        public TaskService $service
+        protected TaskService $service
     ){}
 
     public function index(){
@@ -45,7 +46,7 @@ class TaskController{
                 "success" => true,
                 "data" => $response,
                 "message" => "Task created successfully"
-            ], 200);
+            ], 201);
         }catch(Exception $e){
             return response()->json([
                 "success" => false,
