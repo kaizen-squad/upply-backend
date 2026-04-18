@@ -6,6 +6,7 @@ use App\DTOs\Application\ApplicationStoreDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Application\ApplicationListForTaskRequest;
 use App\Http\Requests\Application\ApplicationStoreRequest;
+use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
 {
@@ -33,5 +34,9 @@ class ApplicationController extends Controller
             "data" => $response,
             "message" => "List of applications for a task"
         ]);
+    }
+
+    public function listMine(Request $request){
+        $user = $request->user();
     }
 }

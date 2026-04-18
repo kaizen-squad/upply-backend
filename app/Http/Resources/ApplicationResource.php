@@ -19,7 +19,14 @@ class ApplicationResource extends JsonResource
             'message' => $this->message,
 
             'prestataire_id' => $this->prestataire_id,
-            'prestataire' => new UserResource($this->whenLoaded('prestataire'))
+            'task_id' => $this->task_id,
+
+            'prestataire' => new UserResource($this->whenLoaded('prestataire')),
+            'task' => $this->whenLoaded('task', fn() => [
+                'id' => $this->task->id,
+                'title' => $this->task->title,
+                'description' => $this->task->description,
+            ])
         ];
     }
 }
