@@ -2,14 +2,9 @@
 
 namespace App\Http\Requests\Task;
 
-<<<<<<< HEAD
 use App\Enums\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
-=======
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
->>>>>>> cacc6e1 (feat(tasks): Defined task storage DTO)
 
 class TaskStoreRequest extends FormRequest
 {
@@ -18,11 +13,7 @@ class TaskStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-<<<<<<< HEAD
         return true;
-=======
-        return false;
->>>>>>> cacc6e1 (feat(tasks): Defined task storage DTO)
     }
 
     /**
@@ -33,7 +24,6 @@ class TaskStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-<<<<<<< HEAD
             "title" => ['required', 'string'],
             "description" => ['required', 'string'],
             "budget" => ['required', 'numeric'],
@@ -41,9 +31,6 @@ class TaskStoreRequest extends FormRequest
             "status" => ['required', new Enum(TaskStatus::class)],
 
             "client_id" => ['required', 'exists:users,id']
-=======
-            //
->>>>>>> cacc6e1 (feat(tasks): Defined task storage DTO)
         ];
     }
 }
