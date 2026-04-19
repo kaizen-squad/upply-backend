@@ -9,6 +9,7 @@ namespace App\Http\Requests\Task;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
 =======
@@ -47,6 +48,11 @@ use Illuminate\Validation\Rules\Enum;
 =======
 >>>>>>> cacc6e1 (feat(tasks): Defined task storage DTO)
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
+=======
+use App\Enums\TaskStatus;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+>>>>>>> e6b67ca (chore: Ended rebase)
 
 class TaskStoreRequest extends FormRequest
 {
@@ -62,6 +68,7 @@ class TaskStoreRequest extends FormRequest
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         return true;
 =======
         return false;
@@ -90,6 +97,9 @@ class TaskStoreRequest extends FormRequest
         return false;
 >>>>>>> cacc6e1 (feat(tasks): Defined task storage DTO)
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
+=======
+        return true;
+>>>>>>> e6b67ca (chore: Ended rebase)
     }
 
     /**
@@ -107,6 +117,7 @@ class TaskStoreRequest extends FormRequest
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
 =======
@@ -117,6 +128,8 @@ class TaskStoreRequest extends FormRequest
 >>>>>>> 59e257c (feat(tasks): Set up the validation request file for the task storage)
 =======
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
+=======
+>>>>>>> e6b67ca (chore: Ended rebase)
             "title" => ['required', 'string'],
             "description" => ['required', 'string'],
             "budget" => ['required', 'numeric'],
@@ -129,6 +142,7 @@ class TaskStoreRequest extends FormRequest
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             //
 >>>>>>> f12918b (feat(tasks): Defined task storage DTO)
@@ -151,6 +165,8 @@ class TaskStoreRequest extends FormRequest
             //
 >>>>>>> cacc6e1 (feat(tasks): Defined task storage DTO)
 >>>>>>> 470409b (feat(tasks): Defined task storage DTO)
+=======
+>>>>>>> e6b67ca (chore: Ended rebase)
         ];
     }
 }
