@@ -12,12 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-<<<<<<< HEAD
             $table->uuid("id")->primary();
             $table->string('name');
-=======
-            $table->id();
->>>>>>> 45d8cb3 (fix- Review of pull request #33 taking in account)
             $table->string('email')->unique();
             $table->string('password');
             $table->enum("role", ['client', 'prestataire'])->default('client');
