@@ -13,40 +13,7 @@ return [
     |
     */
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
-=======
->>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
-    'default' => env('QUEUE_CONNECTION', 'redis'),
-=======
     'default' => env('QUEUE_CONNECTION', 'database'),
->>>>>>> 17ff392 (feat(architecture): Set up the backend code base structure)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    'default' => env('QUEUE_CONNECTION', 'redis'),
->>>>>>> 863066b (fix(architecture): Integrated the domain-based structure)
-=======
->>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
-=======
-    'default' => env('QUEUE_CONNECTION', 'redis'),
->>>>>>> 0a96e76 (fix(architecture): Integrated the domain-based structure)
-=======
-    'default' => env('QUEUE_CONNECTION', 'redis'),
->>>>>>> 863066b (fix(architecture): Integrated the domain-based structure)
-=======
->>>>>>> 6f54ca6 (feat(architecture): Set up the backend code base structure)
-=======
-    'default' => env('QUEUE_CONNECTION', 'redis'),
->>>>>>> 0a96e76 (fix(architecture): Integrated the domain-based structure)
-
     /*
     |--------------------------------------------------------------------------
     | Queue Connections

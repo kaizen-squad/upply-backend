@@ -12,29 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contracts', function (Blueprint $table) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             $table->uuid("id")->primary();
             $table->foreignUuid("application_id")->unique()->constrained()->cascadeOnDelete();
-<<<<<<< HEAD
-=======
-            $table->uuid();
-=======
-            $table->uuid()->primary();
-<<<<<<< HEAD
->>>>>>> fa47f73 (fix(reviews): Added the primary constrained on the uuid)
-            $table->foreignId("application_id")->constrained()->cascadeOnDelete();
->>>>>>> 9733822 (feat(contracts): Added contracts migration for application table)
-=======
-=======
-            $table->uuid("id")->primary();
->>>>>>> f5b2ff4 (fix(migrations): Added id column name - Removed min constraint on review rating column)
-            $table->foreignUuid("application_id")->constrained()->cascadeOnDelete();
->>>>>>> d06817f (fix(migrations): Changed id foreign key to uuid foreign key)
-=======
->>>>>>> 531abd8 (fix(reviews): Added unique constraint to application_id column)
-
             $table->timestamps();
         });
     }
