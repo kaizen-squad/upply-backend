@@ -93,7 +93,19 @@ class ApplicationService{
         });
     }
 
-    public function reject(){
-        
+    public function reject(Application $application){
+        $targetTask = $application->task;
+
+        Gate::authorize('reject', $targetTask);
+
+        if($application->status !== ApplicationStatus::PENDING) throw new DomainException("This application can not be rejected.");
+
+        if($targetTask->status !== TaskStatus::OPENED) throw new DomainException("This can is not opened anymore.");
+
+        $isRejcted = $application->update([
+            'status' => ApplicationStatus::REJECTED
+        ]);
+
+        return $isRejcted;
     }
 }
