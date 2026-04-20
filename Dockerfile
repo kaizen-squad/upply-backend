@@ -18,7 +18,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 # Copie des fichiers du projet
-COPY . .
+COPY --chown=unit:unit . .
 
 # Permissions sur l'entrypoint
 RUN chmod +x Docker/entrypoint.sh
