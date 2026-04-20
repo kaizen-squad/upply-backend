@@ -34,7 +34,7 @@ class ApplicationController extends Controller
             "success" => true,
             "data" => $response,
             "message" => "List of applications for a task"
-        ]);
+        ], 200);
     }
 
     public function listMine(Request $request){
@@ -46,7 +46,7 @@ class ApplicationController extends Controller
             "success" => true,
             "data" => $response,
             "message" => "List of applications for a prestataire"
-        ]);
+        ], 200);
     }
 
     public function accept(Application $application){
@@ -56,6 +56,15 @@ class ApplicationController extends Controller
             'success' => true,
             'data' => $response,
             'message' => "Application accepted successfully"
-        ]);
+        ], 200);
+    }
+
+    public function reject(Application $application){
+        $response = $this->service->reject($application);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Application rejected successfully"
+        ], 204);
     }
 }
