@@ -92,4 +92,8 @@ class ApplicationService{
             return new TaskResource($task->load('contract'));
         });
     }
+
+    public function reject(){
+        
+    }
 }

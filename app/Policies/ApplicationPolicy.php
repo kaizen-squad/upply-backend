@@ -44,4 +44,12 @@ class ApplicationPolicy
             && $user->role === UserRole::CLIENT
         );
     }
+
+    public function reject(User $user, Task $task): bool
+    {
+        return (
+            $user->id = $task->client_id
+            && $user->role = UserRole::CLIENT
+        );
+    }
 }
