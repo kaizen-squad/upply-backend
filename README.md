@@ -43,8 +43,9 @@ The project is dockerized using **FrankenPHP**. Most of the setup (Composer, Key
 
 
 - **3. Build and Start the Containers:**
-    docker compose up -d
-    *Note: If you modify the `Dockerfile` later, use `docker compose up --build -d` to apply changes.*
+    `docker compose up -d`
+    - *Note: If you modify the `Dockerfile` later, use `docker compose up --build -d` to apply changes.*
+    - *To ensure everything is going fine check endpoint* `/api/health` *on base url* `localhost:8000`
 
 
 - **4. Finalize Setup (Assets & Seeding):**
