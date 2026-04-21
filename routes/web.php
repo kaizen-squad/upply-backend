@@ -1,3 +1,3 @@
 <?php
 
-Require __DIR__ . '/api.php';
+Require __DIR__ . '/api.php' ;
