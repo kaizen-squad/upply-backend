@@ -62,7 +62,7 @@ class ApplicationController extends Controller
     public function reject(Application $application){
         $response = $this->service->reject($application);
 
-        return response()->json([
+        if($response) return response()->json([
             'success' => true,
             'message' => "Application rejected successfully"
         ], 204);
