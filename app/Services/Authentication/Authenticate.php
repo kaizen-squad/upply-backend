@@ -7,8 +7,8 @@
     use App\Enums\UserRole;
     use App\Http\Resources\UserResource;
     use App\Models\User;
-use Exception;
-use Illuminate\Http\Request;
+    use Exception;
+    use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Hash;
     use Illuminate\Support\Facades\Validator;
     use Illuminate\Validation\Rule;
@@ -105,7 +105,7 @@ use Illuminate\Http\Request;
 
         public static function refreshAccessToken(Request $request){
 
-            $tokenString = $request->tokenString ?? $request->bearerToken();
+            $tokenString = $request->tokenString;
 
             if(!$tokenString){
                 return [
