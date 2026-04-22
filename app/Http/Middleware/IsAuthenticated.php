@@ -23,7 +23,11 @@ class IsAuthenticated
         if(!$tokenString){
             return response()->json([
                 'success' => false,
+<<<<<<< HEAD
                 'message' => 'Unauthorized bro',
+=======
+                'message' => 'Unauthorized',
+>>>>>>> c723c54 (feat- register User)
                 'code' => 401
             ],401);
         }
