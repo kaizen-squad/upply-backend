@@ -2,6 +2,7 @@
 
 if [ ! -f "vendor/autoload.php" ]; then
     composer install --no-progress --no-interaction
+    
 fi
 
 if [ ! -f ".env" ]; then
@@ -31,6 +32,7 @@ else
     echo "APP_KEY déjà définie, aucune régénération"
 fi
 
+composer require jenssegers/agent
 php artisan migrate --force
 php artisan cache:clear
 php artisan config:clear

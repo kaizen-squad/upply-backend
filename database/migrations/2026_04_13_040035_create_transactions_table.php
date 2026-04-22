@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('task_id')->constrained('tasks')->onDelete('cascade');
             $table->string('fedapay_transaction_id')->unique()->nullable();
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('prestataire_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('client_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('prestataire_id')->constrained('users')->onDelete('cascade');
             $table->integer('amount_gross');
             $table->integer('commission');
             $table->integer('amount_net');
