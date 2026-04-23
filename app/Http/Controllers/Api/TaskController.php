@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTOs\Task\TaskStoreDTO;
 use App\Services\TaskService;
 use Exception;
 
