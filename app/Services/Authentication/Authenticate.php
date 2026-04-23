@@ -105,7 +105,7 @@
 
         public static function refreshAccessToken(Request $request){
 
-            $tokenString = $request->tokenString;
+            $tokenString = $request->tokenString ?? $request->bearerToken();
 
             if(!$tokenString){
                 return [
