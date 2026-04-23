@@ -18,14 +18,13 @@ class TaskController{
                 "success" => true,
                 "data" => $response,
                 "message" => "All Tasks"
-            ]);
+            ], 200);
 
         }catch(Exception $e){
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage()
-            ]);
+            ], 400);
         }
-
     }
 }
