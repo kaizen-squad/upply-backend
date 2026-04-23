@@ -40,7 +40,7 @@ class TransactionService
 
             if ($taskId) {
                 $task = Task::with(['applications' => function ($query) {
-                    $query->where('status', 'ACCEPTEE');
+                    $query->where('status', 'OUVERT');
                 }])->find($taskId);
 
                 if ($task && $task->applications->isNotEmpty()) {

@@ -13,7 +13,6 @@ class Task extends Model
 
     protected $fillable = [
         'client_id',
-
         'title',
         'description',
         'budget',
@@ -28,5 +27,10 @@ class Task extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id', 'id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'task_id', 'id');
     }
 }
