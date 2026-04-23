@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTOs\Task\TaskStoreDTO;
+use App\DTOs\Task\TaskUpdateDTO;
 use App\Http\Requests\Task\TaskStoreRequest;
+use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Exception;
@@ -63,6 +65,24 @@ class TaskController{
             ], 200);
         }catch(Exception $e){
             response()->json([
+                "message" => $e->getMessage()
+            ], 403);
+        }
+    }
+
+    public function update(Task $task, TaskUpdateRequest $request){
+        $taskData = TaskUpdateDTO::fromRequest($request);
+
+        try{
+            $response = $this->service->update($task, $taskData);
+
+            response()->json([
+                "success" => true,
+                "message" => "Task updated successfully"
+            ], 200);
+        }catch(Exception $e){
+            return response()->json([
+                "success" => false,
                 "message" => $e->getMessage()
             ], 403);
         }
