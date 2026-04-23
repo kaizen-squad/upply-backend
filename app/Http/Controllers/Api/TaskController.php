@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTOs\Task\TaskStoreDTO;
+use App\Http\Requests\Task\TaskStoreRequest;
 use App\Services\TaskService;
 use Exception;
 
