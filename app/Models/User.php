@@ -17,11 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-<<<<<<< HEAD
     use HasUuids, HasFactory, Notifiable, HasApiTokens, AuthToken, SoftDeletes;
-=======
-    use HasUuids, HasFactory, Notifiable, HasApiTokens, AuthToken;
->>>>>>> 3ad8f67 (feat- Refresh & logout Authentication)
 
     public $incrementing = false;
     protected $keyType = 'string';
