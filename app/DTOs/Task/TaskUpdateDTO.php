@@ -2,7 +2,7 @@
 
 namespace App\DTOs\Task;
 
-use App\Http\Requests\TaskUpdateRequest;
+use App\Http\Requests\Task\TaskUpdateRequest;
 use Carbon\Carbon;
 
 readonly class TaskUpdateDTO{

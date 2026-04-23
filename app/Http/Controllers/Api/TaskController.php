@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTOs\Task\TaskStoreDTO;
 use App\DTOs\Task\TaskUpdateDTO;
 use App\Http\Requests\Task\TaskStoreRequest;
-use App\Http\Requests\TaskUpdateRequest;
+use App\Http\Requests\Task\TaskUpdateRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Exception;
