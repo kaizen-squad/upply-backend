@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\User;
 
 class DeliverablePolicy
@@ -14,7 +15,8 @@ class DeliverablePolicy
         //
     }
 
-    public function submit(){
-        
+    public function submit(User $user): bool
+    {
+        return $user->status === UserRole::Prestataire;
     }
 }
