@@ -87,4 +87,20 @@ class TaskController{
             ], 403);
         }
     }
+
+    public function delete(Task $task){
+        $response = $this->service->delete($task);
+
+        if(!$response){
+            return response()->json([
+                "success" => false,
+                "message" => "You don't have the right access to delete this resource."
+            ], 403);
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => "Task deleted successfully"
+        ], 204);
+    }
 }
