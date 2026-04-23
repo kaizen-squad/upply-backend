@@ -1,14 +1,19 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthenticationController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    return new UserResource($request->user());
+})->middleware('authentify');
+
+Route::post('/refresh', [AuthenticationController::class, 'refreshToken']);
 
 Route::post('/register', [AuthenticationController::class, 'register'] );
+
+Route::post('/login', [AuthenticationController::class, 'login']);
 
 Route::get('/health', function(Request $request){
     return [
@@ -17,3 +22,5 @@ Route::get('/health', function(Request $request){
         "health" => 'OK',
     ];
 });
+
+Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware('authentify');

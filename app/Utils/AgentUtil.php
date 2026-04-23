@@ -1,8 +1,12 @@
 <?php
 
+namespace App\Utils;
+
 use Jenssegers\Agent\Agent;
 
-function getDeviceName(){
+class AgentUtil {
+    
+    public static function getDeviceName(){
 
     $agent = new Agent();
 
@@ -10,4 +14,5 @@ function getDeviceName(){
 
     return $deviceName;
 
+    }
 }
