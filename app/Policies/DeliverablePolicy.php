@@ -2,7 +2,10 @@
 
 namespace App\Policies;
 
+use App\Enums\ApplicationStatus;
 use App\Enums\UserRole;
+use App\Models\Application;
+use App\Models\Task;
 use App\Models\User;
 
 class DeliverablePolicy
@@ -15,8 +18,17 @@ class DeliverablePolicy
         //
     }
 
-    public function submit(User $user): bool
+    public function submit(User $user, Task $task): bool
     {
-        return $user->status === UserRole::Prestataire;
+        if($user->role !== UserRole::Prestataire) return false;
+
+        $hasAcceptedApplication = Application::where('task_id', $task->id)
+                                    ->where('prestataire_id', $user->id)
+                                    ->where('status', ApplicationStatus::ACCEPTED)
+                                    ->exists();
+
+        if(!$hasAcceptedApplication) return false;
+
+        return true;
     }
 }
