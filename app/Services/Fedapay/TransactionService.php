@@ -2,6 +2,7 @@
 
 namespace App\Services\Fedapay;
 
+use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use App\Models\User;
@@ -22,15 +23,36 @@ class TransactionService
     // Function to save a transaction in the Transaction and TransactionLog tables
     public function handleTransaction($transactionId)
     {
-        // Get prestataireId with fedapayTransactionId
-        $prestataireId = Transaction::where('fedapay_transaction_id', $transactionId)->first()->prestataire_id;
-
         $verification = $this->fedapayService->verifyCollect($transactionId);
         $clientId = Auth::id();
 
         DB::beginTransaction();
         try {
             $txData = $verification['data'] ?? null;
+            $taskId = null;
+            $prestataireId = null;
+
+            // Extract taskId and find prestataireId from the Task model
+            if ($txData && isset($txData->reference)) {
+                $reference = (array) $txData->reference;
+                $taskId = $reference['task_id'] ?? null;
+            }
+
+            if ($taskId) {
+                $task = Task::with(['applications' => function ($query) {
+                    $query->where('status', 'ACCEPTEE');
+                }])->find($taskId);
+
+                if ($task && $task->applications->isNotEmpty()) {
+                    $prestataireId = $task->applications->first()->prestataire_id;
+                }
+            }
+
+            // Fallback for prestataireId if not found via Task reference
+            if (!$prestataireId) {
+                $existingTx = Transaction::where('fedapay_transaction_id', $transactionId)->first();
+                $prestataireId = $existingTx?->prestataire_id;
+            }
 
             // Check if the transaction is valid
             if ($verification['success'] === false) {
@@ -43,6 +65,7 @@ class TransactionService
                     $transaction = Transaction::updateOrCreate(
                         ['fedapay_transaction_id' => $txData->id ?? $transactionId],
                         [
+                            'task_id' => $taskId,
                             'client_id' => $clientId,
                             'prestataire_id' => $prestataireId,
                             'amount_gross' => $amountGross,
@@ -78,6 +101,7 @@ class TransactionService
             ]);
             $previousStatus = $transaction->exists ? $transaction->status : null;
             $transaction->fill([
+                'task_id' => $taskId,
                 'client_id' => $clientId,
                 'prestataire_id' => $txData->custom_metadata['prestataire_id'],
                 'amount_gross' => $amountGross,
