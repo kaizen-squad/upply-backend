@@ -27,4 +27,25 @@ class TaskController{
             ], 400);
         }
     }
+
+    public function create(TaskStoreRequest $request){
+        $user = $request->user();
+
+        $taskData = TaskStoreDTO::fromRequest($request);
+
+        try{
+            $response = $this->service->create($user, $taskData);
+
+            return response()->json([
+                "success" => true,
+                "data" => $response,
+                "message" => "Task created successfully"
+            ], 200);
+        }catch(Exception $e){
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 403);
+        }
+    }
 }
