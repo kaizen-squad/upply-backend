@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Utils\AgentUtil;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -20,7 +21,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
         public function generateAccessToken(int $life=15,array $abilities=['*']){
 
-            $name = 'access' . getDeviceName();
+            $name = 'access_' . AgentUtil::getDeviceName();
 
             $token = $this->createToken($name, $abilities);
             $token->accessToken->expires_at = Carbon::now()->addMinutes($life);
@@ -31,7 +32,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
         public function generateRefreshToken( int $life=7, array $abilities = ['*']){
 
-            $name = 'refresh_' . getDeviceName();
+            $name = 'refresh_' . AgentUtil::getDeviceName();
 
             $token = $this->createToken($name, $abilities);
             $token->accessToken->expires_at = Carbon::now()->addDays($life);
@@ -42,8 +43,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
         public function revokeTokens(){
 
-            $accessToken = 'access_' . getDeviceName();
-            $refreshToken = 'refresh_' . getDeviceName();
+            $accessToken = 'access_' . AgentUtil::getDeviceName();
+            $refreshToken = 'refresh_' . AgentUtil::getDeviceName();
 
             $this->tokens()->where('name',$accessToken)->delete();
             $this->tokens()->where('name',$refreshToken)->delete();
@@ -51,7 +52,7 @@ use Laravel\Sanctum\PersonalAccessToken;
         }
 
         public function revokeAccessToken(){
-            $accessToken = 'access_' . getDeviceName();
+            $accessToken = 'access_' . AgentUtil::getDeviceName();
             $this->tokens()->where('name',$accessToken)->delete();
         }
 

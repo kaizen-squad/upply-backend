@@ -105,7 +105,7 @@ use Illuminate\Http\Request;
 
         public static function refreshAccessToken(Request $request){
 
-            $tokenString = $request->tokenString;
+            $tokenString = $request->tokenString ?? $request->bearerToken();
 
             if(!$tokenString){
                 return [
@@ -125,7 +125,7 @@ use Illuminate\Http\Request;
                 ];
             }else if( $token && $token->expires_at < now() ){
 
-                $user = $token->tokenable();
+                $user = $token->tokenable;
                 $user->revokeTokens();
 
                 return [
@@ -133,14 +133,27 @@ use Illuminate\Http\Request;
                     'message' => 'Invalid Credentials',
                     'code' => 401
                 ];
+            }else if($token && $token->cant('server:refresh')){
+                return [
+                    'success' => false,
+                    'message' => 'Invalid Credentials',
+                    'code' => 401
+                ];
             }
             else{
-                $user = $token->tokenable();
+                $user = $token->tokenable;
                 $user->revokeAccessToken();
 
                 $accessToken = $user->generateAccessToken();
 
-                return $accessToken;
+                return [
+                    "success" => true,
+                    "message" => "User PAT created",
+                    "data" => [
+                        "accessToken" => $accessToken
+                    ],
+                    "code" => 200
+                ];
             }
 
         }
