@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\Gate;
 
 class DeliverableService{
     public function submit(User $prestataire, SubmitDeliverableDTO $data){
-        // Check the ability to perform this action
-        Gate::authorize('submit');
-
         $task = Task::findOrFail($data->task_id);
+        
+        // Check the ability to perform this action
+        Gate::authorize('submit', $task);
+
 
         if($task->status !== TaskStatus::PENDING) throw new DomainException("This task is not waiting for deliverable.");
 
@@ -30,5 +31,9 @@ class DeliverableService{
         ]);
 
         return new DeliverableResource($newDeliverable);
+    }
+
+    public function get(){
+
     }
 }
