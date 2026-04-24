@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Deliverable;
 use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Deliverable\SubmitDeliverableRequest;
+use App\Models\Deliverable;
 use App\Services\DeliverableService;
 
 class DeliverableController extends Controller
@@ -24,6 +25,16 @@ class DeliverableController extends Controller
             "success" => true,
             "data" => $response,
             "message" => "Deliverable submitted successfully."
+        ], 200);
+    }
+
+    public function get(Deliverable $deliverable){
+        $response = $this->service->get($deliverable);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Deliverable fetched successfully"
         ], 200);
     }
 }
