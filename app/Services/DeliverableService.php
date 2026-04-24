@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
+use App\Http\Resources\DeliverableResource;
 use App\Models\Deliverable;
 use App\Models\Task;
 use App\Models\User;
@@ -28,6 +29,6 @@ class DeliverableService{
             'submitted_at' => now()
         ]);
 
-        return $newDeliverable;
+        return new DeliverableResource($newDeliverable);
     }
 }
