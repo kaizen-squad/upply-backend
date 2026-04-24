@@ -20,28 +20,28 @@ class ApplicationPolicy
     {
         return (
             $user->id !== $task->client_id
-            && $user->role === UserRole::PRESTATAIRE
+            && $user->role === UserRole::Prestataire
         );
     }
 
     public function listForTask(User $user, Task $task): bool
     {
         return (
-            $user->status === UserRole::CLIENT
+            $user->status === UserRole::Client
             && $user->id == $task->client_id
         );
     }
 
     public function listMine(User $user): bool
     {
-        return $user->status === UserRole::PRESTATAIRE;
+        return $user->status === UserRole::Prestataire;
     }
 
     public function accept(User $user, Task $task): bool
     {
         return (
             $user->id == $task->client_id
-            && $user->role === UserRole::CLIENT
+            && $user->role === UserRole::Client
         );
     }
 
@@ -49,7 +49,7 @@ class ApplicationPolicy
     {
         return (
             $user->id = $task->client_id
-            && $user->role = UserRole::CLIENT
+            && $user->role = UserRole::Client
         );
     }
 }
