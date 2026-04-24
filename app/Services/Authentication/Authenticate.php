@@ -105,12 +105,12 @@
 
         public static function refreshAccessToken(Request $request){
 
-            $tokenString = $request->tokenString ?? $request->bearerToken();
+            $tokenString = $request->tokenString ;
 
             if(!$tokenString){
                 return [
                     'success' => false,
-                    'message' => 'Invalid Credentials',
+                    'message' => 'Unauthorized',
                     'code' => 401
                 ];
             }
@@ -120,7 +120,7 @@
             if( ! $token){
                 return [
                     'success' => false,
-                    'message' => 'Invalid Credentials',
+                    'message' => 'Unauthorized',
                     'code' => 401 
                 ];
             }else if( $token && $token->expires_at < now() ){
@@ -130,13 +130,13 @@
 
                 return [
                     'success' => false,
-                    'message' => 'Invalid Credentials',
+                    'message' => 'Unauthorized',
                     'code' => 401
                 ];
             }else if($token && $token->cant('server:refresh')){
                 return [
                     'success' => false,
-                    'message' => 'Invalid Credentials',
+                    'message' => 'Unauthorized',
                     'code' => 401
                 ];
             }
