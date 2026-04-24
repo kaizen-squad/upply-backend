@@ -23,12 +23,30 @@ class DeliverablePolicy
         if($user->role !== UserRole::Prestataire) return false;
 
         $hasAcceptedApplication = Application::where('task_id', $task->id)
-                                    ->where('prestataire_id', $user->id)
-                                    ->where('status', ApplicationStatus::ACCEPTED)
-                                    ->exists();
+            ->where('prestataire_id', $user->id)
+            ->where('status', ApplicationStatus::ACCEPTED)
+            ->exists();
 
         if(!$hasAcceptedApplication) return false;
 
         return true;
+    }
+
+    public function get(User $user, Task $task): bool
+    {
+        if($user->role !== UserRole::Client && $user->role !== UserRole::Prestataire) return false;
+
+        $hasAcceptedApplication = Application::where('task_id', $task->id)
+            ->where('prestataire_id', $user->id)
+            ->where('status', ApplicationStatus::ACCEPTED)
+            ->exists();
+
+        if($hasAcceptedApplication) return true;
+
+        $isTaskOwner = ($task->client_id === $user->id);
+
+        if($isTaskOwner) return true;
+
+        return false;
     }
 }
