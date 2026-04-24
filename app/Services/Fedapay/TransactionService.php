@@ -228,47 +228,10 @@ class TransactionService
 
             // Check if the payout was successfully prepared
             if ($payout['success'] === true && isset($payout['data'])) {
-                try {
-                    // Actually send the funds using the FedaPay\Payout object
-                    $payout['data']->sendNow();
+                // Dispatch the Job to handle fund sending and emails
+                \App\Jobs\ProcessPayout::dispatch($transactionId);
 
-                    // Update the transaction status to released — guard on 'releasing' to prevent overwriting a newer state
-                    $affectedRows = Transaction::where('fedapay_transaction_id', $transactionId)
-                        ->where('status', 'releasing')
-                        ->update([
-                            'status' => 'released',
-                            'liberated_at' => now(),
-                        ]);
-
-                    if ($affectedRows === 0) {
-                        Log::warning('Released update skipped: transaction was not in releasing state.', [
-                            'transaction_id' => $transactionId,
-                        ]);
-                    }
-
-                    TransactionLog::create([
-                        'transaction_id' => $txDetails['internal_transaction_id'],
-                        'from_status' => 'releasing',
-                        'to_status' => 'released',
-                        'triggered_by' => $txDetails['client_id'],
-                        'note' => 'Payout successfully processed'
-                    ]);
-
-                    return ['success' => true, 'message' => 'Payout successfully processed'];
-                } catch (Exception $e) {
-                    Log::error('Payout execution failed: ' . $e->getMessage(), ['transaction_id' => $transactionId]);
-                    Transaction::where('fedapay_transaction_id', $transactionId)->update(['status' => 'escrow_lock']);
-
-                    TransactionLog::create([
-                        'transaction_id' => $txDetails['internal_transaction_id'],
-                        'from_status' => 'releasing',
-                        'to_status' => 'escrow_lock',
-                        'triggered_by' => $txDetails['client_id'],
-                        'note' => 'Payout execution failed'
-                    ]);
-
-                    return ['success' => false, 'error' => 'Une erreur est survenue lors de la finalisation du transfert.'];
-                }
+                return ['success' => true, 'message' => 'Le transfert est en cours de traitement.'];
             }
 
             Transaction::where('fedapay_transaction_id', $transactionId)->update(['status' => 'escrow_lock']);

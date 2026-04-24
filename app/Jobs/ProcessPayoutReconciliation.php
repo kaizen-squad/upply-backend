@@ -72,6 +72,8 @@ class ProcessPayoutReconciliation implements ShouldQueue
                         'triggered_by' => $transaction->client_id,
                         'note' => 'Reconciliation: payout confirmed by FedaPay (status: ' . $fedapayStatus . ')',
                     ]);
+
+                    //begin to send 
                 }
             } elseif (in_array($fedapayStatus, ['failed', 'declined', 'cancelled'])) {
                 // Payout failed — rollback to escrow_lock
