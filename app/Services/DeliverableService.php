@@ -30,10 +30,20 @@ class DeliverableService{
             'submitted_at' => now()
         ]);
 
+        $task->update([
+            'status' => TaskStatus::DELIVERED
+        ]);
+
         return new DeliverableResource($newDeliverable);
     }
 
-    public function get(){
+    public function get(Deliverable $deliverable){
+        $task = Task::findOrFail($deliverable->task_id);
 
+        Gate::authorize('get', $task);
+
+        if($task->status !== TaskStatus::DELIVERED) throw new DomainException("This task has not yet received any deliverables.");
+    
+        return new DeliverableResource($deliverable->load('task'));
     }
 }
