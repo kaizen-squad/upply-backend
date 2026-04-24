@@ -32,10 +32,10 @@ class TransactionService
             $taskId = null;
             $prestataireId = null;
 
-            // Extract taskId and find prestataireId from the Task model
-            if ($txData && isset($txData->reference)) {
-                $reference = (array) $txData->reference;
-                $taskId = $reference['task_id'] ?? null;
+            // Extract taskId from custom_metadata
+            if ($txData && isset($txData->custom_metadata)) {
+                $metadata = $txData->custom_metadata;
+                $taskId = $metadata->task_id ?? null;
             }
 
             if ($taskId) {
@@ -45,6 +45,9 @@ class TransactionService
 
                 if ($task && $task->applications->isNotEmpty()) {
                     $prestataireId = $task->applications->first()->prestataire_id;
+                    if (!$clientId) {
+                        $clientId = $task->client_id;
+                    }
                 }
             }
 
@@ -72,7 +75,7 @@ class TransactionService
                             'commission' => $commission,
                             'amount_net' => $amountNet,
                             'currency' => 'XOF',
-                            'payment_method' => $txData->mode ?? 'unknown',
+                            'payment_method' => $this->mapPaymentMethod($txData->mode ?? null),
                             'description' => $txData->description ?? null,
                             'status' => 'canceled'
                         ]
@@ -103,12 +106,12 @@ class TransactionService
             $transaction->fill([
                 'task_id' => $taskId,
                 'client_id' => $clientId,
-                'prestataire_id' => $txData->custom_metadata['prestataire_id'],
+                'prestataire_id' => $txData->custom_metadata->prestataire_id ?? $prestataireId,
                 'amount_gross' => $amountGross,
                 'commission' => $commission,
                 'amount_net' => $amountNet,
                 'currency' => 'XOF',
-                'payment_method' => $txData->mode ?? 'unknown',
+                'payment_method' => $this->mapPaymentMethod($txData->mode ?? null),
                 'description' => $txData->description ?? null,
                 'status' => 'escrow_lock',
             ]);
@@ -134,7 +137,6 @@ class TransactionService
             Log::error('Erreur lors du traitement de la transaction FedaPay.', [
                 'error_id' => $errorId,
                 'transaction_id' => $transactionId,
-                'prestataire_id' => $prestataireId,
                 'client_id' => $clientId,
                 'exception_message' => $e->getMessage(),
             ]);
@@ -144,6 +146,25 @@ class TransactionService
                 'error_id' => $errorId,
             ];
         }
+    }
+
+    private function mapPaymentMethod(?string $mode): string
+    {
+        if (!$mode)
+            return 'mobile_money';
+
+        $mode = strtolower($mode);
+        if (str_contains($mode, 'momo') || str_contains($mode, 'mtn') || str_contains($mode, 'moov')) {
+            return 'mobile_money';
+        }
+        if (str_contains($mode, 'card') || str_contains($mode, 'visa') || str_contains($mode, 'mastercard')) {
+            return 'card';
+        }
+        if (str_contains($mode, 'virement')) {
+            return 'virement';
+        }
+
+        return 'mobile_money';  // Default
     }
 
     // Function to release escrow funds to the user's number
@@ -207,14 +228,18 @@ class TransactionService
                 return ['success' => false, 'message' => $txDetails['error']];
             }
 
+            $nameParts = explode(' ', $txDetails['prestataire']->name, 2);
+            $firstname = $nameParts[0] ?? 'User';
+            $lastname = $nameParts[1] ?? 'Supply';
+
             // Payout configuration (outside DB transaction)
             $data = [
                 'amount' => (int) $txDetails['amount'],
                 'currency' => ['iso' => $txDetails['currency']],
                 'description' => 'Payout for transaction: ' . $txDetails['description'],
                 'customer' => [
-                    'firstname' => $txDetails['prestataire']->firstname,
-                    'lastname' => $txDetails['prestataire']->lastname,
+                    'firstname' => $firstname,
+                    'lastname' => $lastname,
                     'email' => $txDetails['prestataire']->email,
                     'phone_number' => [
                         'number' => $txDetails['prestataire']->phone,
@@ -222,6 +247,8 @@ class TransactionService
                     ]
                 ]
             ];
+
+            Log::info('Initiating FedaPay Payout', ['payout_data' => $data]);
 
             // Trigger the payout now
             $payout = $this->fedapayService->payout($data);

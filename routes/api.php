@@ -26,8 +26,8 @@ Route::get('/health', function (Request $request) {
 
 Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware('authentify');
 
-Route::post('/tasks/{id}/payment/verify', [TransactionController::class, 'verifyPayment'])->middleware('authentify');
+Route::post('/transactions/{transactionId}/verify', [TransactionController::class, 'verifyPayment']);
 
-Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout'])->middleware('authentify');
+Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout']);
 
-Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('authentify');
+Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation']);

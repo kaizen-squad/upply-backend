@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use App\Enums\TaskStatus;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'client_id',
-
         'title',
         'description',
         'budget',
@@ -28,5 +28,10 @@ class Task extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id', 'id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'task_id', 'id');
     }
 }
