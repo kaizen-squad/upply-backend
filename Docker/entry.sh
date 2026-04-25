@@ -12,10 +12,9 @@ done
 echo "Database is up!"
 
 php artisan migrate --force
-
-# En prod on cache, on ne clear pas
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-exec frankenphp run --config /app/Docker/Caddyfile --adapter caddyfile
+# Plus de chown ici
+exec frankenphp run --config /app/Docker/Caddyfile

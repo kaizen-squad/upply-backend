@@ -1,29 +1,25 @@
 FROM dunglas/frankenphp:1-php8.4-alpine
-# Installation des dépendances système et extensions PHP
 
 RUN apk add --no-cache postgresql-client redis curl && \
     install-php-extensions \
-    pdo_pgsql \
-    redis \
-    bcmath \
-    gd \
-    intl \
-    zip \
-    opcache
+    pdo_pgsql redis bcmath gd intl zip opcache
 
-# Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configuration du répertoire de travail
+# Créer l'utilisateur AVANT le COPY
+RUN addgroup -g 1000 unit && adduser -u 1000 -D -S -G unit unit
+
 WORKDIR /app
 
-# Copie des fichiers du projet
 COPY --chown=unit:unit . .
 
-# Permissions sur l'entrypoint
 RUN chmod +x Docker/entry.sh
 
-ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
-
+RUN mkdir -p storage/logs bootstrap/cache && \
+    chown -R unit:unit storage bootstrap/cache
 
 ENV PORT=8000 HOST=0.0.0.0
+
+USER unit
+
+ENTRYPOINT ["/bin/sh", "/app/Docker/entry.sh"]
