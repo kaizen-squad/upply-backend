@@ -15,8 +15,6 @@ COPY --chown=unit:unit . .
 
 RUN chmod +x Docker/entry.sh
 
-RUN composer install --no-dev --no-interaction --optimize-autoloader
-
 ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
 
 
