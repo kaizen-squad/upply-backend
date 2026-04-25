@@ -18,6 +18,4 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-chown -R unit:unit storage bootstrap/cache vendor
-
-exec frankenphp run --config /app/Docker/Caddyfile
+exec frankenphp run --config /app/Docker/Caddyfile --adapter caddyfile
