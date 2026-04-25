@@ -19,7 +19,7 @@ class TaskPolicy
 
     public function create(User $user): bool
     {
-        return $user->role == UserRole::Client;
+        return $user->role === UserRole::Client;
     }
 
     public function update(User $user, Task $task): bool

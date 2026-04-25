@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Task\TaskStoreDTO;
 use App\DTOs\Task\TaskUpdateDTO;
-use App\Enums\UserRole;
+use App\Enums\TaskStatus;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\User;
@@ -28,7 +28,7 @@ class TaskService{
             'description' => $newTask->description,
             'budget' => $newTask->budget,
             'deadline' => $newTask->deadline,
-            'status' => UserRole::Client,
+            'status' => TaskStatus::OPENED,
 
             'client_id' => $client->id
         ]);
@@ -45,12 +45,7 @@ class TaskService{
         // Check the ability of the user to update this task.
         Gate::authorize('update', $targetTask);
 
-        $isUpdated = $targetTask->update([
-            'title' => $data->title,
-            'description' => $data->description,
-            'budget' => $data->budget,
-            'deadline' => $data->deadline,
-        ]);
+        $isUpdated = $targetTask->update($data->toArray());
 
         return $isUpdated;
     }
