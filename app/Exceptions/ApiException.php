@@ -13,7 +13,9 @@ class ApiException extends Exception
     {
         return match(true){
             $e instanceof DomainException => self::domain($e),
-            $e instanceof AuthorizationException => self::forbidden($e)
+            $e instanceof AuthorizationException => self::forbidden($e),
+
+            default => self::serverError($e)
         };
     }
 
@@ -33,6 +35,16 @@ class ApiException extends Exception
             'status' => 422,
             'success' => false,
             'message' => $e->getMessage(),
+            'data' => null
+        ];
+    }
+
+    private static function serverError(Throwable $e): array
+    {
+        return [
+            'status' => 500,
+            'success' => false,
+            'message' => config('app.debug') ? $e->getMessage() : "An unexpected error occurred.",
             'data' => null
         ];
     }

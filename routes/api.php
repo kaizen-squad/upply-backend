@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\AuthenticationController;
 use App\Http\Controllers\Api\Fedapay\TransactionController;
+use App\Http\Controllers\Api\Task\TaskController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,3 +37,16 @@ Route::middleware('authentify')->group(function (){
 
 });
 
+Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout'])->middleware('authentify');
+
+Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('authentify');
+
+Route::get('/tasks', [TaskController::class, 'index']);
+
+Route::post('/task/create', [TaskController::class, 'create'])->middleware('authentify');
+
+Route::put('/task/{task}', [TaskController::class, 'update'])->middleware('authentify');
+
+Route::get('/task/{task}', [TaskController::class, 'show']);
+
+Route::delete('/task/{task}', [TaskController::class, 'delete'])->middleware('authentify');
