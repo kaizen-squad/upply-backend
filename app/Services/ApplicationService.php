@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Application;
+namespace App\Services;
 
 use App\DTOs\Application\ApplicationStoreDTO;
 use App\Enums\ApplicationStatus;
@@ -52,16 +52,16 @@ class ApplicationService{
     public function listMine(User $prestataire){
         Gate::authorize('listMine', Application::class);
 
-        $applications = Application::where('prestataire_id', $prestataire->id)->with('task:id,title,descprition');
+        $applications = Application::where('prestataire_id', $prestataire->id)->with('task:id,title,description')->get();
     
         return ApplicationResource::collection($applications);
     }
 
     public function accept(Application $application){
         return DB::transaction(function() use ($application){
-            $task = $application->task()->lockForUpdate();
+            $task = $application->task()->lockForUpdate()->first();
 
-            Gate::authorize('accept', $task);
+            Gate::authorize('accept', [Application::class, $task]);
 
             if($application->status !== ApplicationStatus::PENDING) throw new DomainException("This application can not be accepted.");
         
@@ -79,7 +79,7 @@ class ApplicationService{
             // The application switch to accepted
             $application->update([
                 'status' => ApplicationStatus::ACCEPTED,
-                'contract_id' => $newContract
+                'contract_id' => $newContract->id
             ]);
 
             // We reject all others application for the specific task.
@@ -96,7 +96,7 @@ class ApplicationService{
     public function reject(Application $application){
         $targetTask = $application->task;
 
-        Gate::authorize('reject', $targetTask);
+        Gate::authorize('reject', [Application::class, $targetTask]);
 
         if($application->status !== ApplicationStatus::PENDING) throw new DomainException("This application can not be rejected.");
 

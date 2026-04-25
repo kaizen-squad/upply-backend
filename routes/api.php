@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Application\ApplicationController;
 use App\Http\Controllers\Api\Auth\AuthenticationController;
 use App\Http\Controllers\Api\Fedapay\TransactionController;
 use App\Http\Controllers\Api\Task\TaskController;
@@ -50,3 +51,13 @@ Route::put('/task/{task}', [TaskController::class, 'update'])->middleware('authe
 Route::get('/task/{task}', [TaskController::class, 'show']);
 
 Route::delete('/task/{task}', [TaskController::class, 'delete'])->middleware('authentify');
+
+Route::post("/application/apply", [ApplicationController::class, 'apply'])->middleware('authentify');
+
+Route::get("/applications/task", [ApplicationController::class, 'listForTask'])->middleware('authentify');
+
+Route::get("/applications/mine", [ApplicationController::class, 'listMine'])->middleware('authentify');
+
+Route::put("/application/accept/{application}", [ApplicationController::class, 'accept'])->middleware('authentify');
+
+Route::put("/application/reject/{application}", [ApplicationController::class, 'reject'])->middleware('authentify');
