@@ -9,8 +9,7 @@
 	
 	encode zstd gzip
 	
-	php_server {
-	}
+	php_server
 
 	file_server
 }
