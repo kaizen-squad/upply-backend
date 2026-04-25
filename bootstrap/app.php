@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Middleware\IsAuthenticated;
 use App\Exceptions\ApiException;
+use App\Http\Middleware\IsAuthenticated;
+use App\Http\Middleware\Role;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
         $middleware->alias([
-            'authentify' => IsAuthenticated::class
+            'authentify' => IsAuthenticated::class,
+            'role' => Role::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
