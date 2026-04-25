@@ -58,7 +58,7 @@ class TaskController{
         try{
             $response = $this->service->show($task);
 
-            response()->json([
+            return response()->json([
                 "success" => true,
                 "data" => $response,
                 "message" => "Task fetch successfully"
@@ -76,7 +76,7 @@ class TaskController{
         try{
             $response = $this->service->update($task, $taskData);
 
-            response()->json([
+            return response()->json([
                 "success" => true,
                 "message" => "Task updated successfully"
             ], 200);
@@ -101,6 +101,6 @@ class TaskController{
         return response()->json([
             "success" => true,
             "message" => "Task deleted successfully"
-        ], 204);
+        ], 200);
     }
 }
