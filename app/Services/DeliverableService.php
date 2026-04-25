@@ -9,9 +9,14 @@ use App\Http\Resources\DeliverableResource;
 use App\Models\Deliverable;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\Fedapay\TransactionService;
 use Illuminate\Support\Facades\Gate;
 
 class DeliverableService{
+    public function __construct(
+        public TransactionService $transactionService
+    ){}
+
     public function submit(User $prestataire, SubmitDeliverableDTO $data){
         $task = Task::findOrFail($data->task_id);
         
@@ -45,5 +50,9 @@ class DeliverableService{
         if($task->status !== TaskStatus::DELIVERED) throw new DomainException("This task has not yet received any deliverables.");
     
         return new DeliverableResource($deliverable->load('task'));
+    }
+
+    public function validate(){
+
     }
 }

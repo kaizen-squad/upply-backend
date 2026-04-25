@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Enums\ApplicationStatus;
 use App\Enums\UserRole;
 use App\Models\Application;
+use App\Models\Deliverable;
 use App\Models\Task;
 use App\Models\User;
 
@@ -48,5 +49,13 @@ class DeliverablePolicy
         if($isTaskOwner) return true;
 
         return false;
+    }
+
+    public function validate(User $user, Deliverable $deliverable): bool
+    {
+        return (
+            $user->id === $deliverable->task->client_id
+            && $user->role === UserRole::Client
+        );
     }
 }
