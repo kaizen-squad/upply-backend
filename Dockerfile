@@ -15,9 +15,6 @@ COPY --chown=unit:unit . .
 
 RUN chmod +x Docker/entry.sh
 
-ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
-
-
 ENV PORT=8000 HOST=0.0.0.0
 
 USER unit
