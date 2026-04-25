@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Application;
+namespace App\Services;
 
 use App\DTOs\Application\ApplicationStoreDTO;
 use App\Enums\ApplicationStatus;
