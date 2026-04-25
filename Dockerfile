@@ -15,8 +15,10 @@ COPY --chown=unit:unit . .
 
 RUN chmod +x Docker/entry.sh
 
-RUN mkdir -p storage/logs bootstrap/cache && \
-    chown -R unit:unit storage bootstrap/cache
+RUN composer install --no-dev --no-interaction --optimize-autoloader
+
+ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
+
 
 ENV PORT=8000 HOST=0.0.0.0
 
