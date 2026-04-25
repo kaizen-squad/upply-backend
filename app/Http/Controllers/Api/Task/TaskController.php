@@ -90,6 +90,6 @@ class TaskController{
         return response()->json([
             "success" => true,
             "message" => "Task deleted successfully"
-        ], 204);
+        ], 200);
     }
 }
