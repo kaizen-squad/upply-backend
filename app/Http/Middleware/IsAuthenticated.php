@@ -53,9 +53,17 @@ class IsAuthenticated
                 'code' => 401
             ],401);
         }
-
     
         $user = $token->tokenable;
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+                'code' => 401
+            ], 401);
+        }
+
         Auth::login($user);
 
         return $next($request);

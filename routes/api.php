@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return new UserResource($request->user());
-})->middleware('authentify');
+})->middleware('authentify','role:client');
 
 Route::post('/refresh', [AuthenticationController::class, 'refreshToken']);
 
