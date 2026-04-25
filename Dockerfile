@@ -23,7 +23,9 @@ COPY . .
 # Permissions sur l'entrypoint
 RUN chmod +x Docker/entrypoint.sh
 
-ENTRYPOINT [ "/bin/sh", "/app/Docker/entrypoint.sh" ]
+RUN composer install --no-dev --no-interaction --optimize-autoloader
+
+ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
 
 
 ENV PORT=8000 HOST=0.0.0.0

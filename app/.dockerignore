@@ -1,0 +1,6 @@
+.env
+.git
+node_modules
+vendor
+storage/logs
+storage/framework/cache

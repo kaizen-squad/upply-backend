@@ -1,0 +1,78 @@
+services:
+
+  # Php setup
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      SERVER_NAME: "http://:8000"
+      APP_KEY: ${APP_KEY}
+      APP_ENV: ${APP_ENV}
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      
+    volumes: 
+      - .:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Postgres database setup
+  database:
+    image: postgres:17-alpine
+    ports: 
+      - 5432:5432
+    
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis setup
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - 6379:6379
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+ 
+volumes:
+  postgres_data: ~
