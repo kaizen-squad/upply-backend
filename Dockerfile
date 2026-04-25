@@ -1,5 +1,8 @@
 FROM dunglas/frankenphp:1-php8.4-alpine
 
+# Supprime les capacités étendues qui font peur à Render
+RUN setcap -r /usr/local/bin/frankenphp || true
+
 # 1. Install system dependencies
 RUN apk add --no-cache postgresql-client redis curl && \
     install-php-extensions pdo_pgsql redis bcmath gd intl zip opcache
