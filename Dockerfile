@@ -1,22 +1,20 @@
 FROM dunglas/frankenphp:1-php8.4-alpine
 
+# 1. Install system dependencies
 RUN apk add --no-cache postgresql-client redis curl && \
-    install-php-extensions \
-    pdo_pgsql redis bcmath gd intl zip opcache
+    install-php-extensions pdo_pgsql redis bcmath gd intl zip opcache
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Créer l'utilisateur AVANT le COPY
-RUN addgroup -g 1000 unit && adduser -u 1000 -D -S -G unit unit
-
 WORKDIR /app
 
-COPY --chown=unit:unit . .
+# 2. Copier les fichiers de dépendances d'abord pour optimiser le cache Docker
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
 
-RUN chmod +x Docker/entry.sh
+# 3. Copier le reste du projet
+COPY . .
 
 ENV PORT=8000 HOST=0.0.0.0
 
-USER unit
-
-ENTRYPOINT ["/bin/sh", "/app/Docker/entry.sh"]
+ENTRYPOINT ["/app/Docker/entry.sh"]

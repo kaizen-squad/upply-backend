@@ -1,8 +1,26 @@
 {
-    frankenphp
+	# Désactive l'administration via API pour éviter les problèmes de droits
+	admin off
+	# Désactive le HTTPS automatique (Render s'en occupe en amont)
+	auto_https off
+	# Nécessaire pour le Worker Mode si tu l'utilises
+	frankenphp
 }
 
-http://:8000 {
-    root * /app/public
-    php_server
+# Le port est injecté via la variable d'environnement {$PORT}
+:{$PORT} {
+	# Dossier public de Laravel
+	root * public/
+	
+	# Active l'encodage Gzip/Zstd
+	encode zstd gzip
+	
+	# Exécution de PHP
+	php_server {
+		# Si tu veux activer le Worker Mode (recommandé pour la prod) :
+		# worker index.php
+	}
+
+	# Gestion des fichiers statiques
+	file_server
 }
