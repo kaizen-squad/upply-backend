@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Application\ApplicationController;
 use App\Http\Controllers\Api\Auth\AuthenticationController;
+use App\Http\Controllers\Api\Deliverable\DeliverableController;
 use App\Http\Controllers\Api\Fedapay\TransactionController;
 use App\Http\Controllers\Api\Task\TaskController;
 use App\Http\Resources\UserResource;
@@ -61,3 +62,7 @@ Route::get("/applications/mine", [ApplicationController::class, 'listMine'])->mi
 Route::put("/application/accept/{application}", [ApplicationController::class, 'accept'])->middleware('authentify');
 
 Route::put("/application/reject/{application}", [ApplicationController::class, 'reject'])->middleware('authentify');
+
+Route::post("/deliverable/submit", [DeliverableController::class, 'submit'])->middleware("authentify");
+
+Route::get("/deliverable/{deliverable}", [DeliverableController::class, 'get'])->middleware('authentify');

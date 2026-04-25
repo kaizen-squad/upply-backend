@@ -17,7 +17,7 @@ readonly class SubmitDeliverableDTO{
 
         return new self(
             content: $data['content'],
-            file_path: $data['file_path'],
+            file_path: $data['file_path'] ?? null,
             task_id: $data['task_id']
         );
     }
