@@ -27,9 +27,3 @@ ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
 
 
 ENV PORT=8000 HOST=0.0.0.0
-
-# Création de l'utilisateur unit
-RUN addgroup -g 1000 unit && adduser -u 1000 -D -S -G unit unit
-
-# Droits sur les dossiers de stockage Laravel
-RUN chown -R unit:unit storage bootstrap/cache
