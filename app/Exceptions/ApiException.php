@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use DomainException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Throwable;
 
 class ApiException extends Exception
@@ -13,13 +14,13 @@ class ApiException extends Exception
     {
         return match(true){
             $e instanceof DomainException => self::domain($e),
-            $e instanceof AuthorizationException => self::forbidden($e),
+            $e instanceof AuthorizationException, $e instanceof AccessDeniedHttpException => self::forbidden($e),
 
             default => self::serverError($e)
         };
     }
 
-    private static function forbidden(): array
+    private static function forbidden(Throwable $e): array
     {
         return [
             'status' => 403,
