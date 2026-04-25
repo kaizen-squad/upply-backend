@@ -23,8 +23,6 @@ COPY --chown=unit:unit . .
 # Permissions sur l'entrypoint
 RUN chmod +x Docker/entrypoint.sh
 
-RUN composer install --no-dev --no-interaction --optimize-autoloader
-
 ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
 
 
