@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --chown=unit:unit . .
 
 # Permissions sur l'entrypoint
-RUN chmod +x Docker/entrypoint.sh
+RUN chmod +x Docker/entry.sh
 
 ENTRYPOINT [ "/bin/sh", "/app/Docker/entry.sh" ]
 
