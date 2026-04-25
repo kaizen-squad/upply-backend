@@ -24,4 +24,4 @@ php artisan route:cache
 echo "🚀 Starting FrankenPHP..."
 
 # ✅ Utilisation du port dynamique de Render
-exec frankenphp run --config /app/Docker/Caddyfile --listen :$PORT
+exec frankenphp run --config /app/Docker/Caddyfile
