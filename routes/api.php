@@ -64,3 +64,34 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/review/note', [ReviewController::class, 'note']);
 });
+<<<<<<< HEAD
+=======
+
+Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout'])->middleware('authentify');
+
+Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('authentify');
+
+Route::get('/tasks', [TaskController::class, 'index']);
+
+Route::post('/task/create', [TaskController::class, 'create'])->middleware('authentify');
+
+Route::put('/task/{task}', [TaskController::class, 'update'])->middleware('authentify');
+
+Route::get('/task/{task}', [TaskController::class, 'show']);
+
+Route::delete('/task/{task}', [TaskController::class, 'delete'])->middleware('authentify');
+
+Route::post("/application/apply", [ApplicationController::class, 'apply'])->middleware('authentify');
+
+Route::get("/applications/task", [ApplicationController::class, 'listForTask'])->middleware('authentify');
+
+Route::get("/applications/mine", [ApplicationController::class, 'listMine'])->middleware('authentify');
+
+Route::put("/application/accept/{application}", [ApplicationController::class, 'accept'])->middleware('authentify');
+
+Route::put("/application/reject/{application}", [ApplicationController::class, 'reject'])->middleware('authentify');
+
+Route::post("/deliverable/submit", [DeliverableController::class, 'submit'])->middleware("authentify");
+
+Route::get("/deliverable/{deliverable}", [DeliverableController::class, 'get'])->middleware('authentify');
+>>>>>>> 708637c (feat- RoleMiddelware definition)
