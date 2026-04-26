@@ -6,10 +6,12 @@ use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
 use App\Http\Resources\DeliverableResource;
+use App\Models\Application;
 use App\Models\Deliverable;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Fedapay\TransactionService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class DeliverableService{
@@ -52,7 +54,19 @@ class DeliverableService{
         return new DeliverableResource($deliverable->load('task'));
     }
 
-    public function validate(){
+    public function validate(Deliverable $deliverable, $transactionId){
+        return DB::transaction(function() use ($deliverable){
+            Gate::authorize('validate', [Application::class, $deliverable]);
 
+            $task = $deliverable->task;
+
+            if($task->status !== TaskStatus::DELIVERED) throw new DomainException("This task isn't delivered yet.");
+
+            $task->update([
+                "status" => TaskStatus::VALIDATED
+            ]);
+
+            $this->transactionService->release();
+        });
     }
 }
