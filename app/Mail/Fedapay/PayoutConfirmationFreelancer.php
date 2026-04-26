@@ -17,7 +17,8 @@ class PayoutConfirmationFreelancer extends Mailable
     public function __construct(
         public $amount,
         public $taskTitle,
-        public $date
+        public $date,
+        public $pdfData = null
     ) {}
 
     /**
@@ -47,6 +48,13 @@ class PayoutConfirmationFreelancer extends Mailable
      */
     public function attachments(): array
     {
+        if ($this->pdfData) {
+            return [
+                Attachment::fromData(fn() => $this->pdfData, 'recu-paiement-upply.pdf')
+                    ->withMime('application/pdf'),
+            ];
+        }
+
         return [];
     }
 }

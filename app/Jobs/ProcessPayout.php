@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -95,10 +96,20 @@ class ProcessPayout implements ShouldQueue
             $client = User::find($transaction->client_id);
 
             if ($freelancer && $task) {
+                // Generate PDF Receipt
+                $pdfData = Pdf::loadView('pdf.receipt', [
+                    'transaction_id' => $transaction->fedapay_transaction_id,
+                    'task_title' => $task->title,
+                    'amount' => $transaction->amount_net,
+                    'date' => $transaction->liberated_at,
+                    'provider_name' => $freelancer->name,
+                ])->output();
+
                 Mail::to($freelancer->email)->send(new PayoutConfirmationFreelancer(
                     $transaction->amount_net,
                     $task->title,
-                    $transaction->liberated_at
+                    $transaction->liberated_at,
+                    $pdfData
                 ));
             }
 
