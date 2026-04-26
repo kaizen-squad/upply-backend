@@ -57,7 +57,7 @@ class DeliverableService{
 
     public function validate(Deliverable $deliverable){
         return DB::transaction(function() use ($deliverable){
-            Gate::authorize('validate', [Application::class, $deliverable]);
+            Gate::authorize('validate', [Deliverable::class, $deliverable]);
 
             $task = $deliverable->task;
 
