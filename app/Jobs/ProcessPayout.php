@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
