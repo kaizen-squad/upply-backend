@@ -37,4 +37,14 @@ class DeliverableController extends Controller
             "message" => "Deliverable fetched successfully"
         ], 200);
     }
+
+    public function validate(Deliverable $deliverable){
+        $response = $this->service->validate($deliverable);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Deliverable validated successfully"
+        ]);
+    }
 }
