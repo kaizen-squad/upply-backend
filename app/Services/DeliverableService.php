@@ -6,6 +6,7 @@ use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
 use App\Http\Resources\DeliverableResource;
+use App\Http\Resources\TaskResource;
 use App\Models\Application;
 use App\Models\Deliverable;
 use App\Models\Task;
@@ -66,7 +67,9 @@ class DeliverableService{
                 "status" => TaskStatus::VALIDATED
             ]);
 
-            $this->transactionService->release();
+            $this->transactionService->release($task->transaction->id);
+
+            return new TaskResource($task);
         });
     }
 }
