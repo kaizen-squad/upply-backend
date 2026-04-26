@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\Review\ReviewStoreDTO;
+use App\Http\Resources\ReviewResource;
 use App\Models\Review;
 use App\Models\User;
 
@@ -15,5 +16,7 @@ class ReviewService{
             "reviewer_id" => $reviewerId->id,
             "reviewee_id" => $data->revieweeId
         ]);
+
+        return new ReviewResource($newReview);
     }
 }
