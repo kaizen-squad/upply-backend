@@ -66,3 +66,5 @@ Route::put("/application/reject/{application}", [ApplicationController::class, '
 Route::post("/deliverable/submit", [DeliverableController::class, 'submit'])->middleware("authentify");
 
 Route::get("/deliverable/{deliverable}", [DeliverableController::class, 'get'])->middleware('authentify');
+
+Route::post("/deliverable/validate/{deliverable}", [DeliverableController::class, 'validate'])->middleware('authentify');
