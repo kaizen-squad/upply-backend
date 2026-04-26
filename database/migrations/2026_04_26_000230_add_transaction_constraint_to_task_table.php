@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
+<<<<<<< HEAD
             $table->foreignUuid('transaction_id')->constrained();
+=======
+            $table->foreignId('transaction_id')->constrained();
+>>>>>>> 1a96ffa (fix(endpoint): Added the deliverable validation endpoint)
         });
     }
 

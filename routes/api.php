@@ -94,4 +94,9 @@ Route::put("/application/reject/{application}", [ApplicationController::class, '
 Route::post("/deliverable/submit", [DeliverableController::class, 'submit'])->middleware("authentify");
 
 Route::get("/deliverable/{deliverable}", [DeliverableController::class, 'get'])->middleware('authentify');
+<<<<<<< HEAD
 >>>>>>> 708637c (feat- RoleMiddelware definition)
+=======
+
+Route::post("/deliverable/validate/{deliverable}", [DeliverableController::class, 'validate'])->middleware('authentify');
+>>>>>>> 1a96ffa (fix(endpoint): Added the deliverable validation endpoint)
