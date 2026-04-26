@@ -86,7 +86,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"Brian John\",\n  \"email\": \"johndoe@gmail.com\",\n  \"phone\": \"0190408601\",\n  \"password\": \"passw0rd\",\n  \"role\": \"prestataire\",\n  \"password_confirmation\": \"passw0rd\",\n  \"rating_avg\": 1.11\n}",
+                            "raw": "{\n  \"name\": \"Brian Okwu\",\n  \"email\": \"okwubrian@gmail.com\",\n  \"phone\": \"0190408601\",\n  \"password\": \"passw0rd\",\n  \"role\": \"client\",\n  \"password_confirmation\": \"passw0rd\",\n  \"rating_avg\": 1.11\n}",
                             "options": {
                                 "raw": {
                                     "headerFamily": "json",
@@ -538,6 +538,35 @@
                                 "deliverable",
                                 "019dc62d-2645-7114-ac51-4c42feff2f95"
                             ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Review",
+            "item": [
+                {
+                    "name": "Note user",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"rating\": 4,\n    \"reviewee_id\": \"019dcae5-756e-7182-94fc-d13576e20a41\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/review/note",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "8000",
+                            "path": ["api", "review", "note"]
                         }
                     },
                     "response": []
