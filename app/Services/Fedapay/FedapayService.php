@@ -87,4 +87,37 @@ class FedapayService
             ];
         }
     }
+
+    // Effectue l'envoi effectif des fonds via l'objet Payout
+    public function sendPayout($payoutId)
+    {
+        try {
+            $payout = FedapayPayout::retrieve($payoutId);
+            $payout->sendNow();
+            return [
+                'success' => true,
+                'message' => 'Payout sent successfully',
+                'data' => $payout
+            ];
+        } catch (Exception $e) {
+            Log::error('FedaPay sendPayout exception: ' . $e->getMessage(), ['payout_id' => $payoutId]);
+            throw $e;  // Rethrow pour la gestion du retry dans le Job
+        }
+    }
+
+    // Récupère le statut d'un payout
+    public function getPayoutStatus($payoutId)
+    {
+        try {
+            $payout = FedapayPayout::retrieve($payoutId);
+            return [
+                'success' => true,
+                'status' => $payout->status,
+                'data' => $payout
+            ];
+        } catch (Exception $e) {
+            Log::error('FedaPay getPayoutStatus exception: ' . $e->getMessage(), ['payout_id' => $payoutId]);
+            throw $e;  // Rethrow pour la logique de réconciliation
+        }
+    }
 }

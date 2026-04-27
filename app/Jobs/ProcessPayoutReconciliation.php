@@ -4,8 +4,6 @@ namespace App\Jobs;
 
 use App\Models\Transaction;
 use App\Models\TransactionLog;
-use FedaPay\FedaPay;
-use FedaPay\Payout as FedapayPayout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -22,13 +20,9 @@ class ProcessPayoutReconciliation implements ShouldQueue
      * timeout, queries FedaPay to determine the real payout state, and
      * transitions the transaction to either 'released' or 'escrow_lock'.
      */
-    public function handle(): void
+    public function handle(\App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
     {
         $timeoutMinutes = config('fedapay.reconciliation_timeout_minutes', 15);
-
-        // Configure FedaPay SDK
-        FedaPay::setApiKey(config('fedapay.secret_key'));
-        FedaPay::setEnvironment(config('fedapay.environment'));
 
         $stuckTransactions = Transaction::where('status', 'releasing')
             ->where('updated_at', '<=', now()->subMinutes($timeoutMinutes))
@@ -42,18 +36,22 @@ class ProcessPayoutReconciliation implements ShouldQueue
         Log::info("ProcessPayoutReconciliation: found {$stuckTransactions->count()} stuck transaction(s).");
 
         foreach ($stuckTransactions as $transaction) {
-            $this->reconcile($transaction);
+            $this->reconcile($transaction, $fedapayService, $emailAction);
         }
     }
 
-    private function reconcile(Transaction $transaction): void
+    private function reconcile(Transaction $transaction, \App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
     {
         try {
-            // Retrieve the payout from FedaPay using the stored transaction ID
-            $payout = FedapayPayout::retrieve($transaction->fedapay_transaction_id);
-            $fedapayStatus = $payout->status ?? null;
+            if (empty($transaction->fedapay_payout_id)) {
+                Log::warning("ProcessPayoutReconciliation: transaction [{$transaction->id}] has no fedapay_payout_id.");
+                return;
+            }
 
-            Log::info("ProcessPayoutReconciliation: transaction [{$transaction->fedapay_transaction_id}] FedaPay status = [{$fedapayStatus}].");
+            // Retrieve the payout statis from FedaPay
+            $fedapayStatus = $fedapayService->getPayoutStatus($transaction->fedapay_payout_id);
+
+            Log::info("ProcessPayoutReconciliation: transaction [{$transaction->id}] FedaPay status = [{$fedapayStatus}].");
 
             if (in_array($fedapayStatus, ['sent', 'approved'])) {
                 // Payout confirmed by FedaPay — mark as released
@@ -73,7 +71,8 @@ class ProcessPayoutReconciliation implements ShouldQueue
                         'note' => 'Reconciliation: payout confirmed by FedaPay (status: ' . $fedapayStatus . ')',
                     ]);
 
-                    //begin to send 
+                    // begin to send
+                    $emailAction->handle($transaction);
                 }
             } elseif (in_array($fedapayStatus, ['failed', 'declined', 'cancelled'])) {
                 // Payout failed — rollback to escrow_lock
@@ -92,10 +91,10 @@ class ProcessPayoutReconciliation implements ShouldQueue
                 }
             } else {
                 // Still pending — log and wait for next cycle
-                Log::info("ProcessPayoutReconciliation: transaction [{$transaction->fedapay_transaction_id}] still pending ({$fedapayStatus}), will retry next cycle.");
+                Log::info("ProcessPayoutReconciliation: transaction [{$transaction->id}] still pending ({$fedapayStatus}), will retry next cycle.");
             }
         } catch (Exception $e) {
-            Log::error("ProcessPayoutReconciliation: failed to reconcile transaction [{$transaction->fedapay_transaction_id}].", [
+            Log::error("ProcessPayoutReconciliation: failed to reconcile transaction [{$transaction->id}].", [
                 'exception' => $e->getMessage(),
             ]);
         }

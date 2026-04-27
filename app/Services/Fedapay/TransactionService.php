@@ -2,6 +2,7 @@
 
 namespace App\Services\Fedapay;
 
+use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
@@ -40,12 +41,16 @@ class TransactionService
 
             if ($taskId) {
                 $task = Task::with(['applications' => function ($query) {
-                    $query->where('status', 'ACCEPTEE');
+                    $query->where('status', TaskStatus::OPENED);
                 }])->find($taskId);
 
                 if ($task && $task->applications->isNotEmpty()) {
                     $prestataireId = $task->applications->first()->prestataire_id;
                 }
+
+                Task::where('id', $taskId)->update([
+                    'status' => TaskStatus::PENDING,
+                ]);
             }
 
             // Fallback for prestataireId if not found via Task reference
@@ -60,7 +65,9 @@ class TransactionService
                     $amountGross = (int) ($txData->amount ?? 0);
                     $commission = intdiv($amountGross * 10, 100);
                     $amountNet = $amountGross - $commission;
-                    $prestataireId = $txData->custom_metadata->prestataire_id;
+                    $prestataireId = is_array($txData->custom_metadata)
+                        ? ($txData->custom_metadata['prestataire_id'] ?? null)
+                        : ($txData->custom_metadata->prestataire_id ?? null);
 
                     $transaction = Transaction::updateOrCreate(
                         ['fedapay_transaction_id' => $txData->id ?? $transactionId],
@@ -103,7 +110,9 @@ class TransactionService
             $transaction->fill([
                 'task_id' => $taskId,
                 'client_id' => $clientId,
-                'prestataire_id' => $txData->custom_metadata['prestataire_id'],
+                'prestataire_id' => is_array($txData->custom_metadata)
+                    ? ($txData->custom_metadata['prestataire_id'] ?? null)
+                    : ($txData->custom_metadata->prestataire_id ?? null),
                 'amount_gross' => $amountGross,
                 'commission' => $commission,
                 'amount_net' => $amountNet,
@@ -228,8 +237,13 @@ class TransactionService
 
             // Check if the payout was successfully prepared
             if ($payout['success'] === true && isset($payout['data'])) {
+                // Update the transaction to store the payout ID
+                Transaction::where('id', $txDetails['internal_transaction_id'])
+                    ->update(['fedapay_payout_id' => $payout['data']->id]);
+
                 // Dispatch the Job to handle fund sending and emails
-                \App\Jobs\ProcessPayout::dispatch($transactionId);
+                // We pass the internal transaction ID (UUID)
+                \App\Jobs\ProcessPayout::dispatch($txDetails['internal_transaction_id']);
 
                 return ['success' => true, 'message' => 'Le transfert est en cours de traitement.'];
             }

@@ -2,13 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Mail\Fedapay\PayoutConfirmationClient;
-use App\Mail\Fedapay\PayoutConfirmationFreelancer;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,36 +20,42 @@ class ProcessPayout implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * Nombre maximum de tentatives
+     */
+    public int $tries = 3;
+
+    /**
+     * Backoff exponentiel : 10s, 30s, 90s
+     */
+    public function backoff(): array
+    {
+        return [10, 30, 90];
+    }
+
+    /**
      * Create a new job instance.
      */
     public function __construct(
-        protected string $fedapayTransactionId
+        protected string $transactionId
     ) {}
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(\App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
     {
-        // Configure FedaPay SDK
-        \FedaPay\FedaPay::setApiKey(config('fedapay.secret_key'));
-        \FedaPay\FedaPay::setEnvironment(config('fedapay.environment'));
-
-        $transaction = Transaction::where('fedapay_transaction_id', $this->fedapayTransactionId)->first();
+        $transaction = Transaction::find($this->transactionId);
 
         if (!$transaction || $transaction->status !== 'releasing') {
             Log::warning('ProcessPayout: Transaction not found or not in releasing state.', [
-                'fedapay_id' => $this->fedapayTransactionId
+                'transaction_id' => $this->transactionId
             ]);
             return;
         }
 
         try {
-            // Retrieve payout object
-            $payoutObject = \FedaPay\Payout::retrieve($this->fedapayTransactionId);
-
             // Actually send the funds
-            $payoutObject->sendNow();
+            $fedapayService->sendPayout($transaction->fedapay_payout_id);
 
             // Update transaction status
             $transaction->update([
@@ -70,61 +73,43 @@ class ProcessPayout implements ShouldQueue
             ]);
 
             // Send emails
-            $this->sendConfirmationEmails($transaction);
+            $emailAction->handle($transaction);
         } catch (Exception $e) {
-            Log::error('ProcessPayout Job failed: ' . $e->getMessage(), [
-                'fedapay_id' => $this->fedapayTransactionId
+            Log::warning('ProcessPayout tentative échouée (attempt ' . $this->attempts() . '/' . $this->tries . '): ' . $e->getMessage(), [
+                'transaction_id' => $this->transactionId,
             ]);
 
-            $transaction->update(['status' => 'escrow_lock']);
-
-            TransactionLog::create([
-                'transaction_id' => $transaction->id,
-                'from_status' => 'releasing',
-                'to_status' => 'escrow_lock',
-                'triggered_by' => $transaction->client_id,
-                'note' => 'Payout job failed: ' . $e->getMessage()
-            ]);
+            // Re-throw pour que Laravel puisse déclencher le retry
+            throw $e;
         }
     }
 
-    protected function sendConfirmationEmails(Transaction $transaction)
+    /**
+     * Appelé uniquement après épuisement de toutes les tentatives.
+     */
+    public function failed(Exception $e): void
     {
-        try {
-            $task = Task::find($transaction->task_id);
-            $freelancer = User::find($transaction->prestataire_id);
-            $client = User::find($transaction->client_id);
+        $transaction = Transaction::find($this->transactionId);
 
-            if ($freelancer && $task) {
-                // Generate PDF Receipt
-                $pdfData = Pdf::loadView('pdf.receipt', [
-                    'transaction_id' => $transaction->fedapay_transaction_id,
-                    'task_title' => $task->title,
-                    'amount' => $transaction->amount_net,
-                    'date' => $transaction->liberated_at,
-                    'provider_name' => $freelancer->name,
-                ])->output();
-
-                Mail::to($freelancer->email)->send(new PayoutConfirmationFreelancer(
-                    $transaction->amount_net,
-                    $task->title,
-                    $transaction->liberated_at,
-                    $pdfData
-                ));
-            }
-
-            if ($client && $task && $freelancer) {
-                Mail::to($client->email)->send(new PayoutConfirmationClient(
-                    $task->title,
-                    $freelancer->name,
-                    $transaction->amount_gross
-                ));
-            }
-        } catch (Exception $e) {
-            Log::error('Failed to send payout confirmation emails', [
-                'transaction_id' => $transaction->id,
-                'error' => $e->getMessage()
+        if (!$transaction) {
+            Log::error('ProcessPayout::failed — transaction introuvable', [
+                'transaction_id' => $this->transactionId,
             ]);
+            return;
         }
+
+        Log::error('ProcessPayout Job définitivement échoué après ' . $this->tries . ' tentatives: ' . $e->getMessage(), [
+            'transaction_id' => $this->transactionId,
+        ]);
+
+        $transaction->update(['status' => 'escrow_lock']);
+
+        TransactionLog::create([
+            'transaction_id' => $transaction->id,
+            'from_status' => 'releasing',
+            'to_status' => 'escrow_lock',
+            'triggered_by' => $transaction->client_id,
+            'note' => 'Payout job définitivement échoué après ' . $this->tries . ' tentatives: ' . $e->getMessage(),
+        ]);
     }
 }
