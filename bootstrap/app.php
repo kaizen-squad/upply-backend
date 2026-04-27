@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ApiException;
+use App\Http\Middleware\EnsureTaskOwnership;
 use App\Http\Middleware\IsAuthenticated;
 use App\Http\Middleware\Role;
 use Illuminate\Foundation\Application;
@@ -19,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->alias([
             'authentify' => IsAuthenticated::class,
-            'role' => Role::class
+            'role' => Role::class,
+            'EnsureTaskOwner' => EnsureTaskOwnership::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
