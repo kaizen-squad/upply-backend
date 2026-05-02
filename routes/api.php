@@ -30,8 +30,6 @@ Route::get('/health', function (Request $request) {
 
 Route::middleware('authentify')->group(function () {
     Route::get('/logout', [AuthenticationController::class, 'logout']);
-<<<<<<< HEAD
-<<<<<<< HEAD
 
     Route::post('/tasks/{id}/payment/verify', [TransactionController::class, 'verifyPayment']);
 
@@ -66,109 +64,5 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/review/note', [ReviewController::class, 'note']);
 });
-<<<<<<< HEAD
-=======
 
-Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout'])->middleware('authentify');
-
-Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('authentify');
-
-Route::get('/tasks', [TaskController::class, 'index']);
-
-Route::post('/task/create', [TaskController::class, 'create'])->middleware('authentify');
-
-Route::put('/task/{task}', [TaskController::class, 'update'])->middleware('authentify');
-
-Route::get('/task/{task}', [TaskController::class, 'show']);
-
-Route::delete('/task/{task}', [TaskController::class, 'delete'])->middleware('authentify');
-
-Route::post("/application/apply", [ApplicationController::class, 'apply'])->middleware('authentify');
-
-Route::get("/applications/task", [ApplicationController::class, 'listForTask'])->middleware('authentify');
-
-Route::get("/applications/mine", [ApplicationController::class, 'listMine'])->middleware('authentify');
-
-Route::put("/application/accept/{application}", [ApplicationController::class, 'accept'])->middleware('authentify');
-
-Route::put("/application/reject/{application}", [ApplicationController::class, 'reject'])->middleware('authentify');
-
-Route::post("/deliverable/submit", [DeliverableController::class, 'submit'])->middleware("authentify");
-
-Route::get("/deliverable/{deliverable}", [DeliverableController::class, 'get'])->middleware('authentify');
-<<<<<<< HEAD
->>>>>>> 708637c (feat- RoleMiddelware definition)
-=======
-
-Route::post("/deliverable/validate/{deliverable}", [DeliverableController::class, 'validate'])->middleware('authentify');
->>>>>>> 1a96ffa (fix(endpoint): Added the deliverable validation endpoint)
-=======
-    
-    Route::post('/tasks/{id}/payment/verify', [TransactionController::class, 'verifyPayment']);
-    
-    Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout']);
-    
-    Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation']);
-    
-    Route::get('/tasks', [TaskController::class, 'index']);
-    
-    Route::post('/task/create', [TaskController::class, 'create']);
-    
-    Route::put('/task/{task}', [TaskController::class, 'update']);
-    
-    Route::get('/task/{task}', [TaskController::class, 'show']);
-    
-    Route::delete('/task/{task}', [TaskController::class, 'delete']);
-    
-    Route::post("/application/apply", [ApplicationController::class, 'apply']);
-    
-    Route::get("/applications/task", [ApplicationController::class, 'listForTask']);
-    
-    Route::get("/applications/mine", [ApplicationController::class, 'listMine']);
-    
-    Route::put("/application/accept/{application}", [ApplicationController::class, 'accept']);
-    
-    Route::put("/application/reject/{application}", [ApplicationController::class, 'reject']);
-    
-    Route::post("/deliverable/submit", [DeliverableController::class, 'submit']);
-    
-    Route::get("/deliverable/{deliverable}", [DeliverableController::class, 'get']);
-    
-    Route::post("/deliverable/validate/{deliverable}", [DeliverableController::class, 'validate']);
-=======
->>>>>>> 1948f3d (fix(escrow): stabilize FedaPay payout workflow and edge cases)
-
-    Route::post('/tasks/{id}/payment/verify', [TransactionController::class, 'verifyPayment']);
-
-    Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout']);
-    Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('role:admin');
-
-    Route::get('/tasks', [TaskController::class, 'index']);
-
-    Route::post('/task/create', [TaskController::class, 'create']);
-
-    Route::put('/task/{task}', [TaskController::class, 'update']);
-
-    Route::get('/task/{task}', [TaskController::class, 'show']);
-
-    Route::delete('/task/{task}', [TaskController::class, 'delete']);
-
-    Route::post('/application/apply', [ApplicationController::class, 'apply']);
-
-    Route::get('/applications/task', [ApplicationController::class, 'listForTask']);
-
-    Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
-
-    Route::put('/application/accept/{application}', [ApplicationController::class, 'accept']);
-
-    Route::put('/application/reject/{application}', [ApplicationController::class, 'reject']);
-
-    Route::post('/deliverable/submit', [DeliverableController::class, 'submit']);
-
-    Route::get('/deliverable/{deliverable}', [DeliverableController::class, 'get']);
-
-    Route::post('/deliverable/validate/{deliverable}', [DeliverableController::class, 'validate']);
-
-    Route::post('/review/note', [ReviewController::class, 'note']);
-});
->>>>>>> 6c6097f (feat(reviews): Tested note endpoints)
+  
