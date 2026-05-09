@@ -36,27 +36,27 @@ Route::middleware('authentify')->group(function () {
     Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout']);
     Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('role:admin');
 
-    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::get('/tasks', [TaskController::class, 'index']); // Validé
 
-    Route::post('/task/create', [TaskController::class, 'create']);
+    Route::post('/tasks', [TaskController::class, 'create']); // Validé
 
-    Route::put('/task/{task}', [TaskController::class, 'update']);
+    Route::put('/tasks/{task}', [TaskController::class, 'update']); // Validé
 
-    Route::get('/task/{task}', [TaskController::class, 'show']);
+    Route::get('/tasks/{task}', [TaskController::class, 'show']); // Validé
 
-    Route::delete('/task/{task}', [TaskController::class, 'delete']);
+    Route::delete('/tasks/{task}', [TaskController::class, 'delete']); // Validé
 
-    Route::post('/application/apply', [ApplicationController::class, 'apply']);
+    Route::post('/applications/apply', [ApplicationController::class, 'apply']);
 
-    Route::get('/applications/task', [ApplicationController::class, 'listForTask']);
+    Route::get('/applications/task', [ApplicationController::class, 'listForTask']); // Validé
 
-    Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
+    Route::get('/applications/mine', [ApplicationController::class, 'listMine']); // Validé
 
-    Route::put('/application/accept/{application}', [ApplicationController::class, 'accept']);
+    Route::put('/application/{application}/accept', [ApplicationController::class, 'accept']); // Validé
 
-    Route::put('/application/reject/{application}', [ApplicationController::class, 'reject']);
+    Route::put('/application/{application}/reject', [ApplicationController::class, 'reject']); // Validé
 
-    Route::post('/deliverable/submit', [DeliverableController::class, 'submit']);
+    Route::post('/deliverables/submit', [DeliverableController::class, 'submit']);
 
     Route::get('/deliverable/{deliverable}', [DeliverableController::class, 'get']);
 
