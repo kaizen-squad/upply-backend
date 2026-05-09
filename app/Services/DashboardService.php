@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\TaskStatus;
 use App\Http\Resources\TaskResource;
+use App\Models\Application;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\User;
@@ -19,7 +20,7 @@ class DashboardService{
         ->get();
 
         $totalSpent = Transaction::query()->whereHas('task', fn($q) => $q
-                                            ->where('client_id')
+                                            ->where('client_id', $client->id)
                                             ->where('status', TaskStatus::VALIDATED))
         ->where('status', 'released')
         ->sum('amount_gross');
@@ -27,6 +28,25 @@ class DashboardService{
         return [
             "tasks" => TaskResource::collection($tasks),
             "total_spent" => $totalSpent
+        ];
+    }
+
+    public function forPrestataire(User $prestaire){
+        Gate::authorize("prestataire-access-dashboard");
+
+        $applications = Application::query()
+        ->where('prestataire_id', $prestaire->id)
+        ->with('task')
+        ->get();
+
+        $totalEarned = Transaction::query()->where('prestataire_id', $prestaire->id)
+                        ->whereHas('task', fn($q) => $q->where('status', TaskStatus::VALIDATED))
+                        ->where('status', 'released')
+                        ->sum('amount_net');
+
+        return [
+            'applications' => $applications,
+            'totalEarned' => $totalEarned
         ];
     }
 }
