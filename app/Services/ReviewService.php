@@ -3,19 +3,11 @@
 namespace App\Services;
 
 use App\DTOs\Review\ReviewStoreDTO;
-use App\Http\Resources\ReviewResource;
-use App\Models\Review;
+use App\Models\Task;
 use App\Models\User;
 
 class ReviewService{
-    public function note(User $reviewerId, ReviewStoreDTO $data){
-        $newReview = Review::create([
-            "rating" => $data->rating,
-            "comment" => $data->comment,
-
-            "reviewer_id" => $reviewerId->id,
-        ]);
-
-        return new ReviewResource($newReview);
+    public function create(User $reviewer, ReviewStoreDTO $data, Task $targetTask){
+        
     }
 }
