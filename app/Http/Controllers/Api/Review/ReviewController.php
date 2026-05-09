@@ -19,5 +19,11 @@ class ReviewController extends Controller
         $user = $request->user();
 
         $response = $this->service->create($user, $data, $task);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Task reviewed successfully"
+        ], 201);
     }
 }
