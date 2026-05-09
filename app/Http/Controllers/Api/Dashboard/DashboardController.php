@@ -20,7 +20,19 @@ class DashboardController extends Controller
         return response()->json([
             "success" => true,
             "data" => $response,
-            "message" => "There is the aggregations for the client."
+            "message" => "There are the aggregations for the client."
+        ]);
+    }
+
+    public function forPrestataire(Request $request){
+        $user = $request->user();
+
+        $response = $this->service->forPrestataire($user);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "There are application for the prestataire."
         ]);
     }
 }
