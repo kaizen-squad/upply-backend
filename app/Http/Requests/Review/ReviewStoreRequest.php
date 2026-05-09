@@ -23,9 +23,7 @@ class ReviewStoreRequest extends FormRequest
     {
         return [
             "comment" => ["nullable", "string"],
-            "rating" => ["required", "integer", "max_digits:1", "max:5"],
-
-            "reviewee_id" => ["required", "exists:users,id"]
+            "rating" => ["required", "integer", "max_digits:1", "max:5", "min:1"],
         ];
     }
 }

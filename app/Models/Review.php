@@ -13,6 +13,7 @@ class Review extends Model
     protected $fillable = [
         "reviewer_id",
         "reviewee_id",
+        "task_id",
 
         "rating",
         "comment"
