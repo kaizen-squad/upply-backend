@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tasks', function (Blueprint $table) {
-
-            $table->foreignUuid('transaction_id')->constrained();
+        Schema::table('reviews', function (Blueprint $table) {
+            $table->foreignUuid('task_id')->constrained()->cascadeOnDelete();
         });
     }
 
@@ -22,9 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->dropForeign('transaction_id');
-            $table->dropColumn('transaction_id');
+        Schema::table('reviews', function (Blueprint $table) {
+            $table->dropForeign("task_id");
+            $table->dropColumn("task_id");
         });
     }
 };
