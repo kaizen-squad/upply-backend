@@ -36,7 +36,7 @@ Route::middleware('authentify')->group(function () {
     Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout']);
     Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('role:admin');
 
-    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::get('/tasks', [TaskController::class, 'index']); // Validé
 
     Route::post('/tasks', [TaskController::class, 'create']);
 
@@ -48,9 +48,9 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/applications/apply', [ApplicationController::class, 'apply']);
 
-    Route::get('/applications/task', [ApplicationController::class, 'listForTask']);
+    Route::get('/applications/task', [ApplicationController::class, 'listForTask']); // Validé
 
-    Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
+    Route::get('/applications/mine', [ApplicationController::class, 'listMine']); // Validé
 
     Route::put('/application/{application}/accept', [ApplicationController::class, 'accept']);
 
