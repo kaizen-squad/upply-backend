@@ -52,9 +52,9 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/applications/apply', [ApplicationController::class, 'apply']);
 
-    Route::get('/applications/task', [ApplicationController::class, 'listForTask']); // Validé
+    Route::get('/applications/task', [ApplicationController::class, 'listForTask']);
 
-    Route::get('/applications/mine', [ApplicationController::class, 'listMine']); // Validé
+    Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
 
     Route::put('/application/{application}/accept', [ApplicationController::class, 'accept']);
 
