@@ -68,4 +68,6 @@ Route::middleware('authentify')->group(function () {
     Route::get('/tasks/{task}/review', [ReviewController::class, 'getForTask']);
 
     Route::get('/dashboard/client', [DashboardController::class, 'forClient']);
+
+    Route::get('/dashboard/client', [DashboardController::class, 'forPrestataire']);
 });
