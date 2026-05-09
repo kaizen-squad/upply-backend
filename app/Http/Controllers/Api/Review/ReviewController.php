@@ -26,4 +26,8 @@ class ReviewController extends Controller
             "message" => "Task reviewed successfully"
         ], 201);
     }
+
+    public function getForTask(Task $targetTask){
+        $response = $this->service->getForTask($targetTask);
+    }
 }

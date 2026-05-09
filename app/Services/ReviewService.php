@@ -34,4 +34,15 @@ class ReviewService{
 
         return new ReviewResource($newReview);
     }
+
+    public function getForTask(Task $targetTask){
+        if($targetTask->status !== TaskStatus::VALIDATED) throw new DomainException("The current task isn't validated yet !!");
+
+        $hasReview = Review::where('task_id', $targetTask->id)->exists();
+        if(!$hasReview) throw new DomainException("This task doesn't have any review.");
+
+        $review = Review::where('task_id', $targetTask->id)->first();
+
+        return new ReviewResource($review->load('task'));
+    }
 }
