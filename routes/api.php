@@ -64,5 +64,3 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/review/note', [ReviewController::class, 'note']);
 });
-
-  
