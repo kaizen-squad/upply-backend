@@ -22,4 +22,9 @@ class Review extends Model
     {
         return $this->belongsTo(User::class, 'reviewer_id', 'id');
     }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
+    }
 }
