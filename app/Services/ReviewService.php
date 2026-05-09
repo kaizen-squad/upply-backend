@@ -14,7 +14,6 @@ class ReviewService{
             "comment" => $data->comment,
 
             "reviewer_id" => $reviewerId->id,
-            "reviewee_id" => $data->revieweeId
         ]);
 
         return new ReviewResource($newReview);
