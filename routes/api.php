@@ -36,25 +36,25 @@ Route::middleware('authentify')->group(function () {
     Route::post('/transactions/{transactionId}/payout', [TransactionController::class, 'makePayout']);
     Route::post('/fedapay/reconcile', [TransactionController::class, 'triggerReconciliation'])->middleware('role:admin');
 
-    Route::get('/tasks', [TaskController::class, 'index']); // Validé
+    Route::get('/tasks', [TaskController::class, 'index']);
 
-    Route::post('/tasks', [TaskController::class, 'create']); // Validé
+    Route::post('/tasks', [TaskController::class, 'create']);
 
-    Route::put('/tasks/{task}', [TaskController::class, 'update']); // Validé
+    Route::put('/tasks/{task}', [TaskController::class, 'update']);
 
-    Route::get('/tasks/{task}', [TaskController::class, 'show']); // Validé
+    Route::get('/tasks/{task}', [TaskController::class, 'show']);
 
-    Route::delete('/tasks/{task}', [TaskController::class, 'delete']); // Validé
+    Route::delete('/tasks/{task}', [TaskController::class, 'delete']);
 
     Route::post('/applications/apply', [ApplicationController::class, 'apply']);
 
-    Route::get('/applications/task', [ApplicationController::class, 'listForTask']); // Validé
+    Route::get('/applications/task', [ApplicationController::class, 'listForTask']);
 
-    Route::get('/applications/mine', [ApplicationController::class, 'listMine']); // Validé
+    Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
 
-    Route::put('/application/{application}/accept', [ApplicationController::class, 'accept']); // Validé
+    Route::put('/application/{application}/accept', [ApplicationController::class, 'accept']);
 
-    Route::put('/application/{application}/reject', [ApplicationController::class, 'reject']); // Validé
+    Route::put('/application/{application}/reject', [ApplicationController::class, 'reject']);
 
     Route::post('/deliverables/submit', [DeliverableController::class, 'submit']);
 
