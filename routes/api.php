@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Application\ApplicationController;
 use App\Http\Controllers\Api\Auth\AuthenticationController;
+use App\Http\Controllers\Api\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Deliverable\DeliverableController;
 use App\Http\Controllers\Api\Fedapay\TransactionController;
 use App\Http\Controllers\Api\Review\ReviewController;
@@ -65,4 +66,8 @@ Route::middleware('authentify')->group(function () {
     Route::post('/tasks/{task}/review', [ReviewController::class, 'create']);
 
     Route::get('/tasks/{task}/review', [ReviewController::class, 'getForTask']);
+
+    Route::get('/dashboard/client', [DashboardController::class, 'forClient']);
+
+    Route::get('/dashboard/client', [DashboardController::class, 'forPrestataire']);
 });

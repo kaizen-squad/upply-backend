@@ -27,7 +27,9 @@ class TaskResource extends JsonResource
             "client" => new UserResource($this->whenLoaded('client')),
             "contract" => $this->whenLoaded('contract', fn() => [
                 "application_id" => $this->contract->application_id
-            ])
+            ]),
+
+            "total_applications" => $this->whenCounted("applications")
         ];
     }
 }
