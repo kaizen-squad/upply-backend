@@ -69,5 +69,5 @@ Route::middleware('authentify')->group(function () {
 
     Route::get('/dashboard/client', [DashboardController::class, 'forClient']);
 
-    Route::get('/dashboard/client', [DashboardController::class, 'forPrestataire']);
+    Route::get('/dashboard/prestataire', [DashboardController::class, 'forPrestataire']);
 });

@@ -86,7 +86,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"Brian Okwu\",\n  \"email\": \"okwubrian@gmail.com\",\n  \"phone\": \"0190408601\",\n  \"password\": \"passw0rd\",\n  \"role\": \"client\",\n  \"password_confirmation\": \"passw0rd\",\n  \"rating_avg\": 1.11\n}",
+                            "raw": "{\n  \"name\": \"Brian Okwu\",\n  \"email\": \"johndoe@gmail.com\",\n  \"phone\": \"0190408601\",\n  \"password\": \"passw0rd\",\n  \"role\": \"prestataire\",\n  \"password_confirmation\": \"passw0rd\",\n  \"rating_avg\": 1.11\n}",
                             "options": {
                                 "raw": {
                                     "headerFamily": "json",
@@ -208,7 +208,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"title\": \"Test de confidentialité de données\",\n    \"description\": \"L'objectif est de mettre en place des tests.\",\n    \"budget\": 2000,\n    \"deadline\": \"2026-05-02\"\n}",
+                            "raw": "{\n    \"title\": \"Test de confidentialité de données\",\n    \"description\": \"L'objectif est de mettre en place des tests.\",\n    \"budget\": 2000,\n    \"deadline\": \"2026-06-02\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -216,11 +216,11 @@
                             }
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/task/create",
+                            "raw": "http://localhost:8000/api/tasks",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
-                            "path": ["api", "task", "create"]
+                            "path": ["api", "tasks"]
                         }
                     },
                     "response": []
@@ -244,13 +244,13 @@
                             "raw": ""
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/task/12a63b3a-b1eb-3a40-b922-1603fc61b168",
+                            "raw": "http://localhost:8000/api/tasks/12a63b3a-b1eb-3a40-b922-1603fc61b168",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
                             "path": [
                                 "api",
-                                "task",
+                                "tasks",
                                 "12a63b3a-b1eb-3a40-b922-1603fc61b168"
                             ]
                         }
@@ -307,13 +307,13 @@
                             }
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/task/019dc2d3-dfe4-70c5-9180-45bd97e833f8",
+                            "raw": "http://localhost:8000/api/tasks/019dc2d3-dfe4-70c5-9180-45bd97e833f8",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
                             "path": [
                                 "api",
-                                "task",
+                                "tasks",
                                 "019dc2d3-dfe4-70c5-9180-45bd97e833f8"
                             ]
                         }
@@ -338,7 +338,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"message\": \"J'ai les compétences requises.\",\n    \"task_id\": \"019dc540-cfe2-7306-b0de-a00970d44800\"\n}",
+                            "raw": "{\n    \"message\": \"J'ai les compétences requises.\",\n    \"task_id\": \"019e0b4c-28ff-70cb-8c38-fb9f4e8331a7\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -346,11 +346,11 @@
                             }
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/application/apply",
+                            "raw": "http://localhost:8000/api/applications/apply",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
-                            "path": ["api", "application", "apply"]
+                            "path": ["api", "applications", "apply"]
                         }
                     },
                     "response": []
@@ -437,15 +437,15 @@
                             }
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/application/accept/019dc542-eab9-71e2-bae5-ca452acbf0f6",
+                            "raw": "http://localhost:8000/api/application/019e0b4e-0f48-7029-8452-5f116497878e/accept",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
                             "path": [
                                 "api",
                                 "application",
-                                "accept",
-                                "019dc542-eab9-71e2-bae5-ca452acbf0f6"
+                                "019e0b4e-0f48-7029-8452-5f116497878e",
+                                "accept"
                             ]
                         }
                     },
@@ -461,15 +461,15 @@
                             "raw": ""
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/application/reject/019dc4f9-3706-720c-918b-7fab925f40a1",
+                            "raw": "http://localhost:8000/api/application/019dc4f9-3706-720c-918b-7fab925f40a1/reject",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
                             "path": [
                                 "api",
                                 "application",
-                                "reject",
-                                "019dc4f9-3706-720c-918b-7fab925f40a1"
+                                "019dc4f9-3706-720c-918b-7fab925f40a1",
+                                "reject"
                             ]
                         }
                     },
@@ -493,7 +493,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"content\": \"There is the deliverable.\",\n\n    \"task_id\": \"019dc540-cfe2-7306-b0de-a00970d44800\"\n}",
+                            "raw": "{\n    \"content\": \"There is the deliverable.\",\n\n    \"task_id\": \"019e0b4c-28ff-70cb-8c38-fb9f4e8331a7\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -501,11 +501,11 @@
                             }
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/deliverable/submit",
+                            "raw": "http://localhost:8000/api/deliverables/submit",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
-                            "path": ["api", "deliverable", "submit"]
+                            "path": ["api", "deliverables", "submit"]
                         }
                     },
                     "response": []
@@ -554,7 +554,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"rating\": 4,\n    \"reviewee_id\": \"019dcae5-756e-7182-94fc-d13576e20a41\"\n}",
+                            "raw": "{\n    \"rating\": 4\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -562,11 +562,96 @@
                             }
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/review/note",
+                            "raw": "http://localhost:8000/api/tasks/019e0b4c-28ff-70cb-8c38-fb9f4e8331a7/review",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
-                            "path": ["api", "review", "note"]
+                            "path": [
+                                "api",
+                                "tasks",
+                                "019e0b4c-28ff-70cb-8c38-fb9f4e8331a7",
+                                "review"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Review",
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"content\": \"There is the deliverable.\",\n\n    \"task_id\": \"019e0b4c-28ff-70cb-8c38-fb9f4e8331a7\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:8000/api/tasks/019e0b4c-28ff-70cb-8c38-fb9f4e8331a7/review",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "8000",
+                            "path": [
+                                "api",
+                                "tasks",
+                                "019e0b4c-28ff-70cb-8c38-fb9f4e8331a7",
+                                "review"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Dashboard",
+            "item": [
+                {
+                    "name": "Dasboard Client",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/dashboard/client",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "8000",
+                            "path": ["api", "dashboard", "client"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Dashboard Prestataire",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:8000/api/dashboard/prestataire",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "8000",
+                            "path": ["api", "dashboard", "prestataire"]
                         }
                     },
                     "response": []

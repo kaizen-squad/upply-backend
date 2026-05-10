@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('prestataire-access-dashboard', function (User $user): bool{
-            return $user->role !== UserRole::Prestataire;
+            return $user->role === UserRole::Prestataire;
         });
     }
 }
