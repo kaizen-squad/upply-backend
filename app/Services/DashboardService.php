@@ -25,8 +25,28 @@ class DashboardService{
         ->where('status', 'released')
         ->sum('amount_gross');
 
+        $opened_tasks = Task::query()
+        ->where('client_id', $client->id)
+        ->where('status', TaskStatus::OPENED)
+        ->count();
+
+        $pending_tasks = Task::query()
+        ->where('client_id', $client->id)
+        ->where('status', TaskStatus::PENDING)
+        ->count();
+
+        $validated_tasks = Task::query()
+        ->where('client_id', $client->id)
+        ->where('status', TaskStatus::VALIDATED)
+        ->count();
+
         return [
             "tasks" => TaskResource::collection($tasks),
+            "statistics" => [
+                "opened" => $opened_tasks,
+                "pending" => $pending_tasks,
+                "validated" => $validated_tasks
+            ],
             "total_spent" => $totalSpent
         ];
     }
