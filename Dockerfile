@@ -18,6 +18,9 @@ RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
 # 3. Copier le reste du projet
 COPY . .
 
+# Générer l'autoloader optimisé pour la production
+RUN composer dump-autoload --no-dev --optimize
+
 # S'assurer que le script d'entrée est exécutable
 RUN chmod +x /app/Docker/entry.sh
 
