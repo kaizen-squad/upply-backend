@@ -26,8 +26,8 @@
                         'name' => ['required','max:255','string'],
                         'password' => ['required','confirmed',Password::min(8)->numbers()->letters()],
                         'role' => ['required', 'max:12', Rule::enum(UserRole::class)],
-                        'phone' => ['string', 'max:100'],
-                        'rating_avg' => ['decimal:2,3']
+                        'phone' => ['nullable', 'string', 'max:100'],
+                        'rating_avg' => ['nullable', 'decimal:2,3']
                         ]);
                         
                         if($validator->fails()){
