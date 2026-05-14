@@ -18,6 +18,9 @@ RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
 # 3. Copier le reste du projet
 COPY . .
 
+# S'assurer que le script d'entrée est exécutable
+RUN chmod +x /app/Docker/entry.sh
+
 ENV PORT=8000 HOST=0.0.0.0
 
-ENTRYPOINT ["/app/Docker/entry.sh"]
+ENTRYPOINT ["/bin/sh", "/app/Docker/entry.sh"]
