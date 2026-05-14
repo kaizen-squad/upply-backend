@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-
             $table->foreignUuid('transaction_id')->constrained();
         });
     }
@@ -23,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->dropForeign('transaction_id');
+            $table->dropForeign(['transaction_id']);
             $table->dropColumn('transaction_id');
         });
     }
