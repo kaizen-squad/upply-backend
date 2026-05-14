@@ -23,7 +23,6 @@ return new class extends Migration
     {
         Schema::table('applications', function (Blueprint $table) {
             $table->dropConstrainedForeignId('contract_id');
-            $table->dropColumn('contract_id');
         });
     }
 };
