@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('role')->default(UserRole::Client);
             $table->string('phone')->nullable();
-            $table->decimal('rating_avg', 3, 2)->default(0);
+            $table->decimal('rating_avg', 3, 2)->default(null);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
