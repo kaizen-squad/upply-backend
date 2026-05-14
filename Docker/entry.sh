@@ -14,8 +14,7 @@ until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME"; do
 done
 
 # On lance les migrations
-#php artisan migrate --force
-php artisan migrate:refresh --force
+php artisan migrate --force
 # Suppression des chown (inutiles/interdits sur bcp de PaaS en runtime)
 # Suppression des caches
 php artisan config:cache
