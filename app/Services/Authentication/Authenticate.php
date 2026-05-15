@@ -91,7 +91,7 @@
                     'message' => 'User successfully logged in !',
                     'code' => 200,
                     'data' => [
-                        'user' => $user,
+                        'user' => new UserResource($user),
                         'accessToken' => $tokenAccess,
                         'refreshToken' => $tokenRefresh
                     ]
