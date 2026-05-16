@@ -24,7 +24,8 @@ class ApplicationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => $response
+            'data' => $response,
+            'message' => "Application to this task is successfull"
         ], 201);
     }
 
