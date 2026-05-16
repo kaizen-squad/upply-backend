@@ -43,6 +43,6 @@ class ReviewService{
 
         $review = Review::where('task_id', $targetTask->id)->first();
 
-        return new ReviewResource($review->load('task'));
+        return new ReviewResource($review->load('reviewer'));
     }
 }
