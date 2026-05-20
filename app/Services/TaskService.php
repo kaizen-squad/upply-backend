@@ -40,6 +40,10 @@ class TaskService{
         return new TaskResource($task->load('client'));
     }
 
+    public function tasksMine(User $client){
+        //
+    }
+
     public function update(Task $targetTask, TaskUpdateDTO $data): bool
     {
         // Check the ability of the user to update this task.

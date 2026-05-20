@@ -22,6 +22,10 @@ class TaskPolicy
         return $user->role === UserRole::Client;
     }
 
+    public function tasksMine(User $user): bool{
+        return $user->role === UserRole::Client;
+    }
+
     public function update(User $user, Task $task): bool
     {
         return (
