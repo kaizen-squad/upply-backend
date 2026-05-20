@@ -41,7 +41,11 @@ class TaskService{
     }
 
     public function tasksMine(User $client){
-        //
+        Gate::authorize('tasksMine', Task::class);
+
+        $tasks = Task::where('client_id', $client->id)->get();
+
+        return TaskResource::collection($tasks);
     }
 
     public function update(Task $targetTask, TaskUpdateDTO $data): bool
