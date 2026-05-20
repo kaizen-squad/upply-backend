@@ -9,6 +9,7 @@ use App\Http\Requests\Task\TaskUpdateRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Exception;
+use Illuminate\Http\Request;
 
 class TaskController{
 
@@ -68,6 +69,18 @@ class TaskController{
                 "message" => $e->getMessage()
             ], 403);
         }
+    }
+
+    public function tasksMine(Request $request){
+        $user = $request->user();
+
+        $response = $this->service->tasksMine($user);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Current client tasks"
+        ], 200);
     }
 
     public function update(Task $task, TaskUpdateRequest $request){
