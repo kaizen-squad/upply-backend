@@ -43,7 +43,7 @@ class TaskService{
     public function tasksMine(User $client){
         Gate::authorize('tasksMine', Task::class);
 
-        $tasks = Task::where('client_id', $client->id)->get();
+        $tasks = $client->tasks;
 
         return TaskResource::collection($tasks);
     }

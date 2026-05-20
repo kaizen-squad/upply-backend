@@ -26,7 +26,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"email\": \"johndoe@gmail.com\",\n  \"password\": \"passw0rd\"\n}",
+                            "raw": "{\n  \"email\": \"okwubrian@gmail.com\",\n  \"password\": \"passw0rd\"\n}",
                             "options": {
                                 "raw": {
                                     "headerFamily": "json",
@@ -273,13 +273,13 @@
                             "raw": "{\n    \"title\": \"Maintenance d'un site vitrine\",\n    \"description\": \"L'objectif est de mettre à jour les composants visuels du site web.\",\n    \"budget\": 30000,\n    \"deadline\": \"2026-05-02\"\n}"
                         },
                         "url": {
-                            "raw": "http://localhost:8000/api/task/0456c3a0-9152-3ad2-b2d2-192b6333fd83",
+                            "raw": "http://localhost:8000/api/tasks/0456c3a0-9152-3ad2-b2d2-192b6333fd83",
                             "protocol": "http",
                             "host": ["localhost"],
                             "port": "8000",
                             "path": [
                                 "api",
-                                "task",
+                                "tasks",
                                 "0456c3a0-9152-3ad2-b2d2-192b6333fd83"
                             ]
                         }
@@ -316,6 +316,21 @@
                                 "tasks",
                                 "019dc2d3-dfe4-70c5-9180-45bd97e833f8"
                             ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Client tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:8000/api/tasks/mine",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "8000",
+                            "path": ["api", "tasks", "mine"]
                         }
                     },
                     "response": []
