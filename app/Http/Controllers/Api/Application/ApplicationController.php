@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\Application;
 
 use App\DTOs\Application\ApplicationStoreDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Application\ApplicationListForTaskRequest;
 use App\Http\Requests\Application\ApplicationStoreRequest;
 use App\Models\Application;
+use App\Models\Task;
 use App\Services\ApplicationService;
 use Illuminate\Http\Request;
 
@@ -29,8 +29,8 @@ class ApplicationController extends Controller
         ], 201);
     }
 
-    public function listForTask(ApplicationListForTaskRequest $request){
-        $response = $this->service->listForTask($request->input('task_id'));
+    public function listForTask(Task $task){
+        $response = $this->service->listForTask($task->id);
 
         return response()->json([
             "success" => true,
