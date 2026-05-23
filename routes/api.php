@@ -39,8 +39,13 @@ Route::middleware('authentify')->group(function () {
 
     Route::get('/tasks', [TaskController::class, 'index']);
     
+    
     Route::get('/tasks/mine', [TaskController::class, 'tasksMine']);
-
+    
+    Route::get('/tasks/{task}/applications', [ApplicationController::class, 'listForTask']);
+    
+    Route::get("tasks/{task}/applications/me", [ApplicationController::class, 'currentApplication']);
+    
     Route::post('/tasks', [TaskController::class, 'create']);
 
     Route::put('/tasks/{task}', [TaskController::class, 'update']);
@@ -51,8 +56,6 @@ Route::middleware('authentify')->group(function () {
     Route::delete('/tasks/{task}', [TaskController::class, 'delete']);
 
     Route::post('/tasks/apply', [ApplicationController::class, 'apply']);
-
-    Route::get('/tasks/{task}/applications', [ApplicationController::class, 'listForTask']);
 
     Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
 

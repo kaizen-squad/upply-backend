@@ -6,6 +6,7 @@ use App\DTOs\Application\ApplicationStoreDTO;
 use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
+use App\Http\Controllers\Api\Task\TaskController;
 use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Application;
@@ -47,6 +48,14 @@ class ApplicationService{
         $applications = Application::where('task_id', $taskId)->with('prestataire')->get();
     
         return ApplicationResource::collection($applications);
+    }
+
+    public function currentApplication(Task $task, User $prestataire){
+        Gate::authorize('currentApplication', [Application::class, $task]);
+
+        $application = $task->applications->where('prestataire_id', $prestataire->id)->first();
+
+        return new ApplicationResource($application);
     }
 
     public function listMine(User $prestataire){

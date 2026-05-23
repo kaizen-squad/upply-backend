@@ -39,6 +39,18 @@ class ApplicationController extends Controller
         ], 200);
     }
 
+    public function currentApplication(Task $task, Request $request){
+        $user = $request->user();
+
+        $response = $this->service->currentApplication($task, $user);
+
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Application of the current prestataire"
+        ]);
+    }
+
     public function listMine(Request $request){
         $user = $request->user();
 
