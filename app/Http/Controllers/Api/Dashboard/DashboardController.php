@@ -32,7 +32,7 @@ class DashboardController extends Controller
         return response()->json([
             "success" => true,
             "data" => $response,
-            "message" => "There are application for the prestataire."
+            "message" => "Prestataire dashboard data retrieved successfully."
         ]);
     }
 }
