@@ -47,8 +47,8 @@ class ApplicationController extends Controller
         return response()->json([
             "success" => true,
             "data" => $response,
-            "message" => "Application of the current prestataire"
-        ]);
+            "message" => "Your application for this task has been retrieved"
+        ], 200);
     }
 
     public function listMine(Request $request){
