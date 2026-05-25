@@ -6,8 +6,7 @@ use App\Http\Requests\Application\ApplicationStoreRequest;
 
 readonly class ApplicationStoreDTO{
     public function __construct(
-        public string $message,
-        public string $task_id
+        public string $message
     ){}
 
     public static function fromRequest(ApplicationStoreRequest $request): self
@@ -16,7 +15,6 @@ readonly class ApplicationStoreDTO{
 
         return new self(
             message: $data['message'],
-            task_id: $data['task_id']
         );
     }
 }
