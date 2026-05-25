@@ -52,7 +52,6 @@ Route::middleware('authentify')->group(function () {
 
     Route::get('/tasks/{task}', [TaskController::class, 'show']);
 
-
     Route::delete('/tasks/{task}', [TaskController::class, 'delete']);
 
     Route::post('/tasks/apply', [ApplicationController::class, 'apply']);
