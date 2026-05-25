@@ -23,7 +23,7 @@ class ApplicationPolicy
         return (
             $user->id !== $task->client_id
             && $user->role === UserRole::Prestataire
-        ) ? Response::allow() : Response::deny("Vous devez être un client pour créer des missions.");
+        ) ? Response::allow() : Response::deny("Vous devez être un prestataire pour créer des candidatures.");
     }
 
     public function listForTask(User $user, Task $task): Response
