@@ -16,11 +16,11 @@ class ApplicationController extends Controller
         protected ApplicationService $service
     ){}
 
-    public function apply(ApplicationStoreRequest $request){
+    public function apply(Task $task, ApplicationStoreRequest $request){
         $user = $request->user();
         $data = ApplicationStoreDTO::fromRequest($request);
 
-        $response = $this->service->apply($user, $data);
+        $response = $this->service->apply($task, $user, $data);
 
         return response()->json([
             'success' => true,

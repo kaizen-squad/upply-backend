@@ -22,8 +22,7 @@ class ApplicationStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => ['required', 'string'],
-            'task_id' => ['required', 'exists:tasks,id']
+            'message' => ['required', 'string']
         ];
     }
 }
