@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Enums\UserRole;
-use App\Models\Application;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -38,9 +37,6 @@ class ApplicationPolicy
     {
         return (
             $user->role === UserRole::Prestataire
-            && Application::where('prestataire_id', $user->id)
-            ->where('task_id', $task->id)
-            ->exists()
         ) ? Response::allow() : Response::deny("Seul le prestataire propriétaire de cette candidature peut la voir.");
     }
 

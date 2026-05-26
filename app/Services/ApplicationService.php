@@ -14,6 +14,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApplicationService{
     public function apply(Task $task, User $prestataire, ApplicationStoreDTO $data){
@@ -49,6 +50,12 @@ class ApplicationService{
 
     public function currentApplication(Task $task, User $prestataire){
         Gate::authorize('currentApplication', [Application::class, $task]);
+
+        $hasApplication = Application::where('prestataire_id', $prestataire->id)
+            ->where('task_id', $task->id)
+            ->exists();
+
+        if(!$hasApplication) throw new NotFoundHttpException("Le prestataire n'a pas de candidature pour cette mission.");
 
         $application = $task->applications->where('prestataire_id', $prestataire->id)->first();
 
