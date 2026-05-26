@@ -6,6 +6,7 @@ use DomainException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class ApiException extends Exception
@@ -15,6 +16,7 @@ class ApiException extends Exception
         return match(true){
             $e instanceof DomainException => self::domain($e),
             $e instanceof AuthorizationException, $e instanceof AccessDeniedHttpException => self::forbidden($e),
+            $e instanceof NotFoundHttpException => self::notFound($e),
 
             default => self::serverError($e)
         };
@@ -26,6 +28,16 @@ class ApiException extends Exception
             'status' => 403,
             'success' => false,
             'message' => "You are not authorized to perform this action.",
+            'data' => null
+        ];
+    }
+
+    private static function notFound(NotFoundHttpException $e): array
+    {
+        return [
+            'status' => 404,
+            "success" => false,
+            'message' => $e->getMessage(),
             'data' => null
         ];
     }
