@@ -44,39 +44,72 @@ class ProcessPayout implements ShouldQueue
      */
     public function handle(\App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
     {
+        Log::info('ProcessPayout::handle — démarrage du job', [
+            'transaction_id' => $this->transactionId,
+            'attempt'        => $this->attempts(),
+            'max_tries'      => $this->tries,
+        ]);
+
         $transaction = Transaction::find($this->transactionId);
 
         if (!$transaction || $transaction->status !== 'releasing') {
-            Log::warning('ProcessPayout: Transaction not found or not in releasing state.', [
-                'transaction_id' => $this->transactionId
+            Log::warning('ProcessPayout::handle — transaction introuvable ou statut invalide, job annulé', [
+                'transaction_id' => $this->transactionId,
+                'status'         => $transaction?->status,
             ]);
             return;
         }
 
         try {
-            // Actually send the funds
+            // Actually send the funds (simulated in sandbox if payout_id starts with SIMULATED_)
             $fedapayService->sendPayout($transaction->fedapay_payout_id);
+
+            Log::info('ProcessPayout::handle — fonds envoyés (ou simulés), mise à jour vers "released"', [
+                'transaction_id' => $this->transactionId,
+                'payout_id'      => $transaction->fedapay_payout_id,
+            ]);
 
             // Update transaction status
             $transaction->update([
-                'status' => 'released',
+                'status'       => 'released',
                 'liberated_at' => now(),
             ]);
+
+            // Update associated task status to VALIDEE
+            if ($transaction->task_id) {
+                Task::where('id', $transaction->task_id)->update(['status' => 'VALIDEE']);
+                Log::info('ProcessPayout::handle — statut de la tâche mis à jour vers "VALIDEE"', [
+                    'task_id' => $transaction->task_id,
+                ]);
+            }
 
             // Log status change
             TransactionLog::create([
                 'transaction_id' => $transaction->id,
-                'from_status' => 'releasing',
-                'to_status' => 'released',
-                'triggered_by' => $transaction->client_id,
-                'note' => 'Payout completed successfully (Job)'
+                'from_status'    => 'releasing',
+                'to_status'      => 'released',
+                'triggered_by'   => $transaction->client_id,
+                'note'           => 'Payout completed successfully (Job)',
             ]);
 
-            // Send emails
-            $emailAction->handle($transaction);
-        } catch (Exception $e) {
-            Log::warning('ProcessPayout tentative échouée (attempt ' . $this->attempts() . '/' . $this->tries . '): ' . $e->getMessage(), [
+            Log::info('ProcessPayout::handle — statut mis à jour vers "released", envoi des emails', [
                 'transaction_id' => $this->transactionId,
+            ]);
+
+            // Send confirmation emails to both parties
+            $emailAction->handle($transaction);
+
+            Log::info('ProcessPayout::handle — job terminé avec succès', [
+                'transaction_id' => $this->transactionId,
+                'payout_id'      => $transaction->fedapay_payout_id,
+            ]);
+
+        } catch (Exception $e) {
+            Log::warning('ProcessPayout::handle — tentative échouée', [
+                'transaction_id' => $this->transactionId,
+                'attempt'        => $this->attempts(),
+                'max_tries'      => $this->tries,
+                'error'          => $e->getMessage(),
             ]);
 
             // Re-throw pour que Laravel puisse déclencher le retry
@@ -89,27 +122,32 @@ class ProcessPayout implements ShouldQueue
      */
     public function failed(Exception $e): void
     {
+        Log::error('ProcessPayout::failed — job définitivement échoué après ' . $this->tries . ' tentatives', [
+            'transaction_id' => $this->transactionId,
+            'error'          => $e->getMessage(),
+        ]);
+
         $transaction = Transaction::find($this->transactionId);
 
         if (!$transaction) {
-            Log::error('ProcessPayout::failed — transaction introuvable', [
+            Log::error('ProcessPayout::failed — transaction introuvable lors du traitement de l\'échec', [
                 'transaction_id' => $this->transactionId,
             ]);
             return;
         }
 
-        Log::error('ProcessPayout Job définitivement échoué après ' . $this->tries . ' tentatives: ' . $e->getMessage(), [
-            'transaction_id' => $this->transactionId,
-        ]);
-
         $transaction->update(['status' => 'escrow_lock']);
 
         TransactionLog::create([
             'transaction_id' => $transaction->id,
-            'from_status' => 'releasing',
-            'to_status' => 'escrow_lock',
-            'triggered_by' => $transaction->client_id,
-            'note' => 'Payout job définitivement échoué après ' . $this->tries . ' tentatives: ' . $e->getMessage(),
+            'from_status'    => 'releasing',
+            'to_status'      => 'escrow_lock',
+            'triggered_by'   => $transaction->client_id,
+            'note'           => 'Payout job définitivement échoué après ' . $this->tries . ' tentatives: ' . $e->getMessage(),
+        ]);
+
+        Log::info('ProcessPayout::failed — transaction remise en escrow_lock', [
+            'transaction_id' => $this->transactionId,
         ]);
     }
 }
