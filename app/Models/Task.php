@@ -52,6 +52,11 @@ class Task extends Model
         );
     }
 
+    public function deliverable(): HasOne
+    {
+        return $this->hasOne(Deliverable::class);
+    }
+
     public function transaction(): HasOne
     {
         return $this->hasOne(Transaction::class);

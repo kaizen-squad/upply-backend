@@ -33,7 +33,7 @@ class ApplicationPolicy
         ) ? Response::allow() : Response::deny("Seul le client propriétaire de cette mission peut voir les candidatures associées.");
     }
 
-    public function currentApplication(User $user, Task $task): Response
+    public function currentApplication(User $user): Response
     {
         return (
             $user->role === UserRole::Prestataire

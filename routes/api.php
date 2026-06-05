@@ -54,6 +54,8 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/tasks/{task}/apply', [ApplicationController::class, 'apply']);
 
+    Route::get('/tasks/{task}/deliverable', [DeliverableController::class, 'get']);
+    
     Route::get('/applications/mine', [ApplicationController::class, 'listMine']);
 
     Route::put('/application/{application}/accept', [ApplicationController::class, 'accept']);
@@ -61,8 +63,6 @@ Route::middleware('authentify')->group(function () {
     Route::put('/application/{application}/reject', [ApplicationController::class, 'reject']);
 
     Route::post('/deliverables/submit', [DeliverableController::class, 'submit']);
-
-    Route::get('/deliverable/{deliverable}', [DeliverableController::class, 'get']);
 
     Route::post('/deliverable/validate/{deliverable}', [DeliverableController::class, 'validate']);
 

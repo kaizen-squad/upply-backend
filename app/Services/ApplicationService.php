@@ -49,7 +49,7 @@ class ApplicationService{
     }
 
     public function currentApplication(Task $task, User $prestataire){
-        Gate::authorize('currentApplication', [Application::class, $task]);
+        Gate::authorize('currentApplication', [Application::class]);
 
         $hasApplication = Application::where('prestataire_id', $prestataire->id)
             ->where('task_id', $task->id)

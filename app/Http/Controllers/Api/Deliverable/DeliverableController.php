@@ -6,6 +6,7 @@ use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Deliverable\SubmitDeliverableRequest;
 use App\Models\Deliverable;
+use App\Models\Task;
 use App\Services\DeliverableService;
 
 class DeliverableController extends Controller
@@ -28,8 +29,8 @@ class DeliverableController extends Controller
         ], 200);
     }
 
-    public function get(Deliverable $deliverable){
-        $response = $this->service->get($deliverable);
+    public function get(Task $task){
+        $response = $this->service->get($task);
 
         return response()->json([
             "success" => true,
