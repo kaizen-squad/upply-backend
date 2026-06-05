@@ -44,12 +44,12 @@ class DeliverableService{
         return new DeliverableResource($newDeliverable);
     }
 
-    public function get(Deliverable $deliverable){
-        $task = Task::findOrFail($deliverable->task_id);
-
+    public function get(Task $task){
         Gate::authorize('get', [Deliverable::class, $task]);
-
+        
         if($task->status !== TaskStatus::DELIVERED) throw new DomainException("This task has not yet received any deliverables.");
+        
+        $deliverable = $task->deliverable;
     
         return new DeliverableResource($deliverable->load('task'));
     }

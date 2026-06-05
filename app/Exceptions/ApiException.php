@@ -24,10 +24,17 @@ class ApiException extends Exception
 
     private static function forbidden(Throwable $e): array
     {
+        $message = "You are not authorized to perform this action.";
+        if($e instanceof AuthorizationException){
+            $message = $e->response()?->message() ?? $e->getMessage();
+        }elseif($e instanceof AccessDeniedHttpException){
+            $message = $e->getMessage() ?: $message;
+        }
+
         return [
             'status' => 403,
             'success' => false,
-            'message' => "You are not authorized to perform this action.",
+            'message' => $message,
             'data' => null
         ];
     }
