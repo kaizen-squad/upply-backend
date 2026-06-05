@@ -28,6 +28,7 @@ class ApplicationResource extends JsonResource
                 'id' => $this->task->id,
                 'title' => $this->task->title,
                 'description' => $this->task->description,
+                'budget' => $this->task->budget
             ])
         ];
     }
