@@ -14,10 +14,11 @@ class TransactionController extends Controller
         protected TransactionService $transactionService
     ) {}
 
-    public function verifyPayment($transactionId): JsonResponse
+    public function verifyPayment(\Illuminate\Http\Request $request, $id): JsonResponse
     {
         try {
-            $result = $this->transactionService->handleTransaction($transactionId);
+            $transactionId = $request->input('transaction_id');
+            $result = $this->transactionService->handleTransaction($transactionId, $id);
 
             if ($result['success']) {
                 return response()->json([
@@ -56,7 +57,7 @@ class TransactionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Le transfert a échoué',
-                'data' => $payout['message'] ?? 'Unknown error'
+                'data' => $payout['message'] ?? ($payout['error'] ?? 'Unknown error')
             ], 400);
         } catch (\Exception $e) {
             return response()->json([

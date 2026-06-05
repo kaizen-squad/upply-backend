@@ -48,8 +48,17 @@ class ProcessPayoutReconciliation implements ShouldQueue
                 return;
             }
 
-            // Retrieve the payout statis from FedaPay
-            $fedapayStatus = $fedapayService->getPayoutStatus($transaction->fedapay_payout_id);
+            // Retrieve the payout status from FedaPay
+            $response = $fedapayService->getPayoutStatus($transaction->fedapay_payout_id);
+
+            if (!$response['success']) {
+                Log::error("ProcessPayoutReconciliation: failed to get status for transaction [{$transaction->id}].", [
+                    'error' => $response['error'] ?? 'Unknown error',
+                ]);
+                return;
+            }
+
+            $fedapayStatus = $response['status'];
 
             Log::info("ProcessPayoutReconciliation: transaction [{$transaction->id}] FedaPay status = [{$fedapayStatus}].");
 
