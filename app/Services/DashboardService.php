@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
+use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Application;
 use App\Models\Task;
@@ -51,22 +53,45 @@ class DashboardService{
         ];
     }
 
-    public function forPrestataire(User $prestaire){
+    public function forPrestataire(User $prestataire){
         Gate::authorize("prestataire-access-dashboard");
 
         $applications = Application::query()
-        ->where('prestataire_id', $prestaire->id)
+        ->where('prestataire_id', $prestataire->id)
         ->with('task')
         ->get();
 
-        $totalEarned = Transaction::query()->where('prestataire_id', $prestaire->id)
+        $totalEarned = Transaction::query()->where('prestataire_id', $prestataire->id)
                         ->whereHas('task', fn($q) => $q->where('status', TaskStatus::VALIDATED))
                         ->where('status', 'released')
                         ->sum('amount_net');
 
+        $tasks = Task::query()
+        ->whereHas('applications', function ($query) use ($prestataire){
+            $query->where('prestataire_id', $prestataire->id);
+        })
+        ->get();
+
+        $waiting_applications = Application::query()
+        ->where('prestataire_id', $prestataire->id)
+        ->where('status', ApplicationStatus::PENDING)
+        ->count();
+
+        $active_missions = Task::query()
+        ->whereIn('status', [TaskStatus::PENDING, TaskStatus::DELIVERED])
+        ->whereHas('applications', function($query) use ($prestataire){
+            $query->where('prestataire_id', $prestataire->id);
+        })
+        ->count();
+
+
         return [
-            'applications' => $applications,
-            'totalEarned' => $totalEarned
+            'tasks' => TaskResource::collection($tasks),
+            'applications' => ApplicationResource::collection($applications),
+            'statistics' => [
+                'waiting_applications' => $waiting_applications,
+                'active_missions' => $active_missions
+            ]
         ];
     }
 }
