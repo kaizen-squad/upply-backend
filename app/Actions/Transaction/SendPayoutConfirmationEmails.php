@@ -82,6 +82,9 @@ class SendPayoutConfirmationEmails
                 'transaction_id' => $transaction->id,
                 'error'          => $e->getMessage(),
             ]);
+
+            // Ne pas masquer l'échec : laisser remonter pour que le job retente / déclenche failed()
+            throw $e;
         }
     }
 }
