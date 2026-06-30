@@ -2,17 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Enums\TransactionStatus;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Exception;
 
 class ProcessPayout implements ShouldQueue
@@ -42,7 +41,7 @@ class ProcessPayout implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(\App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
+    public function handle(\App\Services\Fedapay\FedapayService $fedapayService): void
     {
         Log::info('ProcessPayout::handle — démarrage du job', [
             'transaction_id' => $this->transactionId,
@@ -52,7 +51,7 @@ class ProcessPayout implements ShouldQueue
 
         $transaction = Transaction::find($this->transactionId);
 
-        if (!$transaction || $transaction->status !== 'releasing') {
+        if (!$transaction || $transaction->status !== TransactionStatus::RELEASING) {
             Log::warning('ProcessPayout::handle — transaction introuvable ou statut invalide, job annulé', [
                 'transaction_id' => $this->transactionId,
                 'status'         => $transaction?->status,
@@ -71,7 +70,7 @@ class ProcessPayout implements ShouldQueue
 
             // Update transaction status
             $transaction->update([
-                'status'       => 'released',
+                'status'       => TransactionStatus::RELEASED,
                 'liberated_at' => now(),
             ]);
 
@@ -86,18 +85,18 @@ class ProcessPayout implements ShouldQueue
             // Log status change
             TransactionLog::create([
                 'transaction_id' => $transaction->id,
-                'from_status'    => 'releasing',
-                'to_status'      => 'released',
+                'from_status'    => TransactionStatus::RELEASING->value,
+                'to_status'      => TransactionStatus::RELEASED->value,
                 'triggered_by'   => $transaction->client_id,
                 'note'           => 'Payout completed successfully (Job)',
             ]);
 
-            Log::info('ProcessPayout::handle — statut mis à jour vers "released", envoi des emails', [
+            Log::info('ProcessPayout::handle — statut mis à jour vers "released", dispatch des emails', [
                 'transaction_id' => $this->transactionId,
             ]);
 
-            // Send confirmation emails to both parties
-            $emailAction->handle($transaction);
+            // Send confirmation emails as a separate queued job (decoupled from the payout)
+            \App\Jobs\SendPayoutConfirmationEmailsJob::dispatch($transaction->id);
 
             Log::info('ProcessPayout::handle — job terminé avec succès', [
                 'transaction_id' => $this->transactionId,
@@ -136,12 +135,12 @@ class ProcessPayout implements ShouldQueue
             return;
         }
 
-        $transaction->update(['status' => 'escrow_lock']);
+        $transaction->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
         TransactionLog::create([
             'transaction_id' => $transaction->id,
-            'from_status'    => 'releasing',
-            'to_status'      => 'escrow_lock',
+            'from_status'    => TransactionStatus::RELEASING->value,
+            'to_status'      => TransactionStatus::ESCROW_LOCK->value,
             'triggered_by'   => $transaction->client_id,
             'note'           => 'Payout job définitivement échoué après ' . $this->tries . ' tentatives: ' . $e->getMessage(),
         ]);

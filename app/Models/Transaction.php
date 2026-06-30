@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 #[Fillable([
     'task_id',
     'fedapay_transaction_id',
+    'fedapay_payout_id',
     'client_id',
     'prestataire_id',
     'amount_gross',
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
     'description',
     'payment_method',
     'status',
+    'liberated_at',
 ])]
 class Transaction extends Model
 {
@@ -31,6 +34,8 @@ class Transaction extends Model
             'amount_gross' => 'integer',
             'commission' => 'integer',
             'amount_net' => 'integer',
+            'status' => TransactionStatus::class,
+            'liberated_at' => 'datetime',
         ];
     }
 

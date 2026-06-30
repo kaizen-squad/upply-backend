@@ -4,6 +4,7 @@ namespace App\Services\Fedapay;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
+use App\Enums\TransactionStatus;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
@@ -87,14 +88,14 @@ class TransactionService
                             'currency' => 'XOF',
                             'payment_method' => str_contains($txData->mode ?? '', 'card') ? 'card' : 'mobile_money',
                             'description' => $txData->description ?? null,
-                            'status' => 'canceled'
+                            'status' => TransactionStatus::FAILED,
                         ]
                     );
 
                     TransactionLog::create([
                         'transaction_id' => $transaction->id,
                         'from_status' => null,
-                        'to_status' => 'canceled',
+                        'to_status' => TransactionStatus::FAILED->value,
                         'triggered_by' => $clientId,
                         'note' => $txData->description ?? 'Failed transaction'
                     ]);
@@ -123,16 +124,16 @@ class TransactionService
                 'currency' => 'XOF',
                 'payment_method' => str_contains($txData->mode ?? '', 'card') ? 'card' : 'mobile_money',
                 'description' => $txData->description ?? null,
-                'status' => 'escrow_lock',
+                'status' => TransactionStatus::ESCROW_LOCK,
             ]);
             $transaction->save();
 
             // Record in the log table only on creation or real status change
-            if ($previousStatus === null || $previousStatus !== 'escrow_lock') {
+            if ($previousStatus === null || $previousStatus !== TransactionStatus::ESCROW_LOCK) {
                 TransactionLog::create([
                     'transaction_id' => $transaction->id,
-                    'from_status' => $previousStatus,
-                    'to_status' => 'escrow_lock',
+                    'from_status' => $previousStatus?->value,
+                    'to_status' => TransactionStatus::ESCROW_LOCK->value,
                     'triggered_by' => $clientId,
                     'note' => $txData->description ?? 'Success transaction',
                 ]);
@@ -167,33 +168,32 @@ class TransactionService
     public function release($transactionId)
     {
         Log::info('TransactionService::release — début du processus de libération', [
-            'fedapay_transaction_id' => $transactionId,
-            'triggered_by'           => Auth::id(),
+            'transaction_id' => $transactionId,
+            'triggered_by'   => Auth::id(),
         ]);
 
         try {
             $txDetails = DB::transaction(function () use ($transactionId) {
-                // Find and lock the transaction with lockForUpdate() to prevent race conditions
-                $transaction = Transaction::where('fedapay_transaction_id', $transactionId)
+                // Find and lock the transaction by its internal id with lockForUpdate() to prevent race conditions
+                $transaction = Transaction::where('id', $transactionId)
                     ->lockForUpdate()
                     ->first();
 
                 // Check if the transaction exists
                 if (!$transaction) {
                     Log::warning('TransactionService::release — transaction introuvable', [
-                        'fedapay_transaction_id' => $transactionId,
+                        'transaction_id' => $transactionId,
                     ]);
                     return ['error' => 'Transaction not found'];
                 }
 
                 Log::info('TransactionService::release — transaction trouvée', [
-                    'internal_id'            => $transaction->id,
-                    'fedapay_transaction_id' => $transactionId,
-                    'status'                 => $transaction->status,
+                    'internal_id' => $transaction->id,
+                    'status'      => $transaction->status,
                 ]);
 
                 // Check if the transaction is actually locked in escrow
-                if ($transaction->status !== 'escrow_lock') {
+                if ($transaction->status !== TransactionStatus::ESCROW_LOCK) {
                     Log::warning('TransactionService::release — statut invalide pour la libération', [
                         'internal_id' => $transaction->id,
                         'status'      => $transaction->status,
@@ -236,12 +236,12 @@ class TransactionService
                 $prestataireInfo->lastname  = $nameParts[1] ?? $nameParts[0];
 
                 // Change status to releasing inside DB transaction
-                $transaction->update(['status' => 'releasing']);
+                $transaction->update(['status' => TransactionStatus::RELEASING]);
 
                 TransactionLog::create([
                     'transaction_id' => $transaction->id,
-                    'from_status'    => 'escrow_lock',
-                    'to_status'      => 'releasing',
+                    'from_status'    => TransactionStatus::ESCROW_LOCK->value,
+                    'to_status'      => TransactionStatus::RELEASING->value,
                     'triggered_by'   => $transaction->client_id,
                     'note'           => 'Initiating payout process',
                 ]);
@@ -335,18 +335,18 @@ class TransactionService
 
             // FedaPay returned a real failure — roll back to escrow_lock
             Log::error('TransactionService::release — création du payout échouée sur FedaPay, rollback vers escrow_lock', [
-                'internal_id'            => $txDetails['internal_transaction_id'],
-                'fedapay_transaction_id' => $transactionId,
-                'payout_response'        => $payout,
+                'internal_id'    => $txDetails['internal_transaction_id'],
+                'transaction_id' => $transactionId,
+                'payout_response' => $payout,
             ]);
 
-            Transaction::where('fedapay_transaction_id', $transactionId)
-                ->update(['status' => 'escrow_lock']);
+            Transaction::where('id', $txDetails['internal_transaction_id'])
+                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
             TransactionLog::create([
                 'transaction_id' => $txDetails['internal_transaction_id'],
-                'from_status'    => 'releasing',
-                'to_status'      => 'escrow_lock',
+                'from_status'    => TransactionStatus::RELEASING->value,
+                'to_status'      => TransactionStatus::ESCROW_LOCK->value,
                 'triggered_by'   => $txDetails['client_id'],
                 'note'           => 'Payout preparation failed on FedaPay — rolled back',
             ]);
@@ -355,22 +355,22 @@ class TransactionService
 
         } catch (Exception $e) {
             Log::error('TransactionService::release — exception non gérée, tentative de rollback', [
-                'fedapay_transaction_id' => $transactionId,
-                'error'                  => $e->getMessage(),
-                'trace'                  => $e->getTraceAsString(),
+                'transaction_id' => $transactionId,
+                'error'          => $e->getMessage(),
+                'trace'          => $e->getTraceAsString(),
             ]);
 
-            $updated = Transaction::where('fedapay_transaction_id', $transactionId)
-                ->where('status', 'releasing')
-                ->update(['status' => 'escrow_lock']);
+            $updated = Transaction::where('id', $transactionId)
+                ->where('status', TransactionStatus::RELEASING)
+                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
             if ($updated) {
-                $failedTx = Transaction::where('fedapay_transaction_id', $transactionId)->first();
+                $failedTx = Transaction::where('id', $transactionId)->first();
                 if ($failedTx) {
                     TransactionLog::create([
                         'transaction_id' => $failedTx->id,
-                        'from_status'    => 'releasing',
-                        'to_status'      => 'escrow_lock',
+                        'from_status'    => TransactionStatus::RELEASING->value,
+                        'to_status'      => TransactionStatus::ESCROW_LOCK->value,
                         'triggered_by'   => $failedTx->client_id,
                         'note'           => 'Release reverted due to internal error: ' . $e->getMessage(),
                     ]);

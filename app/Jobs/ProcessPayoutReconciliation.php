@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\TransactionStatus;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,11 +21,11 @@ class ProcessPayoutReconciliation implements ShouldQueue
      * timeout, queries FedaPay to determine the real payout state, and
      * transitions the transaction to either 'released' or 'escrow_lock'.
      */
-    public function handle(\App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
+    public function handle(\App\Services\Fedapay\FedapayService $fedapayService): void
     {
         $timeoutMinutes = config('fedapay.reconciliation_timeout_minutes', 15);
 
-        $stuckTransactions = Transaction::where('status', 'releasing')
+        $stuckTransactions = Transaction::where('status', TransactionStatus::RELEASING)
             ->where('updated_at', '<=', now()->subMinutes($timeoutMinutes))
             ->get();
 
@@ -36,11 +37,11 @@ class ProcessPayoutReconciliation implements ShouldQueue
         Log::info("ProcessPayoutReconciliation: found {$stuckTransactions->count()} stuck transaction(s).");
 
         foreach ($stuckTransactions as $transaction) {
-            $this->reconcile($transaction, $fedapayService, $emailAction);
+            $this->reconcile($transaction, $fedapayService);
         }
     }
 
-    private function reconcile(Transaction $transaction, \App\Services\Fedapay\FedapayService $fedapayService, \App\Actions\Transaction\SendPayoutConfirmationEmails $emailAction): void
+    private function reconcile(Transaction $transaction, \App\Services\Fedapay\FedapayService $fedapayService): void
     {
         try {
             if (empty($transaction->fedapay_payout_id)) {
@@ -65,35 +66,35 @@ class ProcessPayoutReconciliation implements ShouldQueue
             if (in_array($fedapayStatus, ['sent', 'approved'])) {
                 // Payout confirmed by FedaPay — mark as released
                 $updated = Transaction::where('id', $transaction->id)
-                    ->where('status', 'releasing')
+                    ->where('status', TransactionStatus::RELEASING)
                     ->update([
-                        'status' => 'released',
+                        'status' => TransactionStatus::RELEASED,
                         'liberated_at' => now(),
                     ]);
 
                 if ($updated) {
                     TransactionLog::create([
                         'transaction_id' => $transaction->id,
-                        'from_status' => 'releasing',
-                        'to_status' => 'released',
+                        'from_status' => TransactionStatus::RELEASING->value,
+                        'to_status' => TransactionStatus::RELEASED->value,
                         'triggered_by' => $transaction->client_id,
                         'note' => 'Reconciliation: payout confirmed by FedaPay (status: ' . $fedapayStatus . ')',
                     ]);
 
-                    // begin to send
-                    $emailAction->handle($transaction);
+                    // Send confirmation emails as a separate queued job
+                    \App\Jobs\SendPayoutConfirmationEmailsJob::dispatch($transaction->id);
                 }
             } elseif (in_array($fedapayStatus, ['failed', 'declined', 'cancelled'])) {
                 // Payout failed — rollback to escrow_lock
                 $updated = Transaction::where('id', $transaction->id)
-                    ->where('status', 'releasing')
-                    ->update(['status' => 'escrow_lock']);
+                    ->where('status', TransactionStatus::RELEASING)
+                    ->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
                 if ($updated) {
                     TransactionLog::create([
                         'transaction_id' => $transaction->id,
-                        'from_status' => 'releasing',
-                        'to_status' => 'escrow_lock',
+                        'from_status' => TransactionStatus::RELEASING->value,
+                        'to_status' => TransactionStatus::ESCROW_LOCK->value,
                         'triggered_by' => $transaction->client_id,
                         'note' => 'Reconciliation: payout failed on FedaPay (status: ' . $fedapayStatus . ')',
                     ]);
