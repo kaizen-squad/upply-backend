@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ApiException;
+use App\Http\Middleware\EnsureCronSecret;
 use App\Http\Middleware\EnsurePrestataire;
 use App\Http\Middleware\EnsureTaskOwnership;
 use App\Http\Middleware\IsAuthenticated;
@@ -20,10 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
         $middleware->alias([
-            'authentify' => IsAuthenticated::class,
-            'role' => Role::class,
-            'EnsureTaskOwner' => EnsureTaskOwnership::class,
-            'EnsurePrestataire' => EnsurePrestataire::class
+            'authentify'        => IsAuthenticated::class,
+            'role'              => Role::class,
+            'EnsureTaskOwner'   => EnsureTaskOwnership::class,
+            'EnsurePrestataire' => EnsurePrestataire::class,
+            'cron.secret'       => EnsureCronSecret::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
