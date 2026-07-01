@@ -38,7 +38,7 @@ class EnsureTaskOwnership
 
         $Task = Task::where('id',$task)->first();
 
-        if($user->id !== $Task->client_id ){
+        if( !$Task || $user->id !== $Task->client_id ){
             return response()->json([
                 "success" => false,
                 "message" => "Forbidden",

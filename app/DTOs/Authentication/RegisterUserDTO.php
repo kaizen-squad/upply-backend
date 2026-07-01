@@ -11,21 +11,19 @@ use Illuminate\Contracts\Validation\Validator;
             public string $name,
             public string $email,
             public string $password,
-            public ?string $role=UserRole::Prestataire,
+            public ?string $role= UserRole::Prestataire->value,
             public ?string $phone = null,
-            public float $rating_avg,
         ){}
 
-        public static function FromValidator(Validator $array){
-            $data = $array->validated();
+        public static function FromValidator(Validator $validator){
+            $data = $validator->validated();
 
             return new self(
                 name : $data['name'],
                 email : $data['email'],
                 password : $data['password'],
-                role : $data['role'],
-                phone : $data['phone'],
-                rating_avg : $data['rating_avg'],
+                role : $data['role'] ?? UserRole::Prestataire->value,
+                phone : $data['phone'] ?? null,
             );
         }
     };

@@ -64,7 +64,7 @@ class IsAuthenticated
             ], 401);
         }
 
-        Auth::login($user);
+        Auth::setUser($user);
 
         return $next($request);
     }
