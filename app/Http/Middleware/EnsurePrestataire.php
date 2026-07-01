@@ -31,7 +31,7 @@ class EnsurePrestataire
         $application = Application::where([
             'task_id' => $task,
             'prestataire_id' => $user->id
-        ]);
+        ])->first();
 
         if(!$application){
             return response()->json([

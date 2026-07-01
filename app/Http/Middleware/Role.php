@@ -18,7 +18,7 @@ class Role
 
         $Urole = $request->user()->role;
 
-        if ($Urole !== $role) {
+        if (!$Urole || $Urole->value !== $role) {
             return response()->json([
                 "success" => false,
                 "code" => 403,
