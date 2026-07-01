@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Auth\AuthenticationController;
 use App\Http\Controllers\Api\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Deliverable\DeliverableController;
 use App\Http\Controllers\Api\Fedapay\TransactionController;
+use App\Http\Controllers\Api\Queue\QueueWorkerController;
 use App\Http\Controllers\Api\Review\ReviewController;
 use App\Http\Controllers\Api\Task\TaskController;
 use App\Http\Resources\UserResource;
@@ -28,6 +29,9 @@ Route::get('/health', function (Request $request) {
         'health' => 'OK',
     ];
 });
+
+Route::post('/internal/queue-process', [QueueWorkerController::class, 'process'])
+    ->middleware('cron.secret');
 
 Route::middleware('authentify')->group(function () {
     Route::get('/logout', [AuthenticationController::class, 'logout']);
