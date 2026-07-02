@@ -19,8 +19,12 @@ class ReviewService{
 
         if($targetTask->status !== TaskStatus::VALIDATED) throw new DomainException("The current task isn't validated yet !!");
 
-        $hasReview = Review::where('task_id', $targetTask->id)->exists();
-        if($hasReview) throw new DomainException("This task already has a review.");
+        $hasReview = Review::query()
+            ->where('task_id', $targetTask->id)
+            ->where('reviewer_id', $reviewer->id)
+            ->exists();
+
+        if($hasReview) throw new DomainException("This task already has a review for this user.");
 
         $reviewee_id = Application::where('task_id', $targetTask->id)->value("prestataire_id");
         $newReview = Review::create([

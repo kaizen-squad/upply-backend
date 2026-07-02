@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\UserRole;
+use App\Models\Application;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -19,9 +20,20 @@ class ReviewPolicy
 
     public function create(User $user, Task $task): Response
     {
-        return (
-            $user->role === UserRole::Client
-            && $task->client_id === $user->id
-        ) ? Response::allow() : Response::deny("Seul le client propriétaire de cette tâche peut soumettre un commentaire sur le livrable validé.");
+        $isOwner = ($user->role === UserRole::Client
+            && $task->client_id === $user->id);
+        
+        if($isOwner) return Response::allow();
+
+        $isPrestataireForTask = ($user->role === UserRole::Prestataire
+            && Application::query()
+                ->where('task_id', $task->id)
+                ->where('prestataire_id', $user->id)
+                ->exists()
+        );
+        
+        if($isPrestataireForTask) return Response::allow();
+           
+        return Response::deny("Seul le client propriétaire ou le prestataire retenu de cette tâche peuvent soumettre un commentaire sur le livrable validé.");
     }
 }
