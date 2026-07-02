@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Enums\TaskStatus;
 use App\Exceptions\DomainException;
+use App\Http\Requests\Deliverable\SubmitDeliverableRequest;
 use App\Http\Resources\DeliverableResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Deliverable;
@@ -19,23 +20,29 @@ class DeliverableService{
         public TransactionService $transactionService
     ){}
 
-    public function submit(User $prestataire, SubmitDeliverableDTO $data){
+    public function submit(User $prestataire, SubmitDeliverableDTO $data, SubmitDeliverableRequest $request){
         $task = Task::findOrFail($data->task_id);
         
         // Check the ability to perform this action
         Gate::authorize('submit', [Deliverable::class, $task]);
 
-
         if($task->status !== TaskStatus::PENDING) throw new DomainException("This task is not waiting for deliverable.");
 
-        $newDeliverable = Deliverable::create([
+        $deliverable_data = [
             'prestataire_id' => $prestataire->id,
             'task_id' => $task->id,
 
             'content' => $data->content,
-            'file_path' => $data->file_path,
             'submitted_at' => now()
-        ]);
+        ];
+        
+        $file_path = null;
+        if($request->hasFile('file_path')){
+            $file = $request->file('file_path');
+            $deliverable_data['file_path'] = $file->store("uploads/deliverables", 'public');
+
+        }
+        $newDeliverable = Deliverable::create($deliverable_data);
 
         $task->update([
             'status' => TaskStatus::DELIVERED
