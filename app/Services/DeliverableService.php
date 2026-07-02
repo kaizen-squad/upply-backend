@@ -62,11 +62,11 @@ class DeliverableService{
 
             if($task->status !== TaskStatus::DELIVERED) throw new DomainException("This task isn't delivered yet.");
 
+            $this->transactionService->release($task->transaction->id);
+            
             $task->update([
                 "status" => TaskStatus::VALIDATED
             ]);
-
-            $this->transactionService->release($task->transaction->id);
 
             return new TaskResource($task);
         });
