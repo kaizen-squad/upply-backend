@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('reviews', function (Blueprint $table) {
             $table->dropUnique(["task_id"]);
+            $table->unique(["task_id", "reviewer_id", "reviewee_id"]);
         });
     }
 
