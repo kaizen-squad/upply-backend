@@ -14,7 +14,7 @@ class TaskService{
 
     public function index(){
         $tasks = Task::limit(10)->with('client')->where('status', TaskStatus::OPENED)->get();
-
+        
         return TaskResource::collection($tasks);
     }
 
