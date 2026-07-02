@@ -8,7 +8,6 @@ use App\Http\Requests\Task\TaskStoreRequest;
 use App\Http\Requests\Task\TaskUpdateRequest;
 use App\Models\Task;
 use App\Services\TaskService;
-use Exception;
 use Illuminate\Http\Request;
 
 class TaskController{
@@ -18,20 +17,12 @@ class TaskController{
     ){}
 
     public function index(){
-        try{
-            $response = $this->service->index();
-            return response()->json([
-                "success" => true,
-                "data" => $response,
-                "message" => "All Tasks"
-            ], 200);
-
-        }catch(Exception $e){
-            return response()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 400);
-        }
+        $response = $this->service->index();
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "All Tasks"
+        ], 200);
     }
 
     public function create(TaskStoreRequest $request){
@@ -39,36 +30,23 @@ class TaskController{
 
         $taskData = TaskStoreDTO::fromRequest($request);
 
-        try{
-            $response = $this->service->create($user, $taskData);
+        $response = $this->service->create($user, $taskData);
 
-            return response()->json([
-                "success" => true,
-                "data" => $response,
-                "message" => "Task created successfully"
-            ], 200);
-        }catch(Exception $e){
-            return response()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 403);
-        }
+        return response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Task created successfully"
+        ], 200);
     }
 
     public function show(Task $task){
-        try{
-            $response = $this->service->show($task);
+        $response = $this->service->show($task);
 
-            response()->json([
-                "success" => true,
-                "data" => $response,
-                "message" => "Task fetch successfully"
-            ], 200);
-        }catch(Exception $e){
-            response()->json([
-                "message" => $e->getMessage()
-            ], 403);
-        }
+        response()->json([
+            "success" => true,
+            "data" => $response,
+            "message" => "Task fetch successfully"
+        ], 200);
     }
 
     public function tasksMine(Request $request){
@@ -86,19 +64,17 @@ class TaskController{
     public function update(Task $task, TaskUpdateRequest $request){
         $taskData = TaskUpdateDTO::fromRequest($request);
 
-        try{
-            $response = $this->service->update($task, $taskData);
+        $response = $this->service->update($task, $taskData);
 
-            response()->json([
-                "success" => true,
-                "message" => "Task updated successfully"
-            ], 200);
-        }catch(Exception $e){
-            return response()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 403);
-        }
+        if(!$response) return response()->json([
+            "success" => false,
+            "message" => "The task hasn't been updated. Try later."
+        ], 500);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Task updated successfully"
+        ], 200);
     }
 
     public function delete(Task $task){

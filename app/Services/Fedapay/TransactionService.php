@@ -360,10 +360,12 @@ class TransactionService
                 'trace'          => $e->getTraceAsString(),
             ]);
 
+            
             $updated = Transaction::where('id', $transactionId)
-                ->where('status', TransactionStatus::RELEASING)
-                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
-
+            ->where('status', TransactionStatus::RELEASING)
+            ->update(['status' => TransactionStatus::ESCROW_LOCK]);
+            
+            
             if ($updated) {
                 $failedTx = Transaction::where('id', $transactionId)->first();
                 if ($failedTx) {
