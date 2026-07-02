@@ -20,7 +20,7 @@ class DeliverableController extends Controller
 
         $data = SubmitDeliverableDTO::fromRequest($request);
 
-        $response = $this->service->submit($user, $data);
+        $response = $this->service->submit($user, $data, $request);
 
         return response()->json([
             "success" => true,

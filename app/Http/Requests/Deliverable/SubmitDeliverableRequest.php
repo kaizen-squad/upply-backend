@@ -23,7 +23,7 @@ class SubmitDeliverableRequest extends FormRequest
     {
         return [
             'content' => ['string', 'required'],
-            'file_path' => ['nullable', 'string'],
+            'file_path' => ['nullable', 'file', 'max:4096', 'mimes:png,jpg,pdf,docx,xlsx'],
 
             'task_id' => ['required', 'exists:tasks,id']
         ];
