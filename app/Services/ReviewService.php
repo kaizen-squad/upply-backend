@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Review\ReviewStoreDTO;
 use App\Enums\TaskStatus;
+use App\Enums\UserRole;
 use App\Exceptions\DomainException;
 use App\Http\Resources\ReviewResource;
 use App\Models\Application;
@@ -26,7 +27,15 @@ class ReviewService{
 
         if($hasReview) throw new DomainException("This task already has a review for this user.");
 
-        $reviewee_id = Application::where('task_id', $targetTask->id)->value("prestataire_id");
+        $reviewee_id = null;
+        if($reviewer->role === UserRole::Client){
+            $reviewee_id = Application::where('task_id', $targetTask->id)->value("prestataire_id");
+        }else{
+            $reviewee_id = $targetTask->client->id;
+        }
+
+        if($reviewee_id === null) throw new DomainException("Either this task doesn't exist or it isn't validated yet.");
+
         $newReview = Review::create([
             "reviewer_id" => $reviewer->id,
             "reviewee_id" => $reviewee_id,
