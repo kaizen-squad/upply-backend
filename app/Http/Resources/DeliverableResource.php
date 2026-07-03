@@ -18,6 +18,7 @@ class DeliverableResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'file_path' => $this->file_path,
+            'file_url' => $this->file_url,
             'task_id' => $this->task_id,
 
             'task' => new TaskResource($this->whenLoaded('task'))
