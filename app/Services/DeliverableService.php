@@ -36,12 +36,11 @@ class DeliverableService{
             'submitted_at' => now()
         ];
         
-        $file_path = null;
         if($request->hasFile('file_path')){
             $file = $request->file('file_path');
             $deliverable_data['file_path'] = $file->store("uploads/deliverables", 'public');
-
         }
+        
         $newDeliverable = Deliverable::create($deliverable_data);
 
         $task->update([

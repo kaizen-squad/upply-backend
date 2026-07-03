@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Deliverable extends Model
 {
@@ -20,6 +22,15 @@ class Deliverable extends Model
         'file_path',
         'submitted_at'
     ];
+
+    protected function fileUrl(): Attribute
+    {
+        return Attribute::make(
+            get: $this->file_path
+                ? fn () => Storage::disk('public')->url($this->file_path)
+                : null
+        );
+    }
 
     public function prestataire(): BelongsTo
     {
