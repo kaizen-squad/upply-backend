@@ -33,7 +33,7 @@ class ReviewController extends Controller
         return response()->json([
             "success" => true,
             "data" => $response,
-            "message" => "There is the review héhé !!"
+            "message" => "The review is displayed."
         ], 200);
     }
 }

@@ -26,7 +26,7 @@ class DeliverableService{
         // Check the ability to perform this action
         Gate::authorize('submit', [Deliverable::class, $task]);
 
-        if($task->status !== TaskStatus::PENDING) throw new DomainException("This task is not waiting for deliverable.");
+        if($task->status !== TaskStatus::PENDING || $task->transaction->status !== "escrow_lock") throw new DomainException("This task is not waiting for deliverable.");
 
         $deliverable_data = [
             'prestataire_id' => $prestataire->id,
@@ -40,7 +40,7 @@ class DeliverableService{
             $file = $request->file('file_path');
             $deliverable_data['file_path'] = $file->store("uploads/deliverables", 'public');
         }
-        
+
         $newDeliverable = Deliverable::create($deliverable_data);
 
         $task->update([

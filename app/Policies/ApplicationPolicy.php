@@ -29,7 +29,7 @@ class ApplicationPolicy
     {
         return (
             $user->role === UserRole::Client
-            && $user->id == $task->client_id
+            && $user->id === $task->client_id
         ) ? Response::allow() : Response::deny("Seul le client propriétaire de cette mission peut voir les candidatures associées.");
     }
 
