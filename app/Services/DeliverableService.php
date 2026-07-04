@@ -38,6 +38,10 @@ class DeliverableService{
         if($request->hasFile('file_path')){
             $file = $request->file('file_path');
             $deliverable_data['file_path'] = $file->store("uploads/deliverables", 'public');
+
+            $deliverable_data["file_size"] = $file->getSize();
+            $deliverable_data["file_name"] = $file->getBasename();
+            $deliverable_data["file_type"] = $file->getMimeType();
         }
 
         $newDeliverable = Deliverable::create($deliverable_data);
