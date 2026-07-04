@@ -31,7 +31,6 @@ class DeliverableService{
         $deliverable_data = [
             'prestataire_id' => $prestataire->id,
             'task_id' => $task->id,
-
             'content' => $data->content,
             'submitted_at' => now()
         ];
