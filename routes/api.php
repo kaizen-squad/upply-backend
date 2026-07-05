@@ -68,7 +68,7 @@ Route::middleware('authentify')->group(function () {
 
     Route::post('/deliverables/submit', [DeliverableController::class, 'submit']);
 
-    Route::post('/deliverable/validate/{deliverable}', [DeliverableController::class, 'validate']);
+    Route::post('/deliverables/validate/{deliverable}', [DeliverableController::class, 'validate']);
 
     Route::post('/tasks/{task}/review', [ReviewController::class, 'create']);
 
