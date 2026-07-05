@@ -26,4 +26,6 @@ RUN chmod +x /app/Docker/entry.sh
 
 ENV PORT=8000 HOST=0.0.0.0
 
+EXPOSE 8000
+
 ENTRYPOINT ["/bin/sh", "/app/Docker/entry.sh"]
