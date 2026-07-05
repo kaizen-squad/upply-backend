@@ -42,7 +42,7 @@ class TaskController{
     public function show(Task $task){
         $response = $this->service->show($task);
 
-        response()->json([
+        return response()->json([
             "success" => true,
             "data" => $response,
             "message" => "Task fetch successfully"
