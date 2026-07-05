@@ -19,7 +19,6 @@ php artisan migrate --force
 # Suppression des caches
 php artisan config:cache
 php artisan route:cache
-php artisan db:seed --force
 
 echo "🚀 Starting FrankenPHP..."
 
