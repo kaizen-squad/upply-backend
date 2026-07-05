@@ -84,12 +84,12 @@ class DashboardService{
         })
         ->count();
 
-        $waiting_budget = Application::query()
-            ->where('prestataire_id', $prestataire->id)
-            ->where('status', ApplicationStatus::ACCEPTED)
-            ->whereHas('task', fn($q) => $q
-                        ->whereIn('status', [TaskStatus::PENDING, TaskStatus::DELIVERED])
-                    )
+        $waiting_budget = Task::query()
+            ->whereIn('status', [TaskStatus::PENDING, TaskStatus::DELIVERED])
+            ->whereHas('applications', fn($q) => $q
+                ->where('prestataire_id', $prestataire->id)
+                ->where('status', ApplicationStatus::ACCEPTED)
+            )
             ->sum('budget');
 
 
