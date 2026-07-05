@@ -60,7 +60,7 @@ class DeliverableService{
         
         $deliverable = $task->deliverable;
     
-        return new DeliverableResource($deliverable->load('task'));
+        return new DeliverableResource($deliverable->load(['task', 'prestataire']));
     }
 
     public function validate(Deliverable $deliverable){
