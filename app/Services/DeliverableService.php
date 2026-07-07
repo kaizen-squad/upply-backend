@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Deliverable\SubmitDeliverableDTO;
 use App\Enums\TaskStatus;
+use App\Enums\TransactionStatus;
 use App\Exceptions\DomainException;
 use App\Http\Requests\Deliverable\SubmitDeliverableRequest;
 use App\Http\Resources\DeliverableResource;
@@ -26,7 +27,7 @@ class DeliverableService{
         
         Gate::authorize('submit', [Deliverable::class, $task]);
 
-        if($task->status !== TaskStatus::PENDING || $task->transaction->status !== "escrow_lock")
+        if($task->status !== TaskStatus::PENDING || $task->transaction->status !== TransactionStatus::ESCROW_LOCK)
             throw new DomainException("This task is not waiting for deliverable.");
 
         $deliverable_data = [
