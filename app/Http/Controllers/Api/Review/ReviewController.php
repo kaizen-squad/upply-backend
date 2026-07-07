@@ -27,8 +27,8 @@ class ReviewController extends Controller
         ], 201);
     }
 
-    public function getForTask(Task $targetTask){
-        $response = $this->service->getForTask($targetTask);
+    public function getForTask(Task $task){
+        $response = $this->service->getForTask($task);
 
         return response()->json([
             "success" => true,
