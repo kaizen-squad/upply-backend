@@ -21,24 +21,24 @@ class DeliverableService{
     ){}
 
     public function submit(User $prestataire, SubmitDeliverableDTO $data, SubmitDeliverableRequest $request){
-        $task = Task::findOrFail($data->task_id);
+    return DB::transaction(function() use ($prestataire, $data, $request){
+        $task = Task::with('transaction')->lockForUpdate()->findOrFail($data->task_id);
         
-        // Check the ability to perform this action
         Gate::authorize('submit', [Deliverable::class, $task]);
 
-        if($task->status !== TaskStatus::PENDING || $task->transaction->status !== "escrow_lock") throw new DomainException("This task is not waiting for deliverable.");
+        if($task->status !== TaskStatus::PENDING || $task->transaction->status !== "escrow_lock")
+            throw new DomainException("This task is not waiting for deliverable.");
 
         $deliverable_data = [
             'prestataire_id' => $prestataire->id,
-            'task_id' => $task->id,
-            'content' => $data->content,
-            'submitted_at' => now()
+            'task_id'        => $task->id,
+            'content'        => $data->content,
+            'submitted_at'   => now()
         ];
         
         if($request->hasFile('file_path')){
             $file = $request->file('file_path');
             $deliverable_data['file_path'] = $file->store("uploads/deliverables", 'public');
-
             $deliverable_data["file_size"] = $file->getSize();
             $deliverable_data["file_name"] = $file->getBasename();
             $deliverable_data["file_type"] = $file->getMimeType();
@@ -46,12 +46,11 @@ class DeliverableService{
 
         $newDeliverable = Deliverable::create($deliverable_data);
 
-        $task->update([
-            'status' => TaskStatus::DELIVERED
-        ]);
+        $task->update(['status' => TaskStatus::DELIVERED]);
 
         return new DeliverableResource($newDeliverable);
-    }
+    });
+}
 
     public function get(Task $task){
         Gate::authorize('get', [Deliverable::class, $task]);
