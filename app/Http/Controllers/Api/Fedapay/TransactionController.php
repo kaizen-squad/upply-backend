@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ProcessPayoutReconciliation;
 use App\Services\Fedapay\TransactionService;
 use Illuminate\Http\JsonResponse;
-<<<<<<< HEAD
 use Illuminate\Http\Request;
-=======
->>>>>>> a22df4c (fix(payout): unifie l'identifiant interne, persiste liberated_at et fiabilise les emails)
 
 class TransactionController extends Controller
 {
