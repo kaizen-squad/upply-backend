@@ -25,7 +25,6 @@ class TransactionService
 
     // Function to save a transaction in the Transaction and TransactionLog tables
     public function handleTransaction(string $transactionId, $taskId = null)
-    public function handleTransaction(string $transactionId, $taskId = null)
     {
         $verification = $this->fedapayService->verifyCollect($transactionId);
         $clientId = Auth::id();
