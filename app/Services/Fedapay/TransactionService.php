@@ -25,6 +25,7 @@ class TransactionService
 
     // Function to save a transaction in the Transaction and TransactionLog tables
     public function handleTransaction(string $transactionId, $taskId = null)
+    public function handleTransaction(string $transactionId, $taskId = null)
     {
         $verification = $this->fedapayService->verifyCollect($transactionId);
         $clientId = Auth::id();
@@ -41,12 +42,14 @@ class TransactionService
             }
 
             // Try to extract prestataire_id from metadata first (most reliable if sent)
+            // Try to extract prestataire_id from metadata first (most reliable if sent)
             if ($txData && isset($txData->custom_metadata)) {
                 $metadata = (array) $txData->custom_metadata;
                 $prestataireId = $metadata['prestataire_id'] ?? null;
             }
 
             if ($taskId) {
+                //  Fallback to finding the accepted application for the task
                 //  Fallback to finding the accepted application for the task
                 if (!$prestataireId) {
                     $task = Task::with(['applications' => function ($query) {
@@ -57,10 +60,15 @@ class TransactionService
                         $prestataireId = $task->applications->first()->prestataire_id;
                     }
                 }
+
+                Task::query()->where('id', $taskId)->update([
+                    'status' => TaskStatus::PENDING,
+                ]);
             }
 
             // Fallback for prestataireId if not found via Task reference
             if (!$prestataireId) {
+                $existingTx = Transaction::query()->where('fedapay_transaction_id', $transactionId)->first();
                 $existingTx = Transaction::query()->where('fedapay_transaction_id', $transactionId)->first();
                 $prestataireId = $existingTx?->prestataire_id;
             }
@@ -71,6 +79,7 @@ class TransactionService
                     $amountGross = (int) ($txData->amount ?? 0);
                     $commission = intdiv($amountGross * 10, 100);
                     $amountNet = $amountGross - $commission;
+
 
 
                     $transaction = Transaction::updateOrCreate(
@@ -89,11 +98,9 @@ class TransactionService
                         ]
                     );
 
-                    if($taskId !==null){
-                        $task = Task::query()->findOrFail($taskId);
-                        $task->transaction_id = $transaction->id;
-                        $task->save();
-                    }
+                    $task = Task::query()->findOrFail($taskId);
+                    $task->transaction_id = $transaction->id;
+                    $task->save();
 
                     TransactionLog::create([
                         'transaction_id' => $transaction->id,
@@ -216,6 +223,7 @@ class TransactionService
 
                 // Retrieve prestataire information
                 $prestataireInfo = User::query()->find($transaction->prestataire_id);
+                $prestataireInfo = User::query()->find($transaction->prestataire_id);
 
                 if (!$prestataireInfo) {
                     Log::error('TransactionService::release — prestataire introuvable', [
@@ -319,6 +327,7 @@ class TransactionService
                 // Update task status to VALIDEE immediately to reflect completion in UI
                 if (isset($txDetails['task_id'])) {
                     Task::query()->where('id', $txDetails['task_id'])->update(['status' => 'VALIDEE']);
+                    Task::query()->where('id', $txDetails['task_id'])->update(['status' => 'VALIDEE']);
                     Log::info('TransactionService::release — statut de la tâche mis à jour vers "VALIDEE"', [
                         'task_id' => $txDetails['task_id'],
                     ]);
@@ -368,7 +377,10 @@ class TransactionService
             ->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
 
+
+
             if ($updated) {
+                $failedTx = Transaction::query()->where('id', $transactionId)->first();
                 $failedTx = Transaction::query()->where('id', $transactionId)->first();
                 if ($failedTx) {
                     TransactionLog::create([
