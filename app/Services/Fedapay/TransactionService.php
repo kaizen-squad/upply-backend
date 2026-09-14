@@ -347,12 +347,7 @@ class TransactionService
                 'payout_response' => $payout,
             ]);
 
-<<<<<<< HEAD
-            Transaction::query()->where('id', $txDetails['internal_transaction_id'])
-=======
-            Transaction::where('id', $txDetails['internal_transaction_id'])
->>>>>>> a22df4c (fix(payout): unifie l'identifiant interne, persiste liberated_at et fiabilise les emails)
-                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
+            Transaction::query()->where('id', $txDetails['internal_transaction_id'])->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
             TransactionLog::create([
                 'transaction_id' => $txDetails['internal_transaction_id'],
@@ -371,7 +366,6 @@ class TransactionService
                 'trace'          => $e->getTraceAsString(),
             ]);
 
-<<<<<<< HEAD
 
             $updated = Transaction::query()->where('id', $transactionId)
             ->where('status', TransactionStatus::RELEASING)
@@ -380,14 +374,6 @@ class TransactionService
 
             if ($updated) {
                 $failedTx = Transaction::query()->where('id', $transactionId)->first();
-=======
-            $updated = Transaction::where('id', $transactionId)
-                ->where('status', TransactionStatus::RELEASING)
-                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
-
-            if ($updated) {
-                $failedTx = Transaction::where('id', $transactionId)->first();
->>>>>>> a22df4c (fix(payout): unifie l'identifiant interne, persiste liberated_at et fiabilise les emails)
                 if ($failedTx) {
                     TransactionLog::create([
                         'transaction_id' => $failedTx->id,
