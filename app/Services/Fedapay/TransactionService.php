@@ -93,9 +93,11 @@ class TransactionService
                         ]
                     );
 
-                    $task = Task::query()->findOrFail($taskId);
-                    $task->transaction_id = $transaction->id;
-                    $task->save();
+                    if($taskId !==null){
+                        $task = Task::query()->findOrFail($taskId);
+                        $task->transaction_id = $transaction->id;
+                        $task->save();
+                    }
 
                     TransactionLog::create([
                         'transaction_id' => $transaction->id,
