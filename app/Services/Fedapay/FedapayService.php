@@ -24,7 +24,7 @@ class FedapayService
         FedaPay::setEnvironment($environment);
     }
 
-    public function verifyCollect($transactionId)
+    public function verifyCollect( string $transactionId)
     {
         Log::info('FedapayService::verifyCollect — début vérification', [
             'fedapay_transaction_id' => $transactionId,

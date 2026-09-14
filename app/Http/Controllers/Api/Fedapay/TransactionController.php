@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ProcessPayoutReconciliation;
 use App\Services\Fedapay\TransactionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -13,7 +14,7 @@ class TransactionController extends Controller
         protected TransactionService $transactionService
     ) {}
 
-    public function verifyPayment(\Illuminate\Http\Request $request, $id): JsonResponse
+    public function verifyPayment(Request $request, string $id): JsonResponse
     {
         $transactionId = $request->input('transaction_id');
         $result = $this->transactionService->handleTransaction($transactionId, $id);
@@ -33,7 +34,7 @@ class TransactionController extends Controller
         ], 400);
     }
 
-    public function makePayout($transactionId): JsonResponse
+    public function makePayout(string $transactionId): JsonResponse
     {
         $payout = $this->transactionService->release($transactionId);
 
