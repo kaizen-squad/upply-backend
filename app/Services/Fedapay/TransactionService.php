@@ -57,10 +57,6 @@ class TransactionService
                         $prestataireId = $task->applications->first()->prestataire_id;
                     }
                 }
-
-                Task::query()->where('id', $taskId)->update([
-                    'status' => TaskStatus::PENDING,
-                ]);
             }
 
             // Fallback for prestataireId if not found via Task reference
