@@ -49,7 +49,7 @@ class ProcessPayout implements ShouldQueue
             'max_tries'      => $this->tries,
         ]);
 
-        $transaction = Transaction::find($this->transactionId);
+        $transaction = Transaction::query()->find($this->transactionId);
 
         if (!$transaction || $transaction->status !== TransactionStatus::RELEASING) {
             Log::warning('ProcessPayout::handle — transaction introuvable ou statut invalide, job annulé', [
@@ -76,7 +76,7 @@ class ProcessPayout implements ShouldQueue
 
             // Update associated task status to VALIDEE
             if ($transaction->task_id) {
-                Task::where('id', $transaction->task_id)->update(['status' => 'VALIDEE']);
+                Task::query()->where('id', $transaction->task_id)->update(['status' => 'VALIDEE']);
                 Log::info('ProcessPayout::handle — statut de la tâche mis à jour vers "VALIDEE"', [
                     'task_id' => $transaction->task_id,
                 ]);
@@ -126,7 +126,7 @@ class ProcessPayout implements ShouldQueue
             'error'          => $e->getMessage(),
         ]);
 
-        $transaction = Transaction::find($this->transactionId);
+        $transaction = Transaction::query()->find($this->transactionId);
 
         if (!$transaction) {
             Log::error('ProcessPayout::failed — transaction introuvable lors du traitement de l\'échec', [

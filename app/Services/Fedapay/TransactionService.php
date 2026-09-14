@@ -41,14 +41,12 @@ class TransactionService
             }
 
             // Try to extract prestataire_id from metadata first (most reliable if sent)
-            // Try to extract prestataire_id from metadata first (most reliable if sent)
             if ($txData && isset($txData->custom_metadata)) {
                 $metadata = (array) $txData->custom_metadata;
                 $prestataireId = $metadata['prestataire_id'] ?? null;
             }
 
             if ($taskId) {
-                //  Fallback to finding the accepted application for the task
                 //  Fallback to finding the accepted application for the task
                 if (!$prestataireId) {
                     $task = Task::with(['applications' => function ($query) {
@@ -67,7 +65,6 @@ class TransactionService
 
             // Fallback for prestataireId if not found via Task reference
             if (!$prestataireId) {
-                $existingTx = Transaction::query()->where('fedapay_transaction_id', $transactionId)->first();
                 $existingTx = Transaction::query()->where('fedapay_transaction_id', $transactionId)->first();
                 $prestataireId = $existingTx?->prestataire_id;
             }
@@ -222,7 +219,6 @@ class TransactionService
 
                 // Retrieve prestataire information
                 $prestataireInfo = User::query()->find($transaction->prestataire_id);
-                $prestataireInfo = User::query()->find($transaction->prestataire_id);
 
                 if (!$prestataireInfo) {
                     Log::error('TransactionService::release — prestataire introuvable', [
@@ -323,12 +319,11 @@ class TransactionService
                 Transaction::query()->where('id', $txDetails['internal_transaction_id'])
                     ->update(['fedapay_payout_id' => $payoutId]);
 
-                // Update task status to VALIDEE immediately to reflect completion in UI
+                // The task is only marked as VALIDEE after the payout job confirms the transfer.
                 if (isset($txDetails['task_id'])) {
-                    Task::query()->where('id', $txDetails['task_id'])->update(['status' => 'VALIDEE']);
-                    Task::query()->where('id', $txDetails['task_id'])->update(['status' => 'VALIDEE']);
-                    Log::info('TransactionService::release — statut de la tâche mis à jour vers "VALIDEE"', [
+                    Log::info('TransactionService::release — payout_id enregistré, attente de confirmation du job', [
                         'task_id' => $txDetails['task_id'],
+                        'internal_id' => $txDetails['internal_transaction_id'],
                     ]);
                 }
 
@@ -372,14 +367,10 @@ class TransactionService
 
 
             $updated = Transaction::query()->where('id', $transactionId)
-            ->where('status', TransactionStatus::RELEASING)
-            ->update(['status' => TransactionStatus::ESCROW_LOCK]);
-
-
-
+                ->where('status', TransactionStatus::RELEASING)
+                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
 
             if ($updated) {
-                $failedTx = Transaction::query()->where('id', $transactionId)->first();
                 $failedTx = Transaction::query()->where('id', $transactionId)->first();
                 if ($failedTx) {
                     TransactionLog::create([
