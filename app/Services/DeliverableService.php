@@ -73,6 +73,10 @@ class DeliverableService{
 
             $this->transactionService->release($task->transaction->id);
 
+            $task->update([
+                "status" => TaskStatus::VALIDATED
+            ]);
+
             return new TaskResource($task->fresh());
         });
     }
