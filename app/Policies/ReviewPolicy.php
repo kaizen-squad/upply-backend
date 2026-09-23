@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\ApplicationStatus;
 use App\Enums\UserRole;
 use App\Models\Application;
 use App\Models\Task;
@@ -29,6 +30,7 @@ class ReviewPolicy
             && Application::query()
                 ->where('task_id', $task->id)
                 ->where('prestataire_id', $user->id)
+                ->where('status', ApplicationStatus::ACCEPTED)
                 ->exists()
         );
         
