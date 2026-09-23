@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\Review\ReviewStoreDTO;
+use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
 use App\Enums\UserRole;
 use App\Exceptions\DomainException;
@@ -11,6 +12,8 @@ use App\Models\Application;
 use App\Models\Review;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class ReviewService{
@@ -29,21 +32,31 @@ class ReviewService{
 
         $reviewee_id = null;
         if($reviewer->role === UserRole::Client){
-            $reviewee_id = Application::where('task_id', $targetTask->id)->value("prestataire_id");
+            $reviewee_id = Application::query()->where('task_id', $targetTask->id)->where("status", ApplicationStatus::ACCEPTED)->value("prestataire_id");
         }else{
             $reviewee_id = $targetTask->client->id;
         }
 
         if($reviewee_id === null) throw new DomainException("Either this task doesn't exist or it isn't validated yet.");
 
-        $newReview = Review::create([
-            "reviewer_id" => $reviewer->id,
-            "reviewee_id" => $reviewee_id,
-            "task_id" => $targetTask->id,
+        try {
+            $newReview = DB::transaction(function() use ($reviewer, $data, $targetTask, $reviewee_id) {
+                return Review::create([
+                    "reviewer_id" => $reviewer->id,
+                    "reviewee_id" => $reviewee_id,
+                    "task_id" => $targetTask->id,
 
-            "rating" => $data->rating,
-            "comment" => $data->comment
-        ]);
+                    "rating" => $data->rating,
+                    "comment" => $data->comment
+                ]);
+            });
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23505') {
+                throw new DomainException("This task already has a review.");
+            }
+
+            throw $e;
+        }
 
         return new ReviewResource($newReview);
     }
@@ -51,11 +64,10 @@ class ReviewService{
     public function getForTask(Task $targetTask){
         if($targetTask->status !== TaskStatus::VALIDATED) throw new DomainException("The current task isn't validated yet !!");
 
-        $hasReview = Review::where('task_id', $targetTask->id)->exists();
-        if(!$hasReview) throw new DomainException("This task doesn't have any review.");
+        $reviews = Review::where('task_id', $targetTask->id)->with('reviewer')->get();
 
-        $review = Review::where('task_id', $targetTask->id)->first();
+        if($reviews->isEmpty()) throw new DomainException("This task doesn't have any review.");
 
-        return new ReviewResource($review->load('reviewer'));
+        return ReviewResource::collection($reviews);
     }
 }
