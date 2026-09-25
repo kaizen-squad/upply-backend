@@ -23,11 +23,11 @@ class Task extends Model
         'description',
         'budget',
         'deadline',
-        'status'
+        'status',
     ];
 
     protected $casts = [
-        'status' => TaskStatus::class
+        'status' => TaskStatus::class,
     ];
 
     public function client(): BelongsTo
@@ -48,7 +48,7 @@ class Task extends Model
             'task_id',
             'application_id',
             'id',
-            
+
         );
     }
 
@@ -57,8 +57,8 @@ class Task extends Model
         return $this->hasOne(Deliverable::class);
     }
 
-    public function transaction(): HasOne
+    public function transaction(): BelongsTo
     {
-        return $this->hasOne(Transaction::class);
+        return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 }

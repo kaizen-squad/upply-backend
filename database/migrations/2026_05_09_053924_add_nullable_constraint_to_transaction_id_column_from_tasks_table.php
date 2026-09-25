@@ -12,9 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            DB::statement("ALTER TABLE tasks ALTER COLUMN transaction_id DROP NOT NULL");
-        });
+        if (DB::getDriverName() === 'pgsql') {
+            Schema::table('tasks', function (Blueprint $table) {
+                DB::statement('ALTER TABLE tasks ALTER COLUMN transaction_id DROP NOT NULL');
+            });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            DB::statement("ALTER TABLE tasks ALTER COLUMN transaction_id SET NOT NULL");
-        });
+        if (DB::getDriverName() === 'pgsql') {
+            Schema::table('tasks', function (Blueprint $table) {
+                DB::statement('ALTER TABLE tasks ALTER COLUMN transaction_id SET NOT NULL');
+            });
+        }
     }
 };

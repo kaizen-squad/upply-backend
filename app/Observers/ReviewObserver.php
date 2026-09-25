@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Exceptions\DomainException;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -13,8 +14,12 @@ class ReviewObserver
      */
     public function created(Review $review): void
     {
-        DB::transaction(function() use ($review) {
+        DB::transaction(function () use ($review) {
             $reviewee = User::where('id', $review->reviewee_id)->lockForUpdate()->first();
+
+            if ($reviewee === null) {
+                throw new DomainException('The reviewed user does not exist.');
+            }
 
             $ratingAvg = (($reviewee->rating_avg * $reviewee->rating_count + $review->rating) / ($reviewee->rating_count + 1));
 

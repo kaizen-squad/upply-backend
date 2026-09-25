@@ -13,9 +13,10 @@ class DeliverableController extends Controller
 {
     public function __construct(
         public DeliverableService $service
-    ){}
+    ) {}
 
-    public function submit(SubmitDeliverableRequest $request){
+    public function submit(SubmitDeliverableRequest $request)
+    {
         $user = $request->user();
 
         $data = SubmitDeliverableDTO::fromRequest($request);
@@ -23,29 +24,31 @@ class DeliverableController extends Controller
         $response = $this->service->submit($user, $data, $request);
 
         return response()->json([
-            "success" => true,
-            "data" => $response,
-            "message" => "Deliverable submitted successfully."
+            'success' => true,
+            'data' => $response,
+            'message' => 'Deliverable submitted successfully.',
         ], 200);
     }
 
-    public function get(Task $task){
+    public function get(Task $task)
+    {
         $response = $this->service->get($task);
 
         return response()->json([
-            "success" => true,
-            "data" => $response,
-            "message" => "Deliverable fetched successfully"
+            'success' => true,
+            'data' => $response,
+            'message' => 'Deliverable fetched successfully',
         ], 200);
     }
 
-    public function validate(Deliverable $deliverable){
+    public function validate(Deliverable $deliverable)
+    {
         $response = $this->service->validate($deliverable);
 
         return response()->json([
-            "success" => true,
-            "data" => $response,
-            "message" => "Deliverable validated successfully"
-        ]);
+            'success' => true,
+            'data' => $response,
+            'message' => 'Deliverable validation initiated successfully.',
+        ], 202);
     }
 }
