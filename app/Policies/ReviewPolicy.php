@@ -21,10 +21,22 @@ class ReviewPolicy
 
     public function create(User $user, Task $task): Response
     {
+        return $this->allowsAccess($user, $task);
+    }
+
+    public function viewAny(User $user, Task $task): Response
+    {
+        return $this->allowsAccess($user, $task);
+    }
+
+    private function allowsAccess(User $user, Task $task): Response
+    {
         $isOwner = ($user->role === UserRole::Client
             && $task->client_id === $user->id);
-        
-        if($isOwner) return Response::allow();
+
+        if ($isOwner) {
+            return Response::allow();
+        }
 
         $isPrestataireForTask = ($user->role === UserRole::Prestataire
             && Application::query()
@@ -33,9 +45,11 @@ class ReviewPolicy
                 ->where('status', ApplicationStatus::ACCEPTED)
                 ->exists()
         );
-        
-        if($isPrestataireForTask) return Response::allow();
-           
-        return Response::deny("Seul le client propriétaire ou le prestataire retenu de cette tâche peuvent soumettre un commentaire sur le livrable validé.");
+
+        if ($isPrestataireForTask) {
+            return Response::allow();
+        }
+
+        return Response::deny('Seul le client propriétaire ou le prestataire retenu de cette tâche peuvent consulter les avis sur le livrable validé.');
     }
 }

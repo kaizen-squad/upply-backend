@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -19,53 +20,44 @@ class IsAuthenticated
     {
 
         $tokenString = $request->bearerToken();
-        
-        if(!$tokenString){
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-                'code' => 401
-            ],401);
+
+        if (! $tokenString) {
+            return $this->unauthorized();
         }
 
         $token = PersonalAccessToken::findToken($tokenString);
 
-        if( !$token ){
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-                'code' => 401
-            ],401);
+        if (! $token) {
+            return $this->unauthorized();
         }
 
-        if($token->cant('server:access')){
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-                'code' => 401
-            ],401);
+        if ($token->cant('server:access')) {
+            return $this->unauthorized();
         }
 
-        if(  $token && $token->expires_at < now() ){
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-                'code' => 401
-            ],401);
+        if ($token && $token->expires_at < now()) {
+            return $this->unauthorized();
         }
-    
+
         $user = $token->tokenable;
 
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-                'code' => 401
-            ], 401);
+        if (! $user) {
+            return $this->unauthorized();
         }
 
         Auth::setUser($user);
 
         return $next($request);
+    }
+
+    private function unauthorized(): JsonResponse
+    {
+        return response()->json([
+            'status' => 401,
+            'success' => false,
+            'code' => 'UNAUTHENTICATED',
+            'message' => 'Authentication is required.',
+            'data' => null,
+        ], 401);
     }
 }

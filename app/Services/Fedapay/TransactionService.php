@@ -2,17 +2,19 @@
 
 namespace App\Services\Fedapay;
 
+use App\Actions\Transaction\SendPaymentLockedEmails;
 use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
 use App\Enums\TransactionStatus;
+use App\Jobs\ProcessPayout;
 use App\Models\Task;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class TransactionService
 {
@@ -48,7 +50,7 @@ class TransactionService
 
             if ($taskId) {
                 //  Fallback to finding the accepted application for the task
-                if (!$prestataireId) {
+                if (! $prestataireId) {
                     $task = Task::with(['applications' => function ($query) {
                         $query->where('status', ApplicationStatus::ACCEPTED);
                     }])->find($taskId);
@@ -64,7 +66,7 @@ class TransactionService
             }
 
             // Fallback for prestataireId if not found via Task reference
-            if (!$prestataireId) {
+            if (! $prestataireId) {
                 $existingTx = Transaction::query()->where('fedapay_transaction_id', $transactionId)->first();
                 $prestataireId = $existingTx?->prestataire_id;
             }
@@ -75,8 +77,6 @@ class TransactionService
                     $amountGross = (int) ($txData->amount ?? 0);
                     $commission = intdiv($amountGross * 10, 100);
                     $amountNet = $amountGross - $commission;
-
-
 
                     $transaction = Transaction::updateOrCreate(
                         ['fedapay_transaction_id' => $txData->id ?? $transactionId],
@@ -103,11 +103,12 @@ class TransactionService
                         'from_status' => null,
                         'to_status' => TransactionStatus::FAILED->value,
                         'triggered_by' => $clientId,
-                        'note' => $txData->description ?? 'Failed transaction'
+                        'note' => $txData->description ?? 'Failed transaction',
                     ]);
                 }
 
                 DB::commit();
+
                 return ['success' => false, 'message' => 'Transaction declined or failed'];
             }
 
@@ -134,6 +135,10 @@ class TransactionService
             ]);
             $transaction->save();
 
+            if ($taskId) {
+                Task::query()->whereKey($taskId)->update(['transaction_id' => $transaction->id]);
+            }
+
             // Record in the log table only on creation or real status change
             if ($previousStatus === null || $previousStatus !== TransactionStatus::ESCROW_LOCK) {
                 TransactionLog::create([
@@ -148,7 +153,7 @@ class TransactionService
             DB::commit();
 
             // Send confirmation emails
-            (new \App\Actions\Transaction\SendPaymentLockedEmails())->handle($transaction);
+            (new SendPaymentLockedEmails)->handle($transaction);
 
             return ['success' => true, 'message' => 'Transaction created successfully and locked'];
         } catch (Exception $e) {
@@ -162,6 +167,7 @@ class TransactionService
                 'client_id' => $clientId,
                 'exception_message' => $e->getMessage(),
             ]);
+
             return [
                 'success' => false,
                 'error' => 'Une erreur interne est survenue lors du traitement de la transaction.',
@@ -171,12 +177,14 @@ class TransactionService
     }
 
     // Function to release escrow funds to the user's number
-    public function release( string $transactionId)
+    public function release(string $transactionId)
     {
         Log::info('TransactionService::release — début du processus de libération', [
             'transaction_id' => $transactionId,
-            'triggered_by'   => Auth::id(),
+            'triggered_by' => Auth::id(),
         ]);
+
+        $payoutCreated = false;
 
         try {
             $txDetails = DB::transaction(function () use ($transactionId) {
@@ -186,70 +194,75 @@ class TransactionService
                     ->first();
 
                 // Check if the transaction exists
-                if (!$transaction) {
+                if (! $transaction) {
                     Log::warning('TransactionService::release — transaction introuvable', [
                         'transaction_id' => $transactionId,
                     ]);
+
                     return ['error' => 'Transaction not found'];
                 }
 
                 Log::info('TransactionService::release — transaction trouvée', [
                     'internal_id' => $transaction->id,
-                    'status'      => $transaction->status,
+                    'status' => $transaction->status,
                 ]);
 
                 // Check if the transaction is actually locked in escrow
                 if ($transaction->status !== TransactionStatus::ESCROW_LOCK) {
                     Log::warning('TransactionService::release — statut invalide pour la libération', [
                         'internal_id' => $transaction->id,
-                        'status'      => $transaction->status,
+                        'status' => $transaction->status,
                     ]);
+
                     return ['error' => 'Transaction is not active in escrow'];
                 }
 
                 // Security check: does this transaction belong to the authenticated client?
                 if ($transaction->client_id !== Auth::id()) {
                     Log::warning('TransactionService::release — tentative non autorisée', [
-                        'internal_id'     => $transaction->id,
+                        'internal_id' => $transaction->id,
                         'transaction_client_id' => $transaction->client_id,
-                        'auth_user_id'    => Auth::id(),
+                        'auth_user_id' => Auth::id(),
                     ]);
+
                     return ['error' => 'Payout Unauthorized'];
                 }
 
                 // Retrieve prestataire information
                 $prestataireInfo = User::query()->find($transaction->prestataire_id);
 
-                if (!$prestataireInfo) {
+                if (! $prestataireInfo) {
                     Log::error('TransactionService::release — prestataire introuvable', [
-                        'internal_id'    => $transaction->id,
+                        'internal_id' => $transaction->id,
                         'prestataire_id' => $transaction->prestataire_id,
                     ]);
+
                     return ['error' => 'Prestataire details not found'];
                 }
 
                 if (empty($prestataireInfo->phone)) {
                     Log::warning('TransactionService::release — numéro de téléphone manquant', [
-                        'internal_id'    => $transaction->id,
+                        'internal_id' => $transaction->id,
                         'prestataire_id' => $transaction->prestataire_id,
                     ]);
+
                     return ['error' => 'Le numéro de téléphone du prestataire est manquant.'];
                 }
 
                 // Split the single 'name' field into firstname/lastname for FedaPay
                 $nameParts = explode(' ', trim($prestataireInfo->name), 2);
                 $prestataireInfo->firstname = $nameParts[0];
-                $prestataireInfo->lastname  = $nameParts[1] ?? $nameParts[0];
+                $prestataireInfo->lastname = $nameParts[1] ?? $nameParts[0];
 
                 // Change status to releasing inside DB transaction
                 $transaction->update(['status' => TransactionStatus::RELEASING]);
 
                 TransactionLog::create([
                     'transaction_id' => $transaction->id,
-                    'from_status'    => TransactionStatus::ESCROW_LOCK->value,
-                    'to_status'      => TransactionStatus::RELEASING->value,
-                    'triggered_by'   => $transaction->client_id,
-                    'note'           => 'Initiating payout process',
+                    'from_status' => TransactionStatus::ESCROW_LOCK->value,
+                    'to_status' => TransactionStatus::RELEASING->value,
+                    'triggered_by' => $transaction->client_id,
+                    'note' => 'Initiating payout process',
                 ]);
 
                 Log::info('TransactionService::release — statut mis à jour vers "releasing"', [
@@ -258,50 +271,51 @@ class TransactionService
 
                 return [
                     'internal_transaction_id' => $transaction->id,
-                    'task_id'                 => $transaction->task_id,
-                    'client_id'               => $transaction->client_id,
-                    'amount'                  => $transaction->amount_net,
-                    'currency'                => $transaction->currency ?? 'XOF',
-                    'description'             => $transaction->description,
-                    'payment_method'          => $transaction->payment_method,
-                    'prestataire'             => $prestataireInfo,
+                    'task_id' => $transaction->task_id,
+                    'client_id' => $transaction->client_id,
+                    'amount' => $transaction->amount_net,
+                    'currency' => $transaction->currency ?? 'XOF',
+                    'description' => $transaction->description,
+                    'payment_method' => $transaction->payment_method,
+                    'prestataire' => $prestataireInfo,
                 ];
             });
 
             if (isset($txDetails['error'])) {
                 Log::error('TransactionService::release — erreur dans la transaction DB', [
                     'fedapay_transaction_id' => $transactionId,
-                    'error'                  => $txDetails['error'],
+                    'error' => $txDetails['error'],
                 ]);
+
                 return ['success' => false, 'message' => $txDetails['error']];
             }
 
             // Resolve the payout mode based on payment method and environment
-            $isSandbox     = config('fedapay.environment') === 'sandbox';
+            $isSandbox = config('fedapay.environment') === 'sandbox';
             $paymentMethod = $txDetails['payment_method'] ?? 'mobile_money';
             $mode = $isSandbox
                 ? (str_contains($paymentMethod, 'card') ? 'card_test' : 'momo_test')
-                : (str_contains($paymentMethod, 'card') ? 'card'      : 'mtn');
+                : (str_contains($paymentMethod, 'card') ? 'card' : 'mtn');
 
             Log::info('TransactionService::release — mode payout résolu', [
-                'internal_id'    => $txDetails['internal_transaction_id'],
-                'mode'           => $mode,
+                'internal_id' => $txDetails['internal_transaction_id'],
+                'mode' => $mode,
                 'payment_method' => $paymentMethod,
-                'is_sandbox'     => $isSandbox,
+                'is_sandbox' => $isSandbox,
             ]);
 
             // Payout configuration (outside DB transaction)
             $data = [
-                'amount'      => (int) $txDetails['amount'],
-                'currency'    => ['iso' => $txDetails['currency']],
-                'mode'        => $mode,
-                'description' => 'Payout for transaction: ' . $txDetails['description'],
-                'customer'    => [
-                    'firstname'    => $txDetails['prestataire']->firstname,
-                    'lastname'     => $txDetails['prestataire']->lastname,
-                    'email'        => $txDetails['prestataire']->email,
+                'amount' => (int) $txDetails['amount'],
+                'currency' => ['iso' => $txDetails['currency']],
+                'mode' => $mode,
+                'description' => 'Payout for transaction: '.$txDetails['description'],
+                'customer' => [
+                    'firstname' => $txDetails['prestataire']->firstname,
+                    'lastname' => $txDetails['prestataire']->lastname,
+                    'email' => $txDetails['prestataire']->email,
                     'phone_number' => [
-                        'number'  => $txDetails['prestataire']->phone,
+                        'number' => $txDetails['prestataire']->phone,
                         'country' => $txDetails['prestataire']->country ?? 'BJ',
                     ],
                 ],
@@ -311,15 +325,24 @@ class TransactionService
             $payout = $this->fedapayService->payout($data);
 
             // Check if the payout was successfully prepared (real or simulated)
-            if ($payout['success'] === true && isset($payout['data'])) {
-                $payoutId   = $payout['data']->id;
-                $simulated  = $payout['simulated'] ?? false;
+            if (($payout['success'] ?? false) === true && isset($payout['data'])) {
+                $payoutCreated = true;
+                $payoutId = $payout['data']->id;
+                $simulated = $payout['simulated'] ?? false;
 
-                // Update the transaction to store the payout ID
-                Transaction::query()->where('id', $txDetails['internal_transaction_id'])
-                    ->update(['fedapay_payout_id' => $payoutId]);
+                DB::transaction(function () use ($txDetails, $payoutId) {
+                    $updated = Transaction::query()
+                        ->whereKey($txDetails['internal_transaction_id'])
+                        ->where('status', TransactionStatus::RELEASING)
+                        ->update(['fedapay_payout_id' => $payoutId]);
 
-                // The task is only marked as VALIDEE after the payout job confirms the transfer.
+                    if ($updated !== 1) {
+                        throw new Exception('Transaction status changed before payout dispatch.');
+                    }
+
+                    ProcessPayout::dispatch($txDetails['internal_transaction_id'])->afterCommit();
+                });
+
                 if (isset($txDetails['task_id'])) {
                     Log::info('TransactionService::release — payout_id enregistré, attente de confirmation du job', [
                         'task_id' => $txDetails['task_id'],
@@ -329,19 +352,16 @@ class TransactionService
 
                 Log::info('TransactionService::release — payout_id enregistré, dispatch du Job', [
                     'internal_id' => $txDetails['internal_transaction_id'],
-                    'payout_id'   => $payoutId,
-                    'simulated'   => $simulated,
+                    'payout_id' => $payoutId,
+                    'simulated' => $simulated,
                 ]);
-
-                // Dispatch the Job to handle fund sending and emails
-                \App\Jobs\ProcessPayout::dispatch($txDetails['internal_transaction_id']);
 
                 return ['success' => true, 'message' => 'Le transfert est en cours de traitement.'];
             }
 
             // FedaPay returned a real failure — roll back to escrow_lock
             Log::error('TransactionService::release — création du payout échouée sur FedaPay, rollback vers escrow_lock', [
-                'internal_id'    => $txDetails['internal_transaction_id'],
+                'internal_id' => $txDetails['internal_transaction_id'],
                 'transaction_id' => $transactionId,
                 'payout_response' => $payout,
             ]);
@@ -350,10 +370,10 @@ class TransactionService
 
             TransactionLog::create([
                 'transaction_id' => $txDetails['internal_transaction_id'],
-                'from_status'    => TransactionStatus::RELEASING->value,
-                'to_status'      => TransactionStatus::ESCROW_LOCK->value,
-                'triggered_by'   => $txDetails['client_id'],
-                'note'           => 'Payout preparation failed on FedaPay — rolled back',
+                'from_status' => TransactionStatus::RELEASING->value,
+                'to_status' => TransactionStatus::ESCROW_LOCK->value,
+                'triggered_by' => $txDetails['client_id'],
+                'note' => 'Payout preparation failed on FedaPay — rolled back',
             ]);
 
             return ['success' => false, 'error' => 'La demande de création du paiement a échouée sur FedaPay.'];
@@ -361,27 +381,30 @@ class TransactionService
         } catch (Exception $e) {
             Log::error('TransactionService::release — exception non gérée, tentative de rollback', [
                 'transaction_id' => $transactionId,
-                'error'          => $e->getMessage(),
-                'trace'          => $e->getTraceAsString(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
-
+            $rollbackStatus = $payoutCreated ? TransactionStatus::FAILED : TransactionStatus::ESCROW_LOCK;
             $updated = Transaction::query()->where('id', $transactionId)
                 ->where('status', TransactionStatus::RELEASING)
-                ->update(['status' => TransactionStatus::ESCROW_LOCK]);
+                ->update(['status' => $rollbackStatus]);
 
             if ($updated) {
                 $failedTx = Transaction::query()->where('id', $transactionId)->first();
                 if ($failedTx) {
                     TransactionLog::create([
                         'transaction_id' => $failedTx->id,
-                        'from_status'    => TransactionStatus::RELEASING->value,
-                        'to_status'      => TransactionStatus::ESCROW_LOCK->value,
-                        'triggered_by'   => $failedTx->client_id,
-                        'note'           => 'Release reverted due to internal error: ' . $e->getMessage(),
+                        'from_status' => TransactionStatus::RELEASING->value,
+                        'to_status' => $rollbackStatus->value,
+                        'triggered_by' => $failedTx->client_id,
+                        'note' => $payoutCreated
+                            ? 'Payout preparation succeeded but local persistence failed: '.$e->getMessage()
+                            : 'Release reverted due to internal error: '.$e->getMessage(),
                     ]);
-                    Log::info('TransactionService::release — rollback vers escrow_lock effectué', [
+                    Log::info('TransactionService::release — rollback du statut effectué', [
                         'internal_id' => $failedTx->id,
+                        'status' => $rollbackStatus->value,
                     ]);
                 }
             }

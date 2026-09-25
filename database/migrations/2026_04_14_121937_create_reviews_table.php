@@ -13,18 +13,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->uuid("id")->primary();
-            $table->foreignUuid("reviewer_id")->constrained("users")->cascadeOnDelete();
-            $table->foreignUuid("reviewee_id")->constrained("users");
+            $table->uuid('id')->primary();
+            $table->foreignUuid('reviewer_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('reviewee_id')->constrained('users');
 
-            $table->smallInteger("rating");
-            $table->text("comment")->nullable();
+            $table->smallInteger('rating');
+            $table->text('comment')->nullable();
             $table->timestamps();
 
             $table->softDeletes();
         });
 
-        DB::statement("ALTER TABLE reviews ADD CONSTRAINT rating_range CHECK(rating >= 1 AND rating <= 5)");
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE reviews ADD CONSTRAINT rating_range CHECK(rating >= 1 AND rating <= 5)');
+        }
     }
 
     /**
