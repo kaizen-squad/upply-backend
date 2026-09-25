@@ -23,7 +23,7 @@ class ReviewStoreRequest extends FormRequest
     {
         return [
             "comment" => ["nullable", "string"],
-            "rating" => ["required", "integer", "max_digits:1", "max:5", "min:1"],
+            "rating" => ["required", "numeric", "max:5", "min:1"],
         ];
     }
 }
