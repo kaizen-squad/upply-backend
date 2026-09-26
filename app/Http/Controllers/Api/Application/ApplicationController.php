@@ -79,6 +79,6 @@ class ApplicationController extends Controller
         if($response) return response()->json([
             'success' => true,
             'message' => "Application rejected successfully"
-        ], 204);
+        ], 200);
     }
 }
