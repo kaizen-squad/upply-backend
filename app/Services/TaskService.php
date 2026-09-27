@@ -12,10 +12,20 @@ use Illuminate\Support\Facades\Gate;
 
 class TaskService{
 
-    public function index(){
-        $tasks = Task::limit(10)->with('client')->where('status', TaskStatus::OPENED)->get();
+    public function index(int $page){
+        $tasks = Task::with('client')->where('status', TaskStatus::OPENED)
+                    ->latest()
+                    ->paginate(perPage:15, page: $page);
         
-        return TaskResource::collection($tasks);
+        return [
+            "tasks" => TaskResource::collection($tasks),
+            "pagination" => [
+                "total" => $tasks->total(),
+                "per_page" => $tasks->perPage(),
+                "current_page" => $tasks->currentPage(),
+                "last_page" => $tasks->lastPage()
+            ]
+        ];
     }
 
     public function create(User $client, TaskStoreDTO $newTask){

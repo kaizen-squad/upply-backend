@@ -60,7 +60,7 @@ class DashboardService{
         ];
     }
 
-    public function forPrestataire(User $prestataire){
+    public function forPrestataire(User $prestataire, int $page){
         Gate::authorize("prestataire-access-dashboard");
 
         $applications = Application::query()
@@ -77,7 +77,8 @@ class DashboardService{
         ->whereHas('applications', function ($query) use ($prestataire){
             $query->where('prestataire_id', $prestataire->id);
         })
-        ->get();
+        ->latest()
+        ->paginate(perPage: 15, page: $page);
 
         $waiting_applications = Application::query()
         ->where('prestataire_id', $prestataire->id)
@@ -102,6 +103,12 @@ class DashboardService{
 
         return [
             'tasks' => TaskResource::collection($tasks),
+            'pagination' => [
+                "total" => $tasks->total(),
+                "per_page" => $tasks->perPage(),
+                "current_page" => $tasks->currentPage(),
+                "last_page" => $tasks->lastPage()
+            ],
             'applications' => ApplicationResource::collection($applications),
             'statistics' => [
                 'waiting_applications' => $waiting_applications,
