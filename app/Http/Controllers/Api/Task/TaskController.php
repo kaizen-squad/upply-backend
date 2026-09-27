@@ -16,8 +16,8 @@ class TaskController{
         public TaskService $service
     ){}
 
-    public function index(){
-        $response = $this->service->index();
+    public function index(Request $request){
+        $response = $this->service->index($request->integer('page'));
         return response()->json([
             "success" => true,
             "data" => $response,
