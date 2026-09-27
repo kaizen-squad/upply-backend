@@ -15,7 +15,7 @@ class DashboardController extends Controller
     public function forClient(Request $request){
         $user = $request->user();
         
-        $response = $this->service->forClient($user);
+        $response = $this->service->forClient($user, $request->integer('page'));
 
         return response()->json([
             "success" => true,

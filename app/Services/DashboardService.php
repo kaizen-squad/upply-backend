@@ -13,13 +13,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 class DashboardService{
-    public function forClient(User $client){
+    public function forClient(User $client, int $page){
         Gate::authorize("client-access-dashboard");
 
         $tasks = Task::query()
         ->where('client_id', $client->id)
         ->withCount('applications')
-        ->get();
+        ->latest()
+        ->paginate(perPage: 15, page: $page);
 
         $totalSpent = Transaction::query()->whereHas('task', fn($q) => $q
                                             ->where('client_id', $client->id)
@@ -43,7 +44,13 @@ class DashboardService{
         ->count();
 
         return [
-            "tasks" => TaskResource::collection($tasks),
+            "tasks" => TaskResource::collection($tasks->items()),
+            "pagination" => [
+                "total" => $tasks->total(),
+                "per_page" => $tasks->perPage(),
+                "current_page" => $tasks->currentPage(),
+                "last_page" => $tasks->lastPage()
+            ],
             "statistics" => [
                 "opened" => $opened_tasks,
                 "pending" => $pending_tasks,
