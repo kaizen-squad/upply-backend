@@ -8,4 +8,5 @@ enum TransactionStatus: string
     case RELEASING   = 'releasing';
     case RELEASED    = 'released';
     case FAILED      = 'failed';
+    case CANCELED    = 'canceled';
 }

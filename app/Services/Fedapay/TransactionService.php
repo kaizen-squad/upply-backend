@@ -214,7 +214,15 @@ class TransactionService
                         'status' => $transaction->status,
                     ]);
 
-                    return ['error' => 'Transaction is not active in escrow'];
+                    $errorMessage = match ($transaction->status) {
+                        TransactionStatus::RELEASING => 'Payout is already in progress.',
+                        TransactionStatus::RELEASED  => 'Payment has already been released to the prestataire.',
+                        TransactionStatus::CANCELED  => 'Transaction has been canceled.',
+                        TransactionStatus::FAILED    => 'Transaction has failed.',
+                        default                      => 'Transaction is not active in escrow',
+                    };
+
+                    return ['error' => $errorMessage];
                 }
 
                 // Security check: does this transaction belong to the authenticated client?
@@ -287,7 +295,7 @@ class TransactionService
                     'error' => $txDetails['error'],
                 ]);
 
-                return ['success' => false, 'message' => $txDetails['error']];
+                return ['success' => false, 'message' => $txDetails['error'], 'error' => $txDetails['error']];
             }
 
             // Resolve the payout mode based on payment method and environment
