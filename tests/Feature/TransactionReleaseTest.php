@@ -203,4 +203,44 @@ class TransactionReleaseTest extends TestCase
         $this->assertSame(TransactionStatus::RELEASED, $transaction->fresh()->status);
         $this->assertSame(TaskStatus::VALIDATED, $task->fresh()->status);
     }
+
+    public function test_release_returns_specific_error_messages_for_non_escrow_statuses(): void
+    {
+        $client = User::factory()->create();
+        $prestataire = User::factory()->create(['phone' => '+22900000000']);
+        Auth::login($client);
+
+        $statusesAndMessages = [
+            TransactionStatus::RELEASING->value => 'Payout is already in progress.',
+            TransactionStatus::RELEASED->value  => 'Payment has already been released to the prestataire.',
+            TransactionStatus::CANCELED->value  => 'Transaction has been canceled.',
+            TransactionStatus::FAILED->value    => 'Transaction has failed.',
+        ];
+
+        $fedapay = Mockery::mock(FedapayService::class);
+        $service = new TransactionService($fedapay);
+
+        foreach ($statusesAndMessages as $status => $expectedMessage) {
+            $task = Task::factory()->create([
+                'client_id' => $client->id,
+                'status' => TaskStatus::DELIVERED,
+            ]);
+
+            $transaction = Transaction::create([
+                'task_id' => $task->id,
+                'client_id' => $client->id,
+                'prestataire_id' => $prestataire->id,
+                'amount_gross' => 1000,
+                'commission' => 100,
+                'amount_net' => 900,
+                'currency' => 'XOF',
+                'payment_method' => 'mobile_money',
+                'status' => $status,
+            ]);
+
+            $result = $service->release($transaction->id);
+
+            $this->assertSame($expectedMessage, $result['error'] ?? null);
+        }
+    }
 }

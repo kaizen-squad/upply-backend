@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\TaskStatus;
+use App\Enums\TransactionStatus;
 use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Application;
@@ -24,7 +25,7 @@ class DashboardService{
         $totalSpent = Transaction::query()->whereHas('task', fn($q) => $q
                                             ->where('client_id', $client->id)
                                             ->where('status', TaskStatus::VALIDATED))
-        ->where('status', 'released')
+        ->where('status', TransactionStatus::RELEASED)
         ->sum('amount_gross');
 
         $opened_tasks = Task::query()
@@ -63,7 +64,7 @@ class DashboardService{
 
         $totalEarned = Transaction::query()->where('prestataire_id', $prestataire->id)
                         ->whereHas('task', fn($q) => $q->where('status', TaskStatus::VALIDATED))
-                        ->where('status', 'released')
+                        ->where('status', TransactionStatus::RELEASED)
                         ->sum('amount_net');
 
         $tasks = Task::query()
