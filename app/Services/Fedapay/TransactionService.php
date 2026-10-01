@@ -224,6 +224,7 @@ class TransactionService
 
                     return ['error' => $errorMessage];
                 }
+                //Juste un commentaire
 
                 // Security check: does this transaction belong to the authenticated client?
                 if ($transaction->client_id !== Auth::id()) {
